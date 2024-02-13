@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "data:populate": "node scripts/getPokemonList.js",
+    "sprites:populate": "node scripts/getPokemonSprites.js",
+    "populate": "pnpm run data:populate && pnpm run sprites:populate",
     "preview": "vite preview"
   },
   "dependencies": {
