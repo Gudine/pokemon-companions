@@ -12,11 +12,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@pkmn/dex": "^0.9.29",
+    "@pkmn/img": "^0.2.34",
     "preact": "^10.19.3"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.8.1",
-    "node-fetch": "^3.3.2",
+    "@types/node": "^22.13.5",
+    "tsx": "^4.19.3",
     "typescript": "^5.2.2",
     "vite": "^5.1.0"
   }
