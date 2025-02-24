@@ -3,9 +3,12 @@
     "composite": true,
     "skipLibCheck": true,
     "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "types": ["node"],
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "scripts/*", "src/pokemonList.ts"]
 }
