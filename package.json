@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "sprites:populate": "tsx scripts/getPokemonSprites.ts",
+    "sprites:populate": "tsx scripts/getSprites.ts",
     "preview": "vite preview"
   },
   "dependencies": {
