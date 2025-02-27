@@ -14,6 +14,9 @@ importers:
       '@pkmn/img':
         specifier: ^0.2.34
         version: 0.2.34
+      '@pkmn/sets':
+        specifier: ^5.1.2
+        version: 5.1.2
       '@tailwindcss/vite':
         specifier: ^4.0.8
         version: 4.0.8(vite@6.1.1(@types/node@22.13.5)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.3))
@@ -461,6 +464,9 @@ packages:
 
   '@pkmn/img@0.2.34':
     resolution: {integrity: sha512-KdvxUAYR80fMWBh+iIsoX1WOjncZ5ucUr+f8wcJwgsbYa05ZhzkjofEY+vqO4LEaBaz8vOHxq8c8tCRMICEk+Q==}
+
+  '@pkmn/sets@5.1.2':
+    resolution: {integrity: sha512-eMChlYko92ZdvNKqjcJ2PkzDmSc5kIbaKSrPU/bOnjcrOq8ZGjod3b7KcDxeXrZXQAS027O0uVhwIJbdMDe/Yw==}
 
   '@pkmn/types@4.0.0':
     resolution: {integrity: sha512-gR2s/pxJYEegek1TtsYCQupNR3d5hMlcJFsiD+2LyfKr4tc+gETTql47tWLX5mFSbPcbXh7f4+7txlMIDoZx/g==}
@@ -1305,6 +1311,10 @@ snapshots:
       '@pkmn/dex-types': 0.9.29
 
   '@pkmn/img@0.2.34': {}
+
+  '@pkmn/sets@5.1.2':
+    dependencies:
+      '@pkmn/types': 4.0.0
 
   '@pkmn/types@4.0.0': {}
 

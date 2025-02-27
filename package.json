@@ -12,6 +12,7 @@
   "dependencies": {
     "@pkmn/dex": "^0.9.29",
     "@pkmn/img": "^0.2.34",
+    "@pkmn/sets": "^5.1.2",
     "@tailwindcss/vite": "^4.0.8",
     "preact": "^10.26.2",
     "tailwindcss": "^4.0.8"
