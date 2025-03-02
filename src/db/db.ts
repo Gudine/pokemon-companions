@@ -5,28 +5,45 @@ import { openDB, DBSchema } from "idb";
 export interface IPokemonUnit {
   species: SpeciesName,
   form: SpeciesName,
-  playthrough: string,
+  playthrough: IPlaythrough["name"],
   data: ReturnType<typeof Sets["packSet"]>,
+}
+
+export interface IPlaythrough {
+  name: string,
+  date: Date,
+  gen?: string,
 }
 
 interface PokemonDB extends DBSchema {
   pkmn: {
-    value: IPokemonUnit
-    key: number;
+    value: IPokemonUnit,
+    key: number,
     indexes: {
       species: IPokemonUnit["species"],
       form: IPokemonUnit["form"],
       playthrough: IPokemonUnit["playthrough"],
-    };
-  };
+    },
+  },
+
+  playthrough: {
+    value: IPlaythrough,
+    key: string,
+    indexes: {
+      date: IPlaythrough["date"],
+    },
+  },
 }
 
 const db = await openDB<PokemonDB>("mainDB", 1, {
   upgrade(db) {
-    const store = db.createObjectStore("pkmn", { autoIncrement: true });
-    store.createIndex("species", "species", { unique: false });
-    store.createIndex("form", "form", { unique: false });
-    store.createIndex("playthrough", "playthrough", { unique: false });
+    const pkmnStore = db.createObjectStore("pkmn", { autoIncrement: true });
+    pkmnStore.createIndex("species", "species", { unique: false });
+    pkmnStore.createIndex("form", "form", { unique: false });
+    pkmnStore.createIndex("playthrough", "playthrough", { unique: false });
+
+    const playthroughStore = db.createObjectStore("playthrough", { keyPath: "name" });
+    playthroughStore.createIndex("date", "date", { unique: false });
   },
 });
 
