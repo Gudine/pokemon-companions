@@ -2,6 +2,9 @@
 @import "tailwindcss";
 
 @theme static {
+  --font-nunito: Nunito, sans-serif;
+  --font-kodchasan: Kodchasan, sans-serif;
+
   --color-type-normal: #9FA19F;
   --color-type-normal-light: #C1C2C1;
   --color-type-normal-dark: #676967;
