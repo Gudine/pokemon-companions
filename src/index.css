@@ -1,2 +1,96 @@
 @import url('https://fonts.googleapis.com/css2?family=Kodchasan:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 @import "tailwindcss";
+
+@theme static {
+  --color-type-normal: #9FA19F;
+  --color-type-normal-light: #C1C2C1;
+  --color-type-normal-dark: #676967;
+  
+  --color-type-fire: #E62829;
+  --color-type-fire-light: #EF7374;
+  --color-type-fire-dark: #961A1B;
+  
+  --color-type-fighting: #FF8000;
+  --color-type-fighting-light: #FFAC59;
+  --color-type-fighting-dark: #A65300;
+  
+  --color-type-water: #2980EF;
+  --color-type-water-light: #74ACF5;
+  --color-type-water-dark: #1B539B;
+  
+  --color-type-flying: #81B9EF;
+  --color-type-flying-light: #ADD2F5;
+  --color-type-flying-dark: #54789B;
+  
+  --color-type-grass: #3FA129;
+  --color-type-grass-light: #82C274;
+  --color-type-grass-dark: #29691B;
+  
+  --color-type-poison: #9141CB;
+  --color-type-poison-light: #B884DD;
+  --color-type-poison-dark: #5E2A84;
+  
+  --color-type-electric: #FAC000;
+  --color-type-electric-light: #FCD659;
+  --color-type-electric-dark: #A37D00;
+  
+  --color-type-ground: #915121;
+  --color-type-ground-light: #B88E6F;
+  --color-type-ground-dark: #5E3515;
+  
+  --color-type-psychic: #EF4179;
+  --color-type-psychic-light: #F584A8;
+  --color-type-psychic-dark: #9B2A4F;
+  
+  --color-type-rock: #AFA981;
+  --color-type-rock-light: #CBC7AD;
+  --color-type-rock-dark: #726E54;
+  
+  --color-type-ice: #3DCEF3;
+  --color-type-ice-light: #81DFF7;
+  --color-type-ice-dark: #28869E;
+  
+  --color-type-bug: #91A119;
+  --color-type-bug-light: #B8C26A;
+  --color-type-bug-dark: #5E6910;
+  
+  --color-type-dragon: #5060E1;
+  --color-type-dragon-light: #8D98EC;
+  --color-type-dragon-dark: #343E92;
+  
+  --color-type-ghost: #704170;
+  --color-type-ghost-light: #A284A2;
+  --color-type-ghost-dark: #492A49;
+  
+  --color-type-dark: #624D4E;
+  --color-type-dark-light: #998B8C;
+  --color-type-dark-dark: #403233;
+  
+  --color-type-steel: #60A1B8;
+  --color-type-steel-light: #98C2D1;
+  --color-type-steel-dark: #3E6978;
+  
+  --color-type-fairy: #EF70EF;
+  --color-type-fairy-light: #F5A2F5;
+  --color-type-fairy-dark: #9B499B;
+  
+  --color-type-stellar: #40B5A5;
+  --color-type-stellar-light: #83CFC5;
+  --color-type-stellar-dark: #2A766B;
+  
+  --color-type-unknown: #68A090;
+  --color-type-unknown-light: #9DC1B7;
+  --color-type-unknown-dark: #44685E;
+
+  --color-attack-physical: #EB5628;
+  --color-attack-physical-light: #F29173;
+  --color-attack-physical-dark: #99381A;
+
+  --color-attack-special: #375AB2;
+  --color-attack-special-light: #7D94CD;
+  --color-attack-special-dark: #243B74;
+
+  --color-attack-status: #828282;
+  --color-attack-status-light: #AEAEAE;
+  --color-attack-status-dark: #555555;
+}
