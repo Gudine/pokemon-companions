@@ -1,31 +1,10 @@
 import { Dex, SpeciesName } from "@pkmn/dex";
 import { Sprites } from "@pkmn/img";
-import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import { useMemo } from "preact/hooks";
+import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 
 export function SpeciesBig({ name }: { name: SpeciesName }) {
-  const ref = useRef(null);
-  const [isVisible, setVisible] = useState(false);
-
-  useEffect(() => {
-    let observer: IntersectionObserver;
-
-    if (!isVisible && ref.current) {
-      observer = new IntersectionObserver((entries, obs) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setVisible(entry.isIntersecting);
-            obs.disconnect();
-          }
-        }
-      }, { rootMargin: "100%" });
-
-      observer.observe(ref.current);
-    }
-
-    return () => {
-      observer?.disconnect();
-    }
-  }, [ref, isVisible, setVisible]);
+  const [isVisible, elemRef] = useIntersectionObserver(true);
 
   const pkmn = useMemo(() => Dex.species.get(name), [name]);
 
@@ -37,7 +16,7 @@ export function SpeciesBig({ name }: { name: SpeciesName }) {
 
   return (
     <div
-      ref={ref}
+      ref={elemRef}
       class="flex flex-col items-center
         rounded-lg p-2 cursor-pointer
         bg-stone-50 border-gray-400 border-2
@@ -46,7 +25,7 @@ export function SpeciesBig({ name }: { name: SpeciesName }) {
       <span class="self-start font-bold text-xs">
         { `#${pkmn.num}` }
       </span>
-      { isVisible ? <img
+      { isVisible.value ? <img
         src={ image.url }
         width={ image.w }
         height={ image.h }
