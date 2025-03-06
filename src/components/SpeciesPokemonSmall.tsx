@@ -1,10 +1,9 @@
 import { useMemo } from "preact/hooks";
-import { Dex, GenderName, MoveName } from "@pkmn/dex";
+import { Dex, GenderName } from "@pkmn/dex";
 import { Icons, Sprites } from "@pkmn/img";
 import { FaMars, FaVenus } from "react-icons/fa6";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { MoveSmall } from "./MoveSmall";
-import { MoveEmpty } from "./MoveEmpty";
 import { PartialPkmnSet } from "../utils/setUtils";
 
 export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
@@ -21,6 +20,11 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   }), [pkmn]);
 
   const itemIcon = useMemo(() => !pkmn.item ? null : Icons.getItem(pkmn.item), [pkmn]);
+
+  const paddedMoves: (string | undefined)[] = useMemo(() => [
+    ...(pkmn.moves ?? []),
+    ...Array(4 - Math.min((pkmn.moves ?? []).length, 4)).fill(undefined),
+  ].slice(0, 4), [pkmn]);
 
   return (
     <div
@@ -89,8 +93,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
 
       <div class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] gap-2 items-end
         col-span-full bg-gray-100 rounded-xl p-1">
-        {pkmn.moves.slice(0, 4).map((move) => (<MoveSmall name={move as MoveName} />))}
-        {Array(4 - Math.min(pkmn.moves.length, 4)).fill(null).map(() => (<MoveEmpty />))}
+        {paddedMoves.map((move) => (<MoveSmall name={move} />))}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-export function MoveEmpty() {
+export function MoveEmpty({ name }: { name?: string }) {
   return (
     <div
       class="flex items-center justify-center text-center self-stretch
@@ -7,7 +7,7 @@ export function MoveEmpty() {
       h-[calc(var(--text-sm)*var(--text-sm--line-height)+var(--text-xs)*var(--text-xs--line-height)+var(--spacing)*4)]"
     >
       <p>
-        --
+        {name?.trim() || "--"}
       </p>
     </div>
   )

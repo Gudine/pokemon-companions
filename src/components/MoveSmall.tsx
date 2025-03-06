@@ -1,8 +1,15 @@
-import { Dex, MoveName } from "@pkmn/dex";
+import { Dex } from "@pkmn/dex";
 import { useMemo } from "preact/hooks";
+import { MoveEmpty } from "./MoveEmpty";
 
-export function MoveSmall({ name }: { name: MoveName }) {
-  const move = useMemo(() => Dex.moves.get(name), [name]);
+export function MoveSmall({ name }: { name?: string }) {
+  const move = useMemo(() => {
+    if (!name) return;
+    const m = Dex.moves.get(name);
+    return m.exists ? m : undefined;
+  }, [name]);
+
+  if (!move) return <MoveEmpty name={ name } />
 
   return (
     <div
