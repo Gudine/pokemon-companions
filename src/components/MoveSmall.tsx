@@ -1,6 +1,6 @@
 import { Dex } from "@pkmn/dex";
 import { useMemo } from "preact/hooks";
-import { MoveEmpty } from "./MoveEmpty";
+import { MoveInvalid } from "./MoveInvalid";
 
 export function MoveSmall({ name }: { name?: string }) {
   const move = useMemo(() => {
@@ -9,7 +9,7 @@ export function MoveSmall({ name }: { name?: string }) {
     return m.exists ? m : undefined;
   }, [name]);
 
-  if (!move) return <MoveEmpty name={ name } />
+  if (!move) return <MoveInvalid name={ name } />
 
   return (
     <div

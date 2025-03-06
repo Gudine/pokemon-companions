@@ -1,4 +1,4 @@
-export function MoveEmpty({ name }: { name?: string }) {
+export function MoveInvalid({ name }: { name?: string }) {
   return (
     <div
       class="flex items-center justify-center text-center self-stretch
