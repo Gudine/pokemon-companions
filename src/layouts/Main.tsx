@@ -3,7 +3,7 @@ import { SpeciesBig } from "../components/SpeciesBig";
 import { SpeciesPokemonSmall } from "../components/SpeciesPokemonSmall";
 import { generatePokemon } from "../demoSets";
 import { CornerButton } from "../components/common/CornerButton";
-import { AddPlaythroughModal } from "../components/AddPlaythroughModal";
+import { AddPokemonModal } from "../components/AddPokemonModal";
 import { selectedPage } from "../globalState";
 import { useSignal } from "@preact/signals";
 
@@ -21,7 +21,7 @@ export function Main() {
         ))}
       </div>
       <CornerButton onClick={ () => showModal.value = true } />
-      { showModal.value && <AddPlaythroughModal close={ () => showModal.value = false } />}
+      { showModal.value && <AddPokemonModal close={ () => showModal.value = false } />}
     </main>
   )
 }
