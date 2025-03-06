@@ -11,7 +11,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
 
   const species = useMemo(() => Dex.species.get(pkmn.species), [pkmn]);
 
-  const image = useMemo(() => Sprites.getPokemon(pkmn.species, {
+  const image = useMemo(() => Sprites.getPokemon(species.name, {
     gen: "gen5",
     protocol: window.location.protocol.slice(0, -1) as "http" | "https",
     domain: window.location.host,
