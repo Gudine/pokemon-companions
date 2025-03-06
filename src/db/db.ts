@@ -1,12 +1,12 @@
 import type { SpeciesName } from "@pkmn/dex";
-import type { Sets } from "@pkmn/sets";
 import { openDB, DBSchema } from "idb";
+import { SetUtils } from "../utils/setUtils";
 
 export interface IPokemonUnit {
   species: SpeciesName,
   form: SpeciesName,
   playthrough: IPlaythrough["name"],
-  data: ReturnType<typeof Sets["packSet"]>,
+  data: ReturnType<typeof SetUtils["packSet"]>,
 }
 
 export interface IPlaythrough {

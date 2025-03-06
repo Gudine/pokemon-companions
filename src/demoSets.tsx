@@ -1,5 +1,5 @@
 import { Dex, SpeciesName } from "@pkmn/dex";
-import { PokemonSet } from "@pkmn/sets";
+import { PkmnSet } from "./utils/setUtils";
 
 function randomFrom<T extends unknown>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -9,7 +9,7 @@ const allMoves = Dex.moves.all().map((m) => m.name);
 
 const allItems = Dex.items.all().map((item) => item.name);
 
-export function generatePokemon(species: SpeciesName): PokemonSet {
+export function generatePokemon(species: SpeciesName): PkmnSet {
   const pkmn = Dex.species.get(species);
 
   const elligibleAbilities = [pkmn.abilities[0], pkmn.abilities[1], pkmn.abilities.H, pkmn.abilities.S]

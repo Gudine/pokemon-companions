@@ -1,17 +1,18 @@
 import { useMemo } from "preact/hooks";
-import { Dex, GenderName, MoveName, PokemonSet } from "@pkmn/dex";
+import { Dex, GenderName, MoveName } from "@pkmn/dex";
 import { Icons, Sprites } from "@pkmn/img";
 import { FaMars, FaVenus } from "react-icons/fa6";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { MoveSmall } from "./MoveSmall";
 import { MoveEmpty } from "./MoveEmpty";
+import { PartialPkmnSet } from "../utils/setUtils";
 
-export function SpeciesPokemonSmall({ pkmn }: { pkmn: Partial<PokemonSet> }) {
+export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
 
-  const species = useMemo(() => Dex.species.get(pkmn.species!), [pkmn]);
+  const species = useMemo(() => Dex.species.get(pkmn.species), [pkmn]);
 
-  const image = useMemo(() => Sprites.getPokemon(pkmn.species!, {
+  const image = useMemo(() => Sprites.getPokemon(pkmn.species, {
     gen: "gen5",
     protocol: window.location.protocol.slice(0, -1) as "http" | "https",
     domain: window.location.host,
@@ -49,15 +50,17 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: Partial<PokemonSet> }) {
         <div class="bg-gray-100 rounded-xl w-full
           pb-0.5 pt-0.5 pl-1 pr-1
           text-center text-sm">
-          <span class="font-bold">{ pkmn.name }</span>
+          <span class="font-bold">{ pkmn.name || pkmn.species }</span>
           { pkmn.gender === "M" && (
             <span class="text-blue-600 text-xs">&nbsp;<FaMars title="Male" /></span>
           )}
           { pkmn.gender === "F" && (
             <span class="text-pink-400 text-xs">&nbsp;<FaVenus title="Female" /></span>
           )}
-          <span class="font-bold text-xs"> Lv.</span>
-          <span class="font-bold">{pkmn.level}</span>
+          { pkmn.level != null && <>
+            <span class="font-bold text-xs"> Lv.</span>
+            <span class="font-bold">{pkmn.level}</span>
+          </>}
         </div>
       </div>
       <div class="text-sm text-center">
@@ -73,7 +76,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: Partial<PokemonSet> }) {
           ))}
         </div>
         <p class="text-xs pb-0.5 pt-1">Ability:</p>
-        <p>{species.abilities[0] || "No ability"}</p>
+        <p>{pkmn.ability || species.abilities[0] || "No ability"}</p>
         <p class="text-xs pb-0.5 pt-1">Held item:</p>
         <p class="flex justify-center items-end gap-0.5">
           {pkmn.item ? (
@@ -86,8 +89,8 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: Partial<PokemonSet> }) {
 
       <div class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] gap-2 items-end
         col-span-full bg-gray-100 rounded-xl p-1">
-        {(pkmn.moves ?? []).slice(0, 4).map((move) => (<MoveSmall name={move as MoveName} />))}
-        {Array(4 - Math.min((pkmn.moves ?? []).length, 4)).fill(null).map(() => (<MoveEmpty />))}
+        {pkmn.moves.slice(0, 4).map((move) => (<MoveSmall name={move as MoveName} />))}
+        {Array(4 - Math.min(pkmn.moves.length, 4)).fill(null).map(() => (<MoveEmpty />))}
       </div>
     </div>
   )
