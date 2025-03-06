@@ -12,7 +12,7 @@ export function Button({
         hover:bg-gray-100 hover:text-indigo-700
         disabled:bg-stone-600 disabled:border-stone-600 disabled:text-stone-50
         pt-1 pb-1 pl-2 pr-2
-        self-end ${className}`}
+        ${className}`}
       {...rest}
     >
       {children}
