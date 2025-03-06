@@ -19,7 +19,10 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
     gender: pkmn.gender as GenderName,
   }), [pkmn]);
 
-  const itemIcon = useMemo(() => !pkmn.item ? null : Icons.getItem(pkmn.item), [pkmn]);
+  const itemIcon = useMemo(() => {
+    const item = Dex.items.get(pkmn.item);
+    return item.exists ? Icons.getItem(item.name) : undefined;
+  }, [pkmn]);
 
   const paddedMoves: (string | undefined)[] = useMemo(() => [
     ...(pkmn.moves ?? []),
@@ -83,11 +86,8 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
         <p>{pkmn.ability || species.abilities[0] || "No ability"}</p>
         <p class="text-xs pb-0.5 pt-1">Held item:</p>
         <p class="flex justify-center items-end gap-0.5">
-          {pkmn.item ? (
-            <>
-              <span class="self-center" style={ itemIcon!.css } /> {pkmn.item}
-            </>
-          ) : "None"}
+          {itemIcon && <span class="self-center" style={ itemIcon.css } />}
+          {pkmn.item || "No item"}
         </p>
       </div>
 
