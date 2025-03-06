@@ -96,11 +96,3 @@ for (const [form, aliases] of [...forms].sort((a, b) => Dex.species.get(a[0]).nu
 }
 
 export const pokemonList = new Map([...unsortedPokemonList].sort((a, b) => Dex.species.get(a[0]).num - Dex.species.get(b[0]).num));
-
-export function tracePokemon(form: SpeciesName): [species: SpeciesName, form: SpeciesName] | undefined {
-  for (const [species, forms] of pokemonList) {
-    for (const [formName, aliases] of forms) {
-      if ([formName, ...aliases].includes(form)) return [species, formName];
-    }
-  }
-}

@@ -1,6 +1,6 @@
 import { SpeciesName } from "@pkmn/dex";
 import { db, IPokemonUnit } from "./db";
-import { tracePokemon } from "../pokemonList";
+import { tracePokemon } from "../utils/pkmnUtils";
 import { PartialPkmnSet, SetUtils } from "../utils/setUtils";
 
 export class PokemonUnit {
