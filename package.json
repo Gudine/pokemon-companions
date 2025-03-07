@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@pkmn/data": "^0.9.31",
     "@pkmn/dex": "^0.9.29",
     "@pkmn/img": "^0.2.34",
     "@pkmn/sets": "^5.1.2",

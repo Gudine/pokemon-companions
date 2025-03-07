@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@pkmn/data':
+        specifier: ^0.9.31
+        version: 0.9.31
       '@pkmn/dex':
         specifier: ^0.9.29
         version: 0.9.29
@@ -465,8 +468,14 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
+  '@pkmn/data@0.9.31':
+    resolution: {integrity: sha512-pXwwYJqNpuhY1CK5NjGlxAVkM8W3GjhrYQvOClCX2eL2tGWK+lGf9tLSF8kzTM0kdeAJDl3X3TiXh/4+KOfFGw==}
+
   '@pkmn/dex-types@0.9.29':
     resolution: {integrity: sha512-LlciFsu+uNDOEFMplAvSXAdWvRy12GyWi6gkBwpf1oht3T4iqRw985tiOcHz8jv18kups0KymIagAnN4WbpOMw==}
+
+  '@pkmn/dex-types@0.9.31':
+    resolution: {integrity: sha512-X9K8HIxUuAaXewFulUfLPIs79H/g75pEPrlEuE5usLtsRN6yKaBYCKyq8TVti9yGCwVYuiDd7V3NznZyYpLerQ==}
 
   '@pkmn/dex@0.9.29':
     resolution: {integrity: sha512-XMleIoxmDKIVGe3tTCXrmeiVkzdZeL4EAB3dJY+YJj+7BTbkRSBWr/3mRsIgsXwcHa3aI6WtWtFhy/J5r1kBog==}
@@ -1331,7 +1340,15 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@pkmn/data@0.9.31':
+    dependencies:
+      '@pkmn/dex-types': 0.9.31
+
   '@pkmn/dex-types@0.9.29':
+    dependencies:
+      '@pkmn/types': 4.0.0
+
+  '@pkmn/dex-types@0.9.31':
     dependencies:
       '@pkmn/types': 4.0.0
 
