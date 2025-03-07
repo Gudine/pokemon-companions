@@ -1,11 +1,6 @@
-import { Specie, SpeciesName } from "@pkmn/data";
+import { SpeciesName } from "@pkmn/data";
 import { defaultGen } from "./data";
-
-function getParent(pkmn: Specie) {
-  return pkmn.name.endsWith("-Totem")
-    ? pkmn.name.slice(0, -6) as SpeciesName
-    : pkmn.changesFrom;
-}
+import { getImmediateParent } from "./utils/pkmnUtils";
 
 const exclusions = [
   // Pokémon that have no move or ability difference
@@ -39,44 +34,22 @@ const exclusions = [
 
 const elligiblePokemon = defaultGen.species;
 
-const forms: Map<SpeciesName, SpeciesName[]> = new Map();
+const forms: SpeciesName[] = [];
 
 for (const pkmn of elligiblePokemon) {
-  if (getParent(pkmn) || exclusions.includes(pkmn.name) || pkmn.name.match(/\b(?:Totem)\b/g)) continue;
+  if (getImmediateParent(pkmn) || exclusions.includes(pkmn.name)) continue;
 
-  forms.set(pkmn.name, []);
+  forms.push(pkmn.name);
 }
 
-for (const pkmn of elligiblePokemon) {
-  if (!getParent(pkmn) && !exclusions.includes(pkmn.name) && !pkmn.name.match(/\b(?:Totem)\b/g)) continue;
+const unsortedPokemonList: Map<SpeciesName, SpeciesName[]> = new Map();
 
-  let base = getParent(pkmn) ?? pkmn.baseSpecies;
-
-  while (!forms.has(base)) {
-    const baseSpecies = elligiblePokemon.get(base);
-    const newBase = baseSpecies && (getParent(baseSpecies) ?? baseSpecies.baseSpecies);
-
-    if (!newBase || newBase === base) {
-      console.debug(`Base form ${base} is not available`);
-      break;
-    }
-
-    base = newBase;
-  }
-
-  if (!forms.has(base)) continue;
-
-  forms.get(base)!.push(pkmn.name);
-}
-
-const unsortedPokemonList: Map<SpeciesName, Map<SpeciesName, SpeciesName[]>> = new Map();
-
-for (const [form, aliases] of [...forms].sort((a, b) => elligiblePokemon.get(a[0])!.num - elligiblePokemon.get(b[0])!.num)) {
+for (const form of [...forms].sort((a, b) => elligiblePokemon.get(a)!.num - elligiblePokemon.get(b)!.num)) {
   const base = elligiblePokemon.get(form)!.baseSpecies;
 
-  if (!unsortedPokemonList.has(base)) unsortedPokemonList.set(base, new Map());
+  if (!unsortedPokemonList.has(base)) unsortedPokemonList.set(base, []);
 
-  unsortedPokemonList.get(base)!.set([form, elligiblePokemon.get(form)!.baseForme].filter(x => x).join("-") as SpeciesName, aliases);
+  unsortedPokemonList.get(base)!.push(form);
 }
 
 export const pokemonList = new Map([...unsortedPokemonList].sort((a, b) => elligiblePokemon.get(a[0])!.num - elligiblePokemon.get(b[0])!.num));

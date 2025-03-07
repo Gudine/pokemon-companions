@@ -58,7 +58,7 @@ for (const [name, forms] of pokemonList) {
 
   await downloadImages(name);
 
-  for (const [formName] of forms) {
+  for (const formName of forms) {
     await downloadImages(formName);
   }
 }
