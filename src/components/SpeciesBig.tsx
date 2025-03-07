@@ -1,12 +1,13 @@
-import { Dex, SpeciesName } from "@pkmn/dex";
+import { SpeciesName } from "@pkmn/data";
 import { Sprites } from "@pkmn/img";
 import { useMemo } from "preact/hooks";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
+import { defaultGen } from "../data";
 
 export function SpeciesBig({ name }: { name: SpeciesName }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
 
-  const pkmn = useMemo(() => Dex.species.get(name), [name]);
+  const pkmn = useMemo(() => defaultGen.species.get(name)!, [name]);
 
   const image = useMemo(() => Sprites.getPokemon(name, {
     gen: "gen5",

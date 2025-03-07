@@ -1,4 +1,4 @@
-import type { SpeciesName } from "@pkmn/dex";
+import type { SpeciesName } from "@pkmn/data";
 import { openDB, DBSchema } from "idb";
 import { SetUtils } from "../utils/setUtils";
 

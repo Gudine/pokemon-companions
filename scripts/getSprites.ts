@@ -1,9 +1,10 @@
 import fs from "fs/promises";
 import { join, basename, dirname } from "path";
 import { setTimeout as sleep } from "timers/promises";
-import { Dex, SpeciesName } from "@pkmn/dex";
+import { SpeciesName } from "@pkmn/data";
 import { Sprites, Icons } from "@pkmn/img";
 import { pokemonList } from "../src/pokemonList";
+import { defaultGen } from "../src/data";
 
 async function exists(path: string) {
   try {
@@ -32,7 +33,7 @@ async function downloadImage(url: string) {
 }
 
 async function downloadImages(name: SpeciesName) {
-  const species = Dex.species.get(name);
+  const species = defaultGen.species.get(name)!;
 
   try {
     await downloadImage(Sprites.getPokemon(species.name, { gen: "gen5" }).url);
@@ -62,7 +63,7 @@ for (const [name, forms] of pokemonList) {
   }
 }
 
-for (const item of Dex.items.all()) {
+for (const item of defaultGen.items) {
   await downloadImage(Icons.getItem(item.name).url);
 }
 

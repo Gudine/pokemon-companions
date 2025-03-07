@@ -1,21 +1,7 @@
-import { Dex, Species, SpeciesName } from "@pkmn/dex";
+import { Specie, SpeciesName } from "@pkmn/data";
+import { defaultGen } from "./data";
 
-function isFinalStage(pkmn: Species) {
-  const evos = pkmn.evos
-    ?.map((evo) => Dex.species.get(evo))
-    .filter((evo) => evo.gen <= pkmn.gen);
-  
-  if (!evos?.length) return true;
-
-  if (pkmn.gender) return false;
-
-  return (
-    evos.every((evo) => evo.gender)
-    && new Set(evos.map((evo) => evo.gender)).size === 1
-  );
-}
-
-function getParent(pkmn: Species) {
+function getParent(pkmn: Specie) {
   return pkmn.name.endsWith("-Totem")
     ? pkmn.name.slice(0, -6) as SpeciesName
     : pkmn.changesFrom ?? (Array.isArray(pkmn.battleOnly) ? pkmn.battleOnly[0] : pkmn.battleOnly);
@@ -51,9 +37,7 @@ const exclusions = [
   "Sinistcha-Masterpiece",
 ];
 
-const elligiblePokemon = Dex.species.all()
-  .filter((pkmn) => !pkmn.isNonstandard || pkmn.isNonstandard === "Past")
-  .filter(isFinalStage);
+const elligiblePokemon = defaultGen.species;
 
 const forms: Map<SpeciesName, SpeciesName[]> = new Map();
 
@@ -69,11 +53,11 @@ for (const pkmn of elligiblePokemon) {
   let base = getParent(pkmn) ?? pkmn.baseSpecies;
 
   while (!forms.has(base)) {
-    const baseSpecies = Dex.species.get(base);
-    const newBase = getParent(baseSpecies) ?? baseSpecies.baseSpecies;
+    const baseSpecies = elligiblePokemon.get(base);
+    const newBase = baseSpecies && (getParent(baseSpecies) ?? baseSpecies.baseSpecies);
 
-    if (newBase === base) {
-      console.log(`Base form ${base} is not available`);
+    if (!newBase || newBase === base) {
+      console.debug(`Base form ${base} is not available`);
       break;
     }
 
@@ -87,12 +71,12 @@ for (const pkmn of elligiblePokemon) {
 
 const unsortedPokemonList: Map<SpeciesName, Map<SpeciesName, SpeciesName[]>> = new Map();
 
-for (const [form, aliases] of [...forms].sort((a, b) => Dex.species.get(a[0]).num - Dex.species.get(b[0]).num)) {
-  const base = Dex.species.get(form).baseSpecies;
+for (const [form, aliases] of [...forms].sort((a, b) => elligiblePokemon.get(a[0])!.num - elligiblePokemon.get(b[0])!.num)) {
+  const base = elligiblePokemon.get(form)!.baseSpecies;
 
   if (!unsortedPokemonList.has(base)) unsortedPokemonList.set(base, new Map());
 
-  unsortedPokemonList.get(base)!.set([form, Dex.species.get(form).baseForme].filter(x => x).join("-") as SpeciesName, aliases);
+  unsortedPokemonList.get(base)!.set([form, elligiblePokemon.get(form)!.baseForme].filter(x => x).join("-") as SpeciesName, aliases);
 }
 
-export const pokemonList = new Map([...unsortedPokemonList].sort((a, b) => Dex.species.get(a[0]).num - Dex.species.get(b[0]).num));
+export const pokemonList = new Map([...unsortedPokemonList].sort((a, b) => elligiblePokemon.get(a[0])!.num - elligiblePokemon.get(b[0])!.num));

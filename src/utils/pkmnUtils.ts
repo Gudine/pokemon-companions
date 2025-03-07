@@ -1,4 +1,4 @@
-import { SpeciesName } from "@pkmn/dex";
+import { SpeciesName } from "@pkmn/data";
 import { pokemonList } from "../pokemonList";
 
 export function tracePokemon(form: SpeciesName): [species: SpeciesName, form: SpeciesName] | undefined {

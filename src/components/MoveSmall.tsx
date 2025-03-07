@@ -1,12 +1,11 @@
-import { Dex } from "@pkmn/dex";
 import { useMemo } from "preact/hooks";
 import { MoveInvalid } from "./MoveInvalid";
+import { defaultGen } from "../data";
 
 export function MoveSmall({ name }: { name?: string }) {
   const move = useMemo(() => {
     if (!name) return;
-    const m = Dex.moves.get(name);
-    return m.exists ? m : undefined;
+    return defaultGen.moves.get(name);
   }, [name]);
 
   if (!move) return <MoveInvalid name={ name } />

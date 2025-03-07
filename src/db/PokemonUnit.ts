@@ -1,4 +1,4 @@
-import { SpeciesName } from "@pkmn/dex";
+import { SpeciesName } from "@pkmn/data";
 import { db, IPokemonUnit } from "./db";
 import { tracePokemon } from "../utils/pkmnUtils";
 import { PartialPkmnSet, SetUtils } from "../utils/setUtils";

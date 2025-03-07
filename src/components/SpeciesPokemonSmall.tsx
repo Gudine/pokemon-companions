@@ -1,15 +1,16 @@
 import { useMemo } from "preact/hooks";
-import { Dex, GenderName } from "@pkmn/dex";
+import { GenderName } from "@pkmn/data";
 import { Icons, Sprites } from "@pkmn/img";
 import { FaMars, FaVenus } from "react-icons/fa6";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { MoveSmall } from "./MoveSmall";
 import { PartialPkmnSet } from "../utils/setUtils";
+import { defaultGen } from "../data";
 
 export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
 
-  const species = useMemo(() => Dex.species.get(pkmn.species), [pkmn]);
+  const species = useMemo(() => defaultGen.species.get(pkmn.species)!, [pkmn]);
 
   const image = useMemo(() => Sprites.getPokemon(species.name, {
     gen: "gen5",
@@ -20,8 +21,8 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   }), [pkmn]);
 
   const itemIcon = useMemo(() => {
-    const item = Dex.items.get(pkmn.item);
-    return item.exists ? Icons.getItem(item.name) : undefined;
+    const item = defaultGen.items.get(pkmn.item ?? "");
+    return item ? Icons.getItem(item.name) : undefined;
   }, [pkmn]);
 
   const paddedMoves: (string | undefined)[] = useMemo(() => [
