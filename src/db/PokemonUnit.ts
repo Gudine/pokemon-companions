@@ -4,6 +4,10 @@ import { tracePokemon } from "../utils/pkmnUtils";
 import { PartialPkmnSet, SetUtils } from "../utils/setUtils";
 
 export class PokemonUnit {
+  static async getAll(): Promise<IPokemonUnit[]> {
+    return await db.getAll("pkmn");
+  }
+
   static async getBySpecies(species: SpeciesName): Promise<IPokemonUnit[]> {
     return await db.getAllFromIndex("pkmn", "species", species);
   }
