@@ -19,7 +19,7 @@ export function Navigation() {
           hover:bg-gray-100 hover:text-indigo-700
           ${selectedPage.value === "pokemon" ? "bg-gray-100 text-indigo-700" : ""}`}
       >
-        Saved Pokémon
+        Saved playthroughs
       </a>
     </nav>
   )
