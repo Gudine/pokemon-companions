@@ -11,14 +11,19 @@ import { Button } from "./common/Button";
 import { useSavePokemon } from "../hooks/useSavePokemon";
 import { AiOutlineLoading } from "react-icons/ai";
 
-export function AddPokemonModal({ close }: { close: () => void }) {
+interface Props {
+  close: () => void;
+  playthrough?: string;
+}
+
+export function AddPokemonModal({ close, playthrough }: Props) {
   const [savingStatus, save, saveError] = useSavePokemon();
 
   const pkmn = useSignal<PartialPkmnSet>();
   const playthroughs = useSignal<string[]>([]);
 
   const dataError = useSignal("Invalid Pokémon data");
-  const playthroughError = useSignal("Playthrough must be selected");
+  const playthroughError = useSignal(playthrough === undefined ? "Playthrough must be selected" : "");
 
   useSignalEffect(() => { dataError.value = pkmn.value ? "" : "Invalid Pokémon data" });
   
@@ -62,7 +67,7 @@ export function AddPokemonModal({ close }: { close: () => void }) {
     
     const formData = new FormData(ev.currentTarget);
     
-    save(pkmn.value!, formData.get("playthrough") as string);
+    save(pkmn.value!, (formData.get("playthrough") as string | undefined) ?? playthrough!);
   }
 
   return (
@@ -108,13 +113,16 @@ export function AddPokemonModal({ close }: { close: () => void }) {
             name="playthrough"
             required
             onChange={handlePlaythrough}
-            disabled={ inputsDisabled }
+            disabled={ inputsDisabled.value || playthrough !== undefined }
           >
-            <option selected disabled class="hidden" value="">
+            <option selected={playthrough === undefined} disabled class="hidden" value="">
               -- Select Playthrough --
             </option>
-            {playthroughs.value.map((playthrough) => <option value={playthrough}>
-              {playthrough}
+            {playthroughs.value.map((currPlaythrough) => <option
+              value={currPlaythrough}
+              selected={ currPlaythrough === playthrough }
+            >
+              {currPlaythrough}
             </option>)}
           </select>
           <p class="text-sm text-red-500 empty:before:inline-block">
