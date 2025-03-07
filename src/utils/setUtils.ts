@@ -15,8 +15,14 @@ export const SetUtils = new class {
 
   unpackSet(buf: string, data?: Generation): PkmnSet<string> | undefined {
     const unpacked = Sets.unpackSet(buf, data?.dex);
+    if (!this.isMinimum(unpacked)) return;
 
-    return this.isMinimum(unpacked) ? unpacked : undefined;
+    if (data) {
+      const species = data.species.get(unpacked.species);
+      if (!species) return;
+    }
+
+    return unpacked;
   }
 
   exportSet(s: PartialPkmnSet, data?: Generation): string {
@@ -25,8 +31,14 @@ export const SetUtils = new class {
 
   importSet(buf: string, data?: Generation): PartialPkmnSet<string> | undefined {
     const imported = Sets.importSet(buf, data?.dex);
+    if (!this.isMinimum(imported)) return;
 
-    return this.isMinimum(imported) ? imported : undefined;
+    if (data) {
+      const species = data.species.get(imported.species);
+      if (!species) return;
+    }
+
+    return imported;
   }
 
   toJSON(s: PartialPkmnSet): string {
