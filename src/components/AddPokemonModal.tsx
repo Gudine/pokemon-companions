@@ -10,20 +10,27 @@ import { PartialPkmnSet, SetUtils } from "../utils/setUtils";
 import { Button } from "./common/Button";
 import { useSavePokemon } from "../hooks/useSavePokemon";
 import { AiOutlineLoading } from "react-icons/ai";
+import { IPlaythrough } from "../db/db";
+import { gens } from "../data";
+import { GenContext } from "../contexts/genContext";
 
 interface Props {
   close: () => void;
   playthrough?: string;
 }
 
-export function AddPokemonModal({ close, playthrough }: Props) {
+export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Props) {
   const [savingStatus, save, saveError] = useSavePokemon();
 
   const pkmn = useSignal<PartialPkmnSet>();
-  const playthroughs = useSignal<string[]>([]);
+  const playthroughs = useSignal<IPlaythrough[]>([]);
+  
+  const playthrough = useSignal<string>(defaultPlaythrough ?? "");
+
+  const generation = useComputed(() => playthroughs.value.find((p) => p.name === playthrough.value)?.gen);
 
   const dataError = useSignal("Invalid Pokémon data");
-  const playthroughError = useSignal(playthrough === undefined ? "Playthrough must be selected" : "");
+  const playthroughError = useSignal(defaultPlaythrough === undefined ? "Playthrough must be selected" : "");
 
   useSignalEffect(() => { dataError.value = pkmn.value ? "" : "Invalid Pokémon data" });
   
@@ -35,13 +42,15 @@ export function AddPokemonModal({ close, playthrough }: Props) {
 
   useEffect(() => {
     (async () => {
-      const playthroughsRaw = await Playthrough.getAll();
-      playthroughs.value = playthroughsRaw.map((p) => p.name);
+      playthroughs.value = await Playthrough.getAll();
     })();
-  }, [playthroughs]);
+  }, [playthroughs, playthrough]);
 
   const handleData: TextareaHTMLAttributes["onChange"] = (ev) => {
-    const set = SetUtils.importSet(ev.currentTarget.value);
+    const set = SetUtils.importSet(
+      ev.currentTarget.value,
+      generation.value ? gens.get(generation.value) : undefined
+    );
 
     if (!set) {
       pkmn.value = undefined;
@@ -59,15 +68,14 @@ export function AddPokemonModal({ close, playthrough }: Props) {
   };
 
   const handlePlaythrough: SelectHTMLAttributes["onChange"] = (ev) => {
+    playthrough.value = ev.currentTarget.value;
     playthroughError.value = ev.currentTarget.selectedOptions[0].disabled ? "Playthrough must be selected" : "";
   }
 
   const handleSubmit: FormHTMLAttributes["onSubmit"] = (ev) => {
     ev.preventDefault();
     
-    const formData = new FormData(ev.currentTarget);
-    
-    save(pkmn.value!, (formData.get("playthrough") as string | undefined) ?? playthrough!);
+    save(pkmn.value!, playthrough.value);
   }
 
   return (
@@ -112,17 +120,17 @@ export function AddPokemonModal({ close, playthrough }: Props) {
             id="pokemon-playthrough"
             name="playthrough"
             required
-            onChange={handlePlaythrough}
-            disabled={ inputsDisabled.value || playthrough !== undefined }
+            onChange={ handlePlaythrough }
+            disabled={ inputsDisabled.value || defaultPlaythrough !== undefined }
           >
-            <option selected={playthrough === undefined} disabled class="hidden" value="">
+            <option selected={playthrough.value === ""} disabled class="hidden" value="">
               -- Select Playthrough --
             </option>
             {playthroughs.value.map((currPlaythrough) => <option
-              value={currPlaythrough}
-              selected={ currPlaythrough === playthrough }
+              value={currPlaythrough.name}
+              selected={ currPlaythrough.name === playthrough.value }
             >
-              {currPlaythrough}
+              {currPlaythrough.name}
             </option>)}
           </select>
           <p class="text-sm text-red-500 empty:before:inline-block">
@@ -132,9 +140,11 @@ export function AddPokemonModal({ close, playthrough }: Props) {
         
         <div class="flex flex-col">
           <p>Preview:</p>
-          {pkmn.value && (<div class="self-center w-max">
-            <SpeciesPokemonSmall pkmn={ pkmn.value }/>
-          </div>)}
+          <GenContext value={{ gen: generation.value ?? 9 }}>
+            {pkmn.value && (<div class="self-center w-max">
+              <SpeciesPokemonSmall pkmn={ pkmn.value }/>
+            </div>)}
+          </GenContext>
         </div>
 
         <Button class="justify-self-end" type="submit" disabled={submitDisabled}>
