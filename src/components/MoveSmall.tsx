@@ -1,19 +1,24 @@
-import { useMemo } from "preact/hooks";
+import { useContext, useMemo } from "preact/hooks";
 import { MoveInvalid } from "./MoveInvalid";
-import { defaultGen } from "../data";
+import { gens } from "../data";
+import { GenContext } from "../contexts/genContext";
 
 export function MoveSmall({ name }: { name?: string }) {
+  const { gen } = useContext(GenContext);
+
   const move = useMemo(() => {
     if (!name) return;
-    return defaultGen.moves.get(name);
+    return gens.get(gen).moves.get(name);
   }, [name]);
 
   if (!move) return <MoveInvalid name={ name } />
 
+  const hasCategory = gens.get(gen).num >= 4;
+
   return (
     <div
-      class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] text-center
-      rounded-2xl border-4 overflow-hidden"
+      class={`grid ${hasCategory ? "grid-cols-2" : "grid-cols-1"} grid-rows-[repeat(2,max-content)] text-center
+      rounded-2xl border-4 overflow-hidden`}
       style={{ borderColor: `var(--color-type-${move.type.toLowerCase()}-dark)`}}
     >
       <p class="col-span-full text-sm bg-gray-100 pb-0.5 pt-0.5 pl-1 pr-1">
@@ -25,12 +30,12 @@ export function MoveSmall({ name }: { name?: string }) {
       >
         {move.type}
       </p>
-      <p
+      {hasCategory && (<p
         class="text-xs text-gray-100 pb-0.5 pt-0.5 pl-1 pr-1"
         style={{ backgroundColor: `var(--color-attack-${move.category.toLowerCase()})`}}
       >
         {move.category}
-      </p>
+      </p>)}
     </div>
   )
 }

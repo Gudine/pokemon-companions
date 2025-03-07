@@ -1,16 +1,18 @@
-import { useMemo } from "preact/hooks";
+import { useContext, useMemo } from "preact/hooks";
 import { GenderName } from "@pkmn/data";
 import { Icons, Sprites } from "@pkmn/img";
 import { FaMars, FaVenus } from "react-icons/fa6";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { MoveSmall } from "./MoveSmall";
 import { PartialPkmnSet } from "../utils/setUtils";
-import { defaultGen } from "../data";
+import { gens } from "../data";
+import { GenContext } from "../contexts/genContext";
 
 export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
+  const { gen } = useContext(GenContext);
 
-  const species = useMemo(() => defaultGen.species.get(pkmn.species)!, [pkmn]);
+  const species = useMemo(() => gens.get(gen).species.get(pkmn.species)!, [pkmn]);
 
   const image = useMemo(() => Sprites.getPokemon(species.name, {
     gen: "gen5",
@@ -21,7 +23,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   }), [pkmn]);
 
   const itemIcon = useMemo(() => {
-    const item = defaultGen.items.get(pkmn.item ?? "");
+    const item = gens.get(gen).items.get(pkmn.item ?? "");
     return item ? Icons.getItem(item.name) : undefined;
   }, [pkmn]);
 
