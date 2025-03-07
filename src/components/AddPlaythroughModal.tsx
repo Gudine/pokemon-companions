@@ -27,7 +27,7 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
     save({
       name: formData.get("name") as string,
       date: new Date(formData.get("date") as string),
-      gen: formData.get("name") as string,
+      gen: formData.get("gen") as string,
     });
   }
 
