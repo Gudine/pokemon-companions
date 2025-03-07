@@ -30,7 +30,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   ].slice(0, 4), [pkmn]);
 
   return (
-    <div
+    <article
       ref={elemRef}
       class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] content-between gap-1
         rounded-xl p-1 w-80
@@ -95,6 +95,6 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
         col-span-full bg-gray-100 rounded-xl p-1">
         {paddedMoves.map((move) => (<MoveSmall name={move} />))}
       </div>
-    </div>
+    </article>
   )
 }
