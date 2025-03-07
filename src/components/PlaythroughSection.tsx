@@ -6,7 +6,7 @@ import { IPlaythrough, IPokemonUnit } from "../db/db";
 import { PokemonUnit } from "../db/PokemonUnit";
 import { AddPokemonModal } from "./AddPokemonModal";
 import { Placeholder } from "./common/Placeholder";
-import { GenContext } from "../contexts/genContext";
+import { GenProvider } from "../contexts/genContext";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
   const showModal = useSignal(false);
@@ -61,12 +61,12 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
         <div class="flex flex-row flex-wrap justify-evenly
         bg-indigo-200 border-indigo-700 border-t-0 border-2 border-dashed
           gap-2 p-2 pb-6 mb-2">
-          <GenContext value={ { gen: playthrough.gen ?? 9 } }>
+          <GenProvider gen={ playthrough.gen }>
             { units.value.length === 0 && <Placeholder /> }
             { units.value.map(({ data }) => (
               <SpeciesPokemonSmall key={ data } pkmn={ SetUtils.unpackSet(data)! } />
             )) }
-          </GenContext>
+          </GenProvider>
         </div>
       )}
       { showModal.value && (<AddPokemonModal

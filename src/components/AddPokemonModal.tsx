@@ -12,7 +12,7 @@ import { useSavePokemon } from "../hooks/useSavePokemon";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IPlaythrough } from "../db/db";
 import { gens } from "../data";
-import { GenContext } from "../contexts/genContext";
+import { GenProvider } from "../contexts/genContext";
 
 interface Props {
   close: () => void;
@@ -140,11 +140,11 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
         
         <div class="flex flex-col">
           <p>Preview:</p>
-          <GenContext value={{ gen: generation.value ?? 9 }}>
+          <GenProvider gen={ generation.value }>
             {pkmn.value && (<div class="self-center w-max">
               <SpeciesPokemonSmall pkmn={ pkmn.value }/>
             </div>)}
-          </GenContext>
+          </GenProvider>
         </div>
 
         <Button class="justify-self-end" type="submit" disabled={submitDisabled}>
