@@ -1,4 +1,5 @@
-import { Sets, type Data, type PokemonSet } from '@pkmn/sets';
+import type { Generation } from '@pkmn/data';
+import { Sets, type PokemonSet } from '@pkmn/sets';
 
 export type PkmnSet<T = string> = Omit<PokemonSet<T>, "gender" | "level"> & Partial<Pick<PokemonSet<T>, "gender" | "level">>;
 export type PartialPkmnSet<T = string> = Pick<PkmnSet<T>, "species" | "moves"> & Partial<Omit<PkmnSet<T>, "species" | "moves">>;
@@ -12,18 +13,18 @@ export const SetUtils = new class {
     return Sets.packSet(s);
   }
 
-  unpackSet(buf: string, data?: Data): PkmnSet<string> | undefined {
-    const unpacked = Sets.unpackSet(buf, data);
+  unpackSet(buf: string, data?: Generation): PkmnSet<string> | undefined {
+    const unpacked = Sets.unpackSet(buf, data?.dex);
 
     return this.isMinimum(unpacked) ? unpacked : undefined;
   }
 
-  exportSet(s: PartialPkmnSet, data?: Data): string {
-    return Sets.exportSet(s, data);
+  exportSet(s: PartialPkmnSet, data?: Generation): string {
+    return Sets.exportSet(s, data?.dex);
   }
 
-  importSet(buf: string, data?: Data): PartialPkmnSet<string> | undefined {
-    const imported = Sets.importSet(buf, data);
+  importSet(buf: string, data?: Generation): PartialPkmnSet<string> | undefined {
+    const imported = Sets.importSet(buf, data?.dex);
 
     return this.isMinimum(imported) ? imported : undefined;
   }
