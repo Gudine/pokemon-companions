@@ -4,10 +4,20 @@ import { SetUtils } from "../utils/setUtils";
 import { useSignal, useSignalEffect } from "@preact/signals";
 import { IPlaythrough, IPokemonUnit } from "../db/db";
 import { PokemonUnit } from "../db/PokemonUnit";
+import { AddPokemonModal } from "./AddPokemonModal";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
+  const showModal = useSignal(false);
   const collapsed = useSignal(true);
   const units = useSignal<IPokemonUnit[]>([]);
+  
+  useSignalEffect(() => {
+    (async () => {
+      if (showModal.value === false) {
+        units.value = await PokemonUnit.getByPlaythrough(playthrough.name);
+      }
+    })();
+  });
   
   useSignalEffect(() => {
     (async () => {
@@ -33,6 +43,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
         </div>
         <div class="pr-4 flex flex-row gap-2 items-center">
           <button
+            onClick={ () => showModal.value = true }
             class="cursor-pointer flex"
           >
             <FaUserPlus title="Add Pokémon" />
@@ -53,6 +64,11 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           )) }
         </div>
       )}
+      { showModal.value && (<AddPokemonModal
+        close={ () => showModal.value = false }
+        playthrough={ playthrough.name }
+        />
+      ) }
     </section>
   )
 }
