@@ -20,7 +20,7 @@ function existsFn(d: Data) {
   if (!d.exists) return false;
   if (d.kind === "Ability" && d.id === "noability") return false;
   if ('isNonstandard' in d && d.isNonstandard && d.isNonstandard !== "Past") return false;
-  if (d.kind === "Species" && !isFinalStage(d)) return false;
+  if (d.kind === "Species" && (!isFinalStage(d) || d.battleOnly || d.forme === "Gmax")) return false;
   
   return true;
 }

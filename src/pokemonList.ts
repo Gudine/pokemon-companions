@@ -4,7 +4,7 @@ import { defaultGen } from "./data";
 function getParent(pkmn: Specie) {
   return pkmn.name.endsWith("-Totem")
     ? pkmn.name.slice(0, -6) as SpeciesName
-    : pkmn.changesFrom ?? (Array.isArray(pkmn.battleOnly) ? pkmn.battleOnly[0] : pkmn.battleOnly);
+    : pkmn.changesFrom;
 }
 
 const exclusions = [
