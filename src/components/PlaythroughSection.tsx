@@ -15,15 +15,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
   
   useSignalEffect(() => {
     (async () => {
-      if (showModal.value === false) {
-        units.value = await PokemonUnit.getByPlaythrough(playthrough.name);
-      }
-    })();
-  });
-  
-  useSignalEffect(() => {
-    (async () => {
-      if (collapsed.value === false) {
+      if (collapsed.value === false && showModal.value === false) {
         units.value = await PokemonUnit.getByPlaythrough(playthrough.name);
       }
     })();
@@ -51,6 +43,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
             <FaUserPlus title="Add Pokémon" />
           </button>
           <button
+            // onClick={ () => collapsed.value = !collapsed.value }
             class="cursor-pointer flex"
           >
             <FaPencil title="Edit playthrough" />
