@@ -2,7 +2,7 @@ import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons
 import { SpeciesPokemonSmall } from "../components/SpeciesPokemonSmall";
 import { SetUtils } from "../utils/setUtils";
 import { useSignal, useSignalEffect } from "@preact/signals";
-import { IPlaythrough, IPokemonUnit } from "../db/db";
+import { IPlaythrough, IPokemonUnitWithId } from "../db/db";
 import { PokemonUnit } from "../db/PokemonUnit";
 import { AddPokemonModal } from "./AddPokemonModal";
 import { Placeholder } from "./common/Placeholder";
@@ -11,7 +11,7 @@ import { GenProvider } from "../contexts/genContext";
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
   const showModal = useSignal(false);
   const collapsed = useSignal(true);
-  const units = useSignal<IPokemonUnit[]>([]);
+  const units = useSignal<IPokemonUnitWithId[]>([]);
   
   useSignalEffect(() => {
     (async () => {
@@ -63,8 +63,8 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           gap-2 p-2 pb-6 mb-2">
           <GenProvider gen={ playthrough.gen }>
             { units.value.length === 0 && <Placeholder /> }
-            { units.value.map(({ data }) => (
-              <SpeciesPokemonSmall key={ data } pkmn={ SetUtils.unpackSet(data)! } />
+            { units.value.map(({ id, data }) => (
+              <SpeciesPokemonSmall key={ id } pkmn={ SetUtils.unpackSet(data)! } />
             )) }
           </GenProvider>
         </div>
