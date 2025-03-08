@@ -26,28 +26,25 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
       <header class="bg-indigo-700 text-gray-100
         text-lg p-1
         flex flex-row justify-between">
-        <div class="flex flex-row items-center gap-4 pl-2">
+        <div class="flex flex-row items-center gap-2 pl-2">
           <button
             onClick={ () => collapsed.value = !collapsed.value }
             class="cursor-pointer flex"
           >
             { collapsed.value ? <FaChevronRight title="Expand" /> : <FaChevronDown title="Collapse" /> }
           </button>
-          <h2>[{playthrough.date.toLocaleDateString()}] {playthrough.name}</h2>
-        </div>
-        <div class="pr-4 flex flex-row gap-2 items-center">
           <button
-            onClick={ () => showModal.value = true }
-            class="cursor-pointer flex"
-          >
-            <FaUserPlus title="Add Pokémon" />
-          </button>
-          <button
-            // onClick={ () => collapsed.value = !collapsed.value }
-            class="cursor-pointer flex"
+            class={`cursor-pointer flex ${collapsed.value ? "invisible" : ""}`}
           >
             <FaPencil title="Edit playthrough" />
           </button>
+          <button
+            onClick={ () => showModal.value = true }
+            class={`cursor-pointer flex ${collapsed.value ? "invisible" : ""}`}
+          >
+            <FaUserPlus title="Add Pokémon" />
+          </button>
+          <h2>[{playthrough.date.toLocaleDateString()}] {playthrough.name}</h2>
         </div>
       </header>
       { !collapsed.value && (
