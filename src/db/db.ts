@@ -3,10 +3,15 @@ import { openDB, DBSchema } from "idb";
 import { SetUtils } from "../utils/setUtils";
 
 export interface IPokemonUnit {
+  id?: number,
   species: SpeciesName,
   form: SpeciesName,
   playthrough: IPlaythrough["name"],
   data: ReturnType<typeof SetUtils["packSet"]>,
+}
+
+export interface IPokemonUnitWithId extends IPokemonUnit {
+  id: number,
 }
 
 export interface IPlaythrough {
@@ -18,7 +23,7 @@ export interface IPlaythrough {
 interface PokemonDB extends DBSchema {
   pkmn: {
     value: IPokemonUnit,
-    key: number,
+    key: IPokemonUnitWithId["id"],
     indexes: {
       species: IPokemonUnit["species"],
       form: IPokemonUnit["form"],
@@ -28,7 +33,7 @@ interface PokemonDB extends DBSchema {
 
   playthrough: {
     value: IPlaythrough,
-    key: string,
+    key: IPlaythrough["name"],
     indexes: {
       date: IPlaythrough["date"],
     },
@@ -37,7 +42,7 @@ interface PokemonDB extends DBSchema {
 
 const db = await openDB<PokemonDB>("mainDB", 1, {
   upgrade(db) {
-    const pkmnStore = db.createObjectStore("pkmn", { autoIncrement: true });
+    const pkmnStore = db.createObjectStore("pkmn", { keyPath: "id", autoIncrement: true });
     pkmnStore.createIndex("species", "species", { unique: false });
     pkmnStore.createIndex("form", "form", { unique: false });
     pkmnStore.createIndex("playthrough", "playthrough", { unique: false });
