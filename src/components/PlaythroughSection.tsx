@@ -6,7 +6,7 @@ import { IPlaythrough, IPokemonUnitWithId } from "../db/db";
 import { PokemonUnit } from "../db/PokemonUnit";
 import { AddPokemonModal } from "./AddPokemonModal";
 import { Placeholder } from "./common/Placeholder";
-import { GenProvider } from "../contexts/genContext";
+import { GenProvider } from "../contexts/GenContext";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
   const showModal = useSignal(false);

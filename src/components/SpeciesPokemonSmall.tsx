@@ -6,7 +6,7 @@ import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { MoveSmall } from "./MoveSmall";
 import { PartialPkmnSet } from "../utils/setUtils";
 import { gens } from "../data";
-import { GenContext } from "../contexts/genContext";
+import { GenContext } from "../contexts/GenContext";
 
 export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);

@@ -1,7 +1,7 @@
 import { useContext, useMemo } from "preact/hooks";
 import { MoveInvalid } from "./MoveInvalid";
 import { gens } from "../data";
-import { GenContext } from "../contexts/genContext";
+import { GenContext } from "../contexts/GenContext";
 
 export function MoveSmall({ name }: { name?: string }) {
   const { gen } = useContext(GenContext);

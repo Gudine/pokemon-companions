@@ -12,7 +12,7 @@ import { useSavePokemon } from "../hooks/useSavePokemon";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IPlaythrough } from "../db/db";
 import { gens } from "../data";
-import { GenProvider } from "../contexts/genContext";
+import { GenProvider } from "../contexts/GenContext";
 
 interface Props {
   close: () => void;
