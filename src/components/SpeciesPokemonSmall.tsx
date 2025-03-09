@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "preact/hooks";
+import { useContext } from "preact/hooks";
 import { GenderName } from "@pkmn/data";
 import { FaMars, FaVenus } from "react-icons/fa6";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
@@ -11,23 +11,21 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
   const { data } = useContext(GenContext);
 
-  const species = useMemo(() => data.species.get(pkmn.species)!, [pkmn]);
+  const species = data.species.get(pkmn.species)!;
 
-  const image = useMemo(() => ImgUtils.getPokemon(
+  const image = ImgUtils.getPokemon(
     species.name,
     pkmn.shiny ?? false,
     pkmn.gender as GenderName,
-  ), [pkmn]);
+  );
 
-  const itemIcon = useMemo(() => {
-    const item = data.items.get(pkmn.item ?? "");
-    return item ? ImgUtils.getItem(item.name) : undefined;
-  }, [pkmn]);
+  const item = data.items.get(pkmn.item ?? "");
+  const itemIcon = item ? ImgUtils.getItem(item.name) : undefined;
 
-  const paddedMoves: (string | undefined)[] = useMemo(() => [
+  const paddedMoves = [
     ...(pkmn.moves ?? []),
-    ...Array(4 - Math.min((pkmn.moves ?? []).length, 4)).fill(undefined),
-  ].slice(0, 4), [pkmn]);
+    ...Array<undefined>(4 - Math.min((pkmn.moves ?? []).length, 4)).fill(undefined),
+  ].slice(0, 4);
 
   return (
     <article

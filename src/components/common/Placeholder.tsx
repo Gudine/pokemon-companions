@@ -1,8 +1,7 @@
-import { useMemo } from "preact/hooks";
 import { ImgUtils } from "../../utils/imgUtils";
 
 export function Placeholder() {
-  const image = useMemo(() => ImgUtils.getSubstitute(), []);
+  const image = ImgUtils.getSubstitute();
 
   return (
     <article class="flex flex-col gap-2 items-center text-2xl text-center">

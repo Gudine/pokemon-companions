@@ -1,5 +1,4 @@
 import { SpeciesName } from "@pkmn/data";
-import { useMemo } from "preact/hooks";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { defaultGen } from "../data";
 import { ImgUtils } from "../utils/imgUtils";
@@ -18,8 +17,8 @@ const getCompletionStyle = (completion: number) => completion === 0
 export function SpeciesBig({ name, completion }: Props) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
 
-  const pkmn = useMemo(() => defaultGen.species.get(name)!, [name]);
-  const image = useMemo(() => ImgUtils.getPokemon(name), [name]);
+  const pkmn = defaultGen.species.get(name)!;
+  const image = ImgUtils.getPokemon(name);
 
   return (
     <div
