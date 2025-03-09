@@ -13,7 +13,7 @@ export function MoveSmall({ name }: { name?: string }) {
 
   if (!move) return <MoveInvalid name={ name } />
 
-  const hasCategory = gens.get(gen).num >= 4;
+  const hasCategory = gen >= 4;
 
   return (
     <div
