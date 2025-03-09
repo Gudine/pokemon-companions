@@ -1,8 +1,8 @@
 import { SpeciesName } from "@pkmn/data";
-import { Sprites } from "@pkmn/img";
 import { useMemo } from "preact/hooks";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { defaultGen } from "../data";
+import { ImgUtils } from "../utils/imgUtils";
 
 interface Props {
   name: SpeciesName;
@@ -19,12 +19,7 @@ export function SpeciesBig({ name, completion }: Props) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
 
   const pkmn = useMemo(() => defaultGen.species.get(name)!, [name]);
-
-  const image = useMemo(() => Sprites.getPokemon(name, {
-    gen: "gen5",
-    protocol: window.location.protocol.slice(0, -1) as "http" | "https",
-    domain: window.location.host,
-  }), [name]);
+  const image = useMemo(() => ImgUtils.getPokemon(name), [name]);
 
   return (
     <div

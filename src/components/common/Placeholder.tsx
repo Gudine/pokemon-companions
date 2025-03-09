@@ -1,12 +1,8 @@
-import { Sprites } from "@pkmn/img";
 import { useMemo } from "preact/hooks";
+import { ImgUtils } from "../../utils/imgUtils";
 
 export function Placeholder() {
-  const image = useMemo(() => Sprites.getSubstitute({
-    gen: "gen5",
-    protocol: window.location.protocol.slice(0, -1) as "http" | "https",
-    domain: window.location.host,
-  }), []);
+  const image = useMemo(() => ImgUtils.getSubstitute(), []);
 
   return (
     <article class="flex flex-col gap-2 items-center text-2xl text-center">
