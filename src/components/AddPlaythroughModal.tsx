@@ -4,8 +4,9 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { useSavePlaythrough } from "../hooks/useSavePlaythrough";
 import { Modal } from "./common/Modal";
 import { Button } from "./common/Button";
+import { GenerationNum } from "@pkmn/data";
 
-const GEN_IDS = ["gen1", "gen2", "gen3", "gen4", "gen5", "gen6", "gen7", "gen8", "gen9"] as const;
+const GENS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 export function AddPlaythroughModal({ close }: { close: () => void }) {
   const [savingStatus, save, saveError] = useSavePlaythrough();
@@ -27,7 +28,7 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
     save({
       name: formData.get("name") as string,
       date: new Date(formData.get("date") as string),
-      gen: formData.get("gen") as string,
+      gen: Number(formData.get("gen")) as GenerationNum,
     });
   }
 
@@ -87,8 +88,8 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
             name="gen"
             disabled={ inputsDisabled }
           >
-            {GEN_IDS.map((genId) => <option value={genId} selected={genId === GEN_IDS[GEN_IDS.length - 1]}>
-              {genId.slice(-1)}
+            {GENS.map((genId) => <option value={genId} selected={genId === GENS[GENS.length - 1]}>
+              {genId}
             </option>)}
           </select>
         </div>

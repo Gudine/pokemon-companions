@@ -1,4 +1,4 @@
-import type { SpeciesName } from "@pkmn/data";
+import type { GenerationNum, SpeciesName } from "@pkmn/data";
 import { openDB, DBSchema } from "idb";
 import { SetUtils } from "../utils/setUtils";
 
@@ -17,7 +17,7 @@ export interface IPokemonUnitWithId extends IPokemonUnit {
 export interface IPlaythrough {
   name: string,
   date: Date,
-  gen?: string,
+  gen: GenerationNum,
 }
 
 interface PokemonDB extends DBSchema {
