@@ -156,7 +156,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
         </div>
 
         <Button class="justify-self-end" type="submit" disabled={submitDisabled}>
-          { isSaving.value
+          { !isSaving.value
             ? "Submit"
             /* @ts-expect-error */
             : <AiOutlineLoading className="animate-spin" /> }
