@@ -1,8 +1,9 @@
+import { GenerationNum } from "@pkmn/data";
 import { createContext } from "preact";
 import { PropsWithChildren } from "preact/compat";
 
 interface IGenContext {
-  gen: number | string;
+  gen: GenerationNum;
 }
 
 const defaultValue: IGenContext = { gen: 9 };
