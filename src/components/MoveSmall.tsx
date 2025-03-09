@@ -1,14 +1,13 @@
 import { useContext, useMemo } from "preact/hooks";
 import { MoveInvalid } from "./MoveInvalid";
-import { gens } from "../data";
 import { GenContext } from "../contexts/GenContext";
 
 export function MoveSmall({ name }: { name?: string }) {
-  const { gen } = useContext(GenContext);
+  const { gen, data } = useContext(GenContext);
 
   const move = useMemo(() => {
     if (!name) return;
-    return gens.get(gen).moves.get(name);
+    return data.moves.get(name);
   }, [name]);
 
   if (!move) return <MoveInvalid name={ name } />

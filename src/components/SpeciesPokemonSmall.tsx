@@ -5,14 +5,13 @@ import { FaMars, FaVenus } from "react-icons/fa6";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { MoveSmall } from "./MoveSmall";
 import { PartialPkmnSet } from "../utils/setUtils";
-import { gens } from "../data";
 import { GenContext } from "../contexts/GenContext";
 
 export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
-  const { gen } = useContext(GenContext);
+  const { data } = useContext(GenContext);
 
-  const species = useMemo(() => gens.get(gen).species.get(pkmn.species)!, [pkmn]);
+  const species = useMemo(() => data.species.get(pkmn.species)!, [pkmn]);
 
   const image = useMemo(() => Sprites.getPokemon(species.name, {
     gen: "gen5",
@@ -23,7 +22,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
   }), [pkmn]);
 
   const itemIcon = useMemo(() => {
-    const item = gens.get(gen).items.get(pkmn.item ?? "");
+    const item = data.items.get(pkmn.item ?? "");
     return item ? Icons.getItem(item.name) : undefined;
   }, [pkmn]);
 
