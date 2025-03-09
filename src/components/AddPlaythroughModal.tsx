@@ -1,35 +1,44 @@
 import type { FormHTMLAttributes } from "preact/compat";
-import { useComputed, useSignal, useSignalEffect } from "@preact/signals";
+import { useComputed, useSignal } from "@preact/signals";
 import { AiOutlineLoading } from "react-icons/ai";
-import { useSavePlaythrough } from "../hooks/useSavePlaythrough";
 import { Modal } from "./common/Modal";
 import { Button } from "./common/Button";
 import { GenerationNum } from "@pkmn/data";
+import { Playthrough } from "../db/Playthrough";
 
 const GENS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 export function AddPlaythroughModal({ close }: { close: () => void }) {
-  const [savingStatus, save, saveError] = useSavePlaythrough();
+  const isSaving = useSignal(false);
 
   const nameError = useSignal("Name can't be empty");
   const dateError = useSignal("Date must be set");
   
-  const inputsDisabled = useComputed(() => savingStatus.value === "saving");
-  const submitDisabled = useComputed(() => !!nameError.value || !!dateError.value || savingStatus.value === "saving");
-  
-  useSignalEffect(() => { if (saveError.value) nameError.value = saveError.value });
-  useSignalEffect(() => { if (savingStatus.value === "saved") close() });
+  const submitDisabled = useComputed(() => !!nameError.value || !!dateError.value || isSaving.value);
 
-  const handleSubmit: FormHTMLAttributes["onSubmit"] = (ev) => {
+  const handleSubmit: FormHTMLAttributes["onSubmit"] = async (ev) => {
     ev.preventDefault();
+
+    if (isSaving.value) throw new Error("Tried to save playthrough while saving another one");
+    isSaving.value = true;
     
     const formData = new FormData(ev.currentTarget);
     
-    save({
-      name: formData.get("name") as string,
-      date: new Date(formData.get("date") as string),
-      gen: Number(formData.get("gen")) as GenerationNum,
-    });
+    try {
+      await Playthrough.add(
+        formData.get("name") as string,
+        new Date(formData.get("date") as string),
+        Number(formData.get("gen")) as GenerationNum,
+      );
+
+      close();
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "ConstraintError") {
+        nameError.value = "Name already exists";
+      }
+    }
+
+    isSaving.value = false;
   }
 
   return (
@@ -51,7 +60,7 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
             id="playthrough-name"
             name="name"
             type="text"
-            disabled={ inputsDisabled }
+            disabled={ isSaving }
             onChange={(ev) => nameError.value = ev.currentTarget.value === "" ? "Name can't be empty" : ""}
           />
           <p class="text-sm text-red-500 empty:before:inline-block">
@@ -69,7 +78,7 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
             id="playthrough-date"
             name="date"
             type="date"
-            disabled={ inputsDisabled }
+            disabled={ isSaving }
             onChange={(ev) => dateError.value = ev.currentTarget.value === "" ? "Date must be set" : ""}
           />
           <p class="text-sm text-red-500 empty:before:inline-block">
@@ -86,7 +95,7 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
             disabled:bg-gray-300 text-stone-700"
             id="playthrough-gen"
             name="gen"
-            disabled={ inputsDisabled }
+            disabled={ isSaving }
           >
             {GENS.map((genId) => <option value={genId} selected={genId === GENS[GENS.length - 1]}>
               {genId}
@@ -94,7 +103,7 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
           </select>
         </div>
         <Button class="self-end" type="submit" disabled={submitDisabled}>
-          { savingStatus.value !== "saving"
+          { !isSaving.value
             ? "Submit"
             /* @ts-expect-error */
             : <AiOutlineLoading className="animate-spin" /> }

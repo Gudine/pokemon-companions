@@ -8,11 +8,11 @@ import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
 import { tracePokemon } from "../utils/pkmnUtils";
 import { PartialPkmnSet, SetUtils } from "../utils/setUtils";
 import { Button } from "./common/Button";
-import { useSavePokemon } from "../hooks/useSavePokemon";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IPlaythrough } from "../db/db";
 import { gens } from "../data";
 import { GenProvider } from "../contexts/GenContext";
+import { PokemonUnit } from "../db/PokemonUnit";
 
 interface Props {
   close: () => void;
@@ -20,7 +20,7 @@ interface Props {
 }
 
 export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Props) {
-  const [savingStatus, save, saveError] = useSavePokemon();
+  const isSaving = useSignal(false);
 
   const pkmn = useSignal<PartialPkmnSet>();
   const playthroughs = useSignal<IPlaythrough[]>([]);
@@ -34,11 +34,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
 
   useSignalEffect(() => { dataError.value = pkmn.value ? "" : "Invalid Pokémon data" });
   
-  const inputsDisabled = useComputed(() => savingStatus.value === "saving");
-  const submitDisabled = useComputed(() => !!dataError.value || !!playthroughError.value || savingStatus.value === "saving");
-  
-  useSignalEffect(() => { if (saveError.value) dataError.value = saveError.value });
-  useSignalEffect(() => { if (savingStatus.value === "saved") close() });
+  const submitDisabled = useComputed(() => !!dataError.value || !!playthroughError.value || isSaving.value);
 
   useEffect(() => {
     (async () => {
@@ -72,10 +68,22 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
     playthroughError.value = ev.currentTarget.selectedOptions[0].disabled ? "Playthrough must be selected" : "";
   }
 
-  const handleSubmit: FormHTMLAttributes["onSubmit"] = (ev) => {
+  const handleSubmit: FormHTMLAttributes["onSubmit"] = async (ev) => {
     ev.preventDefault();
-    
-    save(pkmn.value!, playthrough.value);
+
+    if (isSaving.value) throw new Error("Tried to save Pokémon while saving another one");
+    isSaving.value = true;
+
+    try {
+      await PokemonUnit.add(pkmn.value!, playthrough.value);
+      close();
+    } catch (err) {
+      if (err instanceof Error && err.message.match(/^Species .+? not found$/)) {
+        dataError.value = err.message;
+      }
+    }
+
+    isSaving.value = false;
   }
 
   return (
@@ -100,7 +108,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
             name="data"
             required
             spellcheck={ false }
-            disabled={ inputsDisabled }
+            disabled={ isSaving }
             onChange={handleData}
           />
           <p class="text-sm text-red-500 empty:before:inline-block">
@@ -121,7 +129,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
             name="playthrough"
             required
             onChange={ handlePlaythrough }
-            disabled={ inputsDisabled.value || defaultPlaythrough !== undefined }
+            disabled={ isSaving.value || defaultPlaythrough !== undefined }
           >
             <option selected={playthrough.value === ""} disabled class="hidden" value="">
               -- Select Playthrough --
@@ -148,7 +156,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
         </div>
 
         <Button class="justify-self-end" type="submit" disabled={submitDisabled}>
-          { savingStatus.value !== "saving"
+          { isSaving.value
             ? "Submit"
             /* @ts-expect-error */
             : <AiOutlineLoading className="animate-spin" /> }
