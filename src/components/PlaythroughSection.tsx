@@ -53,9 +53,9 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           gap-2 p-2 pb-6 mb-2">
           <GenProvider gen={ playthrough.gen }>
             { units.value.length === 0 && <Placeholder /> }
-            { units.value.map(({ id, data }) => (
-              <SpeciesPokemonSmall key={ id } pkmn={ unpackSet(data, playthrough.gen)! } />
-            )) }
+            { units.value.map((info) => ({ ...info, set: unpackSet(info.data, playthrough.gen) }))
+              .filter(({ set }) => set !== undefined)
+              .map(({ id, set }) => (<SpeciesPokemonSmall key={ id } pkmn={ set! } />))}
           </GenProvider>
         </div>
       )}
