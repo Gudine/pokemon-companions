@@ -1,7 +1,8 @@
 import { SpeciesName } from "@pkmn/data";
 import { db, type IPokemonUnitWithId, type IPokemonUnit } from "./db";
 import { tracePokemon } from "../utils/pkmnUtils";
-import { type PokemonSet } from "../utils/setUtils";
+import { type PokemonSet, importFromObject } from "../utils/setUtils";
+import { type MinimalSet, Sets } from "../utils/setUtils/sets";
 import { DatabaseError } from "../errors";
 
 export class PokemonUnit {
@@ -47,5 +48,29 @@ export class PokemonUnit {
       t.store.put(newFile),
       t.done,
     ]);
+  }
+  
+  static async updateSet(id: number, payload: Omit<MinimalSet, "species">) {
+    const t = db.transaction(["pkmn", "playthrough"], "readwrite");
+
+    const old = await t.objectStore("pkmn").get(id);
+    if (!old) throw new DatabaseError("notFound", { store: "pkmn", key: id });
+
+    const playthrough = await t.objectStore("playthrough").get(old.playthrough);
+    if (!playthrough) throw new DatabaseError("notFound", { store: "playthrough", key: old.playthrough }, { store: "pkmn", key: id });
+  
+    const oldSet = Sets.unpackSet(old.data);
+    if (!oldSet) throw new Error(`Stored set for Pokémon #${id} is invalid`);
+    
+    const newSet = Object.assign({}, oldSet, payload);
+    
+    const newInstance = importFromObject(newSet, playthrough.gen);
+  
+    await Promise.all([
+      t.objectStore("pkmn").put({ ...old, data: newInstance.pack() }),
+      t.done,
+    ]);
+
+    return newInstance;
   }
 }
