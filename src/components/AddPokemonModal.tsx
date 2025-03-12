@@ -10,6 +10,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { IPlaythrough } from "../db/db";
 import { GenProvider } from "../contexts/GenContext";
 import { PokemonUnit } from "../db/PokemonUnit";
+import { SetValidationError } from "../errors";
 
 interface Props {
   close: () => void;
@@ -46,8 +47,10 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
         generation.value ?? 9,
       );
     } catch (err) {
-      if (err instanceof Error) {
+      if (err instanceof SetValidationError) {
         dataError.value = err.message;
+      } else {
+        throw err;
       }
 
       pkmn.value = undefined;
