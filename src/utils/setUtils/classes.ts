@@ -1,6 +1,7 @@
 import type { Ability, GenderName, Generation, GenerationNum, ID, Item, Move, Nature, Specie, StatsTable } from '@pkmn/data';
 import { gens } from '../../data';
 import { MinimalSet, Sets } from './sets';
+import { SetValidationError } from '../../errors';
 
 type UpToFour<T> = [T] | [T, T] | [T, T, T] | [T, T, T, T];
 
@@ -43,17 +44,18 @@ export class PokemonSetGen1 {
   protected constructor(set: MinimalSet, gen: GenerationNum) {
     const data = gens.get(gen);
 
-    if (!set.species) throw new Error("Species not specified");
+    if (!set.species) throw new SetValidationError("species", set.species);
     const speciesData = data.species.get(set.species);
-    if (!speciesData) throw new Error(`Invalid species "${set.species}"`);
+    if (!speciesData)  throw new SetValidationError("species", set.species);
 
-    if (!set.level) throw new Error("Level not specified");
-    if (!set.moves?.length || set.moves.length > 4) throw new Error("Pokémon should have 1-4 moves");
+    if (set.level == null) throw new SetValidationError("level", set.level);
+    if (!set.moves?.length || set.moves.length > 4) throw new SetValidationError("moves", set.moves, "Pokémon should have 1-4 moves");
 
-    const invalidMoves = set.moves.filter((move) => !data.moves.get(move));
-    if (invalidMoves.length) throw new Error(`Invalid move${invalidMoves.length === 1 ? "" : "s"}: ${invalidMoves.map((m) => `"${m}"`).join(", ")}`);
-
-    const movesData = set.moves.map((move) => data.moves.get(move)!) satisfies Move[] as UpToFour<Move>;
+    const movesData = set.moves.map((move) => {
+      const moveData = data.moves.get(move);
+      if (!moveData) throw new SetValidationError("move", move);
+      return moveData;
+    }) satisfies Move[] as UpToFour<Move>;
 
     this.data = {
       main: data,
@@ -110,10 +112,10 @@ export class PokemonSetGen2 extends PokemonSetGen1 {
 
     const speciesData = this.data.main.species.get(this.species)!;
 
-    if (!speciesData.gender && !set.gender) throw new Error(`Gender must be specified for species "${speciesData.name}"`);
-    if (set.gender && set.gender !== "M" && set.gender !== "F") throw new Error(`Invalid gender "${set.gender}"`);
+    if (!speciesData.gender && !set.gender) throw new SetValidationError("gender", set.gender, `Gender must be specified for species "${speciesData.name}"`);
+    if (set.gender && set.gender !== "M" && set.gender !== "F") throw new SetValidationError("gender", set.gender);
     if (set.gender && speciesData.gender && set.gender !== speciesData.gender) {
-      throw new Error(`Gender "${set.gender}" not allowed for species "${speciesData.name}"`);
+      throw new SetValidationError("gender", set.gender, `Gender "${set.gender}" not allowed for species "${speciesData.name}"`);
     }
     // speciesData.gender = "M" | "F" | "N"; set.gender = undefined
     // speciesData.gender = undefined; set.gender = "M" | "F"
@@ -127,7 +129,7 @@ export class PokemonSetGen2 extends PokemonSetGen1 {
 
     const itemData = set.item && this.data.main.items.get(set.item) || undefined;
     const item = itemData?.id;
-    if (set.item && !item) throw new Error(`Invalid item "${set.item}"`);
+    if (set.item && !item) throw new SetValidationError("item", set.item);
 
     this.data.item = itemData;
 
@@ -166,7 +168,7 @@ export class PokemonSetGen3 extends PokemonSetGen2 {
     const speciesData = this.data.main.species.get(this.species)!;
 
     const abilityData = this.data.main.abilities.get(set.ability || speciesData.abilities[0]);
-    if (!abilityData) throw new Error(`Invalid ability "${set.ability}"`);
+    if (!abilityData) throw new SetValidationError("ability", set.ability);
     
     this.data.ability = abilityData;
     this.data.pokeball = set.pokeball && this.data.main.items.get(set.pokeball) || undefined;

@@ -1,6 +1,20 @@
 import type { StoreNames, StoreKey } from "idb";
 import type { PokemonDB } from "./db/db";
 
+const capitalize = (str: string) => str && str[0].toUpperCase() + str.slice(1);
+
+export class SetValidationError extends Error {
+  constructor(public field: string, public value?: any, message?: string) {
+    const finalMessage = message ?? ((value == null || value === "")
+      ? `${capitalize(field)} not specified`
+      : `Invalid ${field} "${value}"`);
+
+    super(finalMessage);
+
+    this.name = "SetValidationError";
+  }
+}
+
 type ErrorDBEntityType<T extends StoreNames<PokemonDB>> = {
   store: T;
   key: StoreKey<PokemonDB, T>
