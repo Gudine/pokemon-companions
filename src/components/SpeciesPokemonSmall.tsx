@@ -1,26 +1,21 @@
-import { useContext } from "preact/hooks";
-import { GenderName } from "@pkmn/data";
 import { FaMars, FaVenus } from "react-icons/fa6";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { MoveSmall } from "./MoveSmall";
-import { PartialPkmnSet } from "../utils/setUtils";
+import { PokemonSet } from "../utils/setUtils";
 import { ImgUtils } from "../utils/imgUtils";
-import { GenContext } from "../contexts/GenContext";
 
-export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
+export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
-  const { data } = useContext(GenContext);
-
-  const species = data.species.get(pkmn.species)!;
+  
+  const { species } = pkmn.data;
 
   const image = ImgUtils.getPokemon(
     species.name,
-    pkmn.shiny ?? false,
-    pkmn.gender as GenderName,
+    pkmn.isGen(2) && pkmn.shiny,
+    (pkmn.isGen(2) && pkmn.gender) || undefined,
   );
 
-  const item = data.items.get(pkmn.item ?? "");
-  const itemIcon = item ? ImgUtils.getItem(item.name) : undefined;
+  const itemIcon = (pkmn.isGen(3) && pkmn.data.item) ? ImgUtils.getItem(pkmn.data.item.name) : undefined;
 
   const paddedMoves = [
     ...(pkmn.moves ?? []),
@@ -44,8 +39,8 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
           src={ image.url }
           width={ image.w }
           height={ image.h }
-          title={ `${pkmn.shiny ? "Shiny " : ""}${species.name}` }
-          alt={ `${pkmn.shiny ? "Shiny " : ""}${species.name}` }
+          title={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
+          alt={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
           style={ { imageRendering: image.pixelated ? "pixelated" : "auto" } }
           class="rounded-xl bg-gray-100"
         /> : <div class="rounded-xl bg-gray-100" style={ {
@@ -56,12 +51,14 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
           pb-0.5 pt-0.5 pl-1 pr-1
           text-center text-sm">
           <span class="font-bold">{ pkmn.name || pkmn.species }</span>
-          { pkmn.gender === "M" && (
-            <span class="text-blue-600 text-xs">&nbsp;<FaMars title="Male" /></span>
-          )}
-          { pkmn.gender === "F" && (
-            <span class="text-pink-400 text-xs">&nbsp;<FaVenus title="Female" /></span>
-          )}
+          {pkmn.isGen(2) && (<>
+            { pkmn.gender === "M" && (
+              <span class="text-blue-600 text-xs">&nbsp;<FaMars title="Male" /></span>
+            )}
+            { pkmn.gender === "F" && (
+              <span class="text-pink-400 text-xs">&nbsp;<FaVenus title="Female" /></span>
+            )}
+          </>)}
           { pkmn.level != null && <>
             <span class="font-bold text-xs"> Lv.</span>
             <span class="font-bold">{pkmn.level}</span>
@@ -81,11 +78,11 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PartialPkmnSet }) {
           ))}
         </div>
         <p class="text-xs pb-0.5 pt-1">Ability:</p>
-        <p>{pkmn.ability || species.abilities[0] || "No ability"}</p>
+        <p>{pkmn.isGen(3) && pkmn.data.ability.name}</p>
         <p class="text-xs pb-0.5 pt-1">Held item:</p>
         <p class="flex justify-center items-end gap-0.5">
           {itemIcon && <span class="self-center" style={ itemIcon.css } />}
-          {pkmn.item || "No item"}
+          {pkmn.isGen(2) && pkmn.data.item?.name || "No item"}
         </p>
       </div>
 
