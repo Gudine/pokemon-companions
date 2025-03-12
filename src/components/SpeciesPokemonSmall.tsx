@@ -15,7 +15,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
     (pkmn.isGen(2) && pkmn.gender) || undefined,
   );
 
-  const itemIcon = (pkmn.isGen(3) && pkmn.data.item) ? ImgUtils.getItem(pkmn.data.item.name) : undefined;
+  const itemIcon = (pkmn.isGen(2) && pkmn.data.item) ? ImgUtils.getItem(pkmn.data.item.name) : undefined;
 
   const paddedMoves = [
     ...(pkmn.moves ?? []),
