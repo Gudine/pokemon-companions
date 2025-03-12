@@ -1,7 +1,7 @@
 import { SpeciesName } from "@pkmn/data";
 import { db, IPokemonUnitWithId } from "./db";
 import { tracePokemon } from "../utils/pkmnUtils";
-import { PartialPkmnSet, SetUtils } from "../utils/setUtils";
+import { PokemonSet } from "../utils/setUtils";
 
 export class PokemonUnit {
   static async getAll(): Promise<IPokemonUnitWithId[]> {
@@ -20,8 +20,8 @@ export class PokemonUnit {
     return await db.getAllFromIndex("pkmn", "playthrough", playthrough) as IPokemonUnitWithId[];
   }
 
-  static async add(pkmn: PartialPkmnSet, playthrough: string) {
-    const result = pkmn.species && tracePokemon(pkmn.species as SpeciesName);
+  static async add(pkmn: PokemonSet, playthrough: string) {
+    const result = tracePokemon(pkmn.data.species.name);
 
     if (!result) throw new Error(`Species ${pkmn.species} not found`);
 
@@ -31,7 +31,7 @@ export class PokemonUnit {
       species,
       form,
       playthrough,
-      data: SetUtils.packSet(pkmn),
+      data: pkmn.pack(),
     });
   }
 }

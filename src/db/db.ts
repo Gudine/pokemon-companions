@@ -1,13 +1,13 @@
 import type { GenerationNum, SpeciesName } from "@pkmn/data";
 import { openDB, DBSchema } from "idb";
-import { SetUtils } from "../utils/setUtils";
+import { PokemonSet } from "../utils/setUtils";
 
 export interface IPokemonUnit {
   id?: number,
   species: SpeciesName,
   form: SpeciesName,
   playthrough: IPlaythrough["name"],
-  data: ReturnType<typeof SetUtils["packSet"]>,
+  data: ReturnType<PokemonSet["pack"]>,
 }
 
 export interface IPokemonUnitWithId extends IPokemonUnit {
