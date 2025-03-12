@@ -20,7 +20,7 @@ export interface IPlaythrough {
   gen: GenerationNum,
 }
 
-interface PokemonDB extends DBSchema {
+export interface PokemonDB extends DBSchema {
   pkmn: {
     value: IPokemonUnit,
     key: IPokemonUnitWithId["id"],
