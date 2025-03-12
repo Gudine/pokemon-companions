@@ -1,42 +1,56 @@
-import type { Generation } from '@pkmn/data';
-import { Sets, type MinimalSet } from './sets';
+import { MinimalSet, Sets } from './sets';
+import {
+  PokemonSetGen1, PokemonSetGen2, PokemonSetGen3,
+  PokemonSetGen7, PokemonSetGen8, PokemonSetGen9,
+  PokemonSets,
+} from "./classes";
 
-export type PartialPkmnSet = Required<Pick<MinimalSet, "species" | "moves">> & Omit<MinimalSet, "species" | "moves">;
+const pokemonSets: { [Key in keyof PokemonSets]: (set: MinimalSet) => PokemonSets[Key] } = {
+  1: (set) => PokemonSetGen1.create(set),
+  2: (set) => PokemonSetGen2.create(set),
+  3: (set) => PokemonSetGen3.create(set, 3),
+  4: (set) => PokemonSetGen3.create(set, 4),
+  5: (set) => PokemonSetGen3.create(set, 5),
+  6: (set) => PokemonSetGen3.create(set, 6),
+  7: (set) => PokemonSetGen7.create(set),
+  8: (set) => PokemonSetGen8.create(set),
+  9: (set) => PokemonSetGen9.create(set),
+};
 
-export const SetUtils = new class {
-  isMinimum(set?: MinimalSet): set is PartialPkmnSet {
-    return Boolean(set && set.species && set.moves?.length);
-  }
+function createObject<T extends keyof PokemonSets>(set: MinimalSet, gen: T): PokemonSets[T] {
+  return pokemonSets[gen](set) as PokemonSets[T];
+}
 
-  packSet(s: PartialPkmnSet): string {
-    return Sets.packSet(s);
-  }
+export function unpackSet<T extends keyof PokemonSets>(buf: string, gen: T) {
+  const unpacked = Sets.unpackSet(buf);
 
-  unpackSet(buf: string, data?: Generation): PartialPkmnSet | undefined {
-    const unpacked = Sets.unpackSet(buf);
-    if (!this.isMinimum(unpacked)) return;
-
-    if (data) {
-      const species = data.species.get(unpacked.species);
-      if (!species) return;
-    }
-
-    return unpacked;
-  }
-
-  exportSet(s: PartialPkmnSet): string {
-    return Sets.exportSet(s);
-  }
-
-  importSet(buf: string, data?: Generation): PartialPkmnSet | undefined {
-    const imported = Sets.importSet(buf);
-    if (!this.isMinimum(imported)) return;
-
-    if (data) {
-      const species = data.species.get(imported.species);
-      if (!species) return;
-    }
-
-    return imported;
+  try {
+    return unpacked && createObject(unpacked, gen);
+  } catch {
+    return undefined;
   }
 }
+
+export function importSet<T extends keyof PokemonSets>(buf: string, gen: T) {
+  const imported = Sets.importSet(buf);
+
+  try {
+    return imported && createObject(imported, gen);
+  } catch {
+    return undefined;
+  }
+}
+
+export function importSetWithErrors<T extends keyof PokemonSets>(buf: string, gen: T) {
+  const imported = Sets.importSet(buf);
+
+  if (!imported) throw new Error("Invalid data");
+
+  return createObject(imported, gen);
+}
+
+export type {
+  PokemonSetGen1, PokemonSetGen2, PokemonSetGen3,
+  PokemonSetGen7, PokemonSetGen8, PokemonSetGen9,
+  PokemonSet, PokemonSets,
+} from "./classes";
