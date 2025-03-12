@@ -24,4 +24,29 @@ export class Playthrough {
       }
     }
   }
+
+  static async update(name: string, payload: Omit<IPlaythrough, "name">) {
+    const t = db.transaction("playthrough", "readwrite");
+
+    const old = await t.store.get(name);
+    if (!old) throw new DatabaseError("notFound", { store: "playthrough", key: name });
+    
+    const newFile = Object.assign({}, old, payload);
+    await Promise.all([
+      t.store.put(newFile),
+      t.done,
+    ]);
+  }
+
+  static async delete(name: string) {
+    const t = db.transaction("playthrough", "readwrite");
+
+    try {
+      await t.store.delete(name);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "InvalidStateError") {
+        throw new DatabaseError("notFound", { store: "playthrough", key: name });
+      }
+    }
+  }
 }
