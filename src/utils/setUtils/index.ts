@@ -17,7 +17,7 @@ const pokemonSets: { [Key in keyof PokemonSets]: (set: MinimalSet) => PokemonSet
   9: (set) => PokemonSetGen9.create(set),
 };
 
-function createObject<T extends keyof PokemonSets>(set: MinimalSet, gen: T): PokemonSets[T] {
+export function importFromObject<T extends keyof PokemonSets>(set: MinimalSet, gen: T): PokemonSets[T] {
   return pokemonSets[gen](set) as PokemonSets[T];
 }
 
@@ -25,7 +25,7 @@ export function unpackSet<T extends keyof PokemonSets>(buf: string, gen: T) {
   const unpacked = Sets.unpackSet(buf);
 
   try {
-    return unpacked && createObject(unpacked, gen);
+    return unpacked && importFromObject(unpacked, gen);
   } catch {
     return undefined;
   }
@@ -35,7 +35,7 @@ export function importSet<T extends keyof PokemonSets>(buf: string, gen: T) {
   const imported = Sets.importSet(buf);
 
   try {
-    return imported && createObject(imported, gen);
+    return imported && importFromObject(imported, gen);
   } catch {
     return undefined;
   }
@@ -46,7 +46,7 @@ export function importSetWithErrors<T extends keyof PokemonSets>(buf: string, ge
 
   if (!imported) throw new Error("Invalid data");
 
-  return createObject(imported, gen);
+  return importFromObject(imported, gen);
 }
 
 export type {

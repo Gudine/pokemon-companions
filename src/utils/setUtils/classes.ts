@@ -41,7 +41,9 @@ export class PokemonSetGen1 {
     moves: UpToFour<Move>,
   }
 
-  protected constructor(set: MinimalSet, gen: GenerationNum) {
+  get gen() { return this.data.main.num; }
+
+  protected constructor(set: MinimalSet, gen: PokemonSetGen1["gen"]) {
     const data = gens.get(gen);
 
     if (!set.species) throw new SetValidationError("species", set.species);
@@ -78,6 +80,17 @@ export class PokemonSetGen1 {
     return Sets.exportSet(this);
   }
 
+  toObject(): MinimalSet {
+    return {
+      name: this.name,
+      species: this.species,
+      moves: this.moves,
+      evs: this.evs,
+      ivs: this.ivs,
+      level: this.level,
+    }
+  }
+
   static create(set: MinimalSet) { return new this(set, 1) }
   
   isGen<T extends GenerationNum>(min: T): this is PokemonSets[T] { return min <= 1; }
@@ -107,7 +120,9 @@ export class PokemonSetGen2 extends PokemonSetGen1 {
     item?: Item,
   }
 
-  protected constructor(set: MinimalSet, gen: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) {
+  get gen() { return this.data.main.num as 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9; }
+
+  protected constructor(set: MinimalSet, gen: PokemonSetGen2["gen"]) {
     super(set, gen);
 
     const speciesData = this.data.main.species.get(this.species)!;
@@ -136,6 +151,16 @@ export class PokemonSetGen2 extends PokemonSetGen1 {
     this.happiness = set.happiness;
   }
 
+  toObject(): MinimalSet {
+    return {
+      ...super.toObject(),
+      item: this.item,
+      gender: this.gender,
+      shiny: this.shiny,
+      happiness: this.happiness,
+    }
+  }
+
   static create(set: MinimalSet) { return new this(set, 2) }
 
   override isGen<T extends GenerationNum>(min: T): this is PokemonSets[T] { return min <= 2 }
@@ -162,7 +187,9 @@ export class PokemonSetGen3 extends PokemonSetGen2 {
     nature?: Nature,
   }
 
-  protected constructor(set: MinimalSet, gen: 3 | 4 | 5 | 6 | 7 | 8 | 9) {
+  get gen() { return this.data.main.num as 3 | 4 | 5 | 6 | 7 | 8 | 9; }
+
+  protected constructor(set: MinimalSet, gen: PokemonSetGen3["gen"]) {
     super(set, gen);
 
     const speciesData = this.data.main.species.get(this.species)!;
@@ -173,6 +200,15 @@ export class PokemonSetGen3 extends PokemonSetGen2 {
     this.data.ability = abilityData;
     this.data.pokeball = set.pokeball && this.data.main.items.get(set.pokeball) || undefined;
     this.data.nature = set.nature && this.data.main.natures.get(set.nature) || undefined;
+  }
+
+  toObject(): MinimalSet {
+    return {
+      ...super.toObject(),
+      ability: this.ability,
+      nature: this.nature,
+      pokeball: this.pokeball,
+    }
   }
 
   static create(set: MinimalSet, gen?: 3 | 4 | 5 | 6) { return new this(set, gen ?? 3) }
@@ -186,7 +222,9 @@ export class PokemonSetGen7 extends PokemonSetGen3 {
   // * If undefined, is treated as: See above || "Unspecified"
   hpType?: ID;
 
-  protected constructor(set: MinimalSet, gen: 7 | 8 | 9) {
+  get gen() { return this.data.main.num as 7 | 8 | 9; }
+
+  protected constructor(set: MinimalSet, gen: PokemonSetGen7["gen"]) {
     super(set, gen);
 
     const hiddenPower = this.moves.find((move) => move.startsWith("hiddenpower"));
@@ -194,6 +232,13 @@ export class PokemonSetGen7 extends PokemonSetGen3 {
     const hpTypeId = set.hpType === undefined ? undefined : this.data.main.types.get(set.hpType)?.id;
     
     this.hpType = (!hiddenPower && hpTypeId && hpTypeId !== hpCalc) ? hpTypeId : undefined;
+  }
+
+  toObject(): MinimalSet {
+    return {
+      ...super.toObject(),
+      hpType: this.hpType,
+    }
   }
 
   static create(set: MinimalSet) { return new this(set, 7) }
@@ -211,11 +256,21 @@ export class PokemonSetGen8 extends PokemonSetGen7 {
   // * If undefined, is treated as: "Unspecified"
   dynamaxLevel?: number;
 
-  protected constructor(set: MinimalSet, gen: 8 | 9) {
+  get gen() { return this.data.main.num as 8 | 9; }
+
+  protected constructor(set: MinimalSet, gen: PokemonSetGen8["gen"]) {
     super(set, gen);
 
     this.gigantamax = !!set.gigantamax;
     this.dynamaxLevel = set.dynamaxLevel;
+  }
+
+  toObject(): MinimalSet {
+    return {
+      ...super.toObject(),
+      dynamaxLevel: this.dynamaxLevel,
+      gigantamax: this.gigantamax,
+    }
   }
 
   static create(set: MinimalSet) { return new this(set, 8) }
@@ -229,10 +284,19 @@ export class PokemonSetGen9 extends PokemonSetGen8 {
   // * If undefined, is treated as: "Unspecified"
   teraType?: ID;
 
-  protected constructor(set: MinimalSet, gen: 9) {
+  get gen() { return this.data.main.num as 9; }
+
+  protected constructor(set: MinimalSet, gen: PokemonSetGen9["gen"]) {
     super(set, gen);
     
     this.teraType = set.teraType && this.data.main.types.get(set.teraType)?.id || undefined;
+  }
+
+  toObject(): MinimalSet {
+    return {
+      ...super.toObject(),
+      teraType: this.teraType,
+    }
   }
 
   static create(set: MinimalSet) { return new this(set, 9) }
