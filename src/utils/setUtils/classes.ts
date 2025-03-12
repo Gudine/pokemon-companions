@@ -142,11 +142,8 @@ export class PokemonSetGen2 extends PokemonSetGen1 {
     
     this.shiny = !!set.shiny;
 
-    const itemData = set.item && this.data.main.items.get(set.item) || undefined;
-    const item = itemData?.id;
-    if (set.item && !item) throw new SetValidationError("item", set.item);
-
-    this.data.item = itemData;
+    this.data.item = set.item && this.data.main.items.get(set.item) || undefined;
+    if (set.item && !this.data.item) throw new SetValidationError("item", set.item);
 
     this.happiness = set.happiness;
   }
@@ -196,10 +193,17 @@ export class PokemonSetGen3 extends PokemonSetGen2 {
 
     const abilityData = this.data.main.abilities.get(set.ability || speciesData.abilities[0]);
     if (!abilityData) throw new SetValidationError("ability", set.ability);
-    
     this.data.ability = abilityData;
+
+    const itemData = set.item && this.data.main.items.get(set.item) || undefined;
+    if (set.item && !itemData) throw new SetValidationError("item", set.item);
+    this.data.item = itemData;
+
     this.data.pokeball = set.pokeball && this.data.main.items.get(set.pokeball) || undefined;
+    if (set.pokeball && !this.data.pokeball) throw new SetValidationError("pokeball", set.pokeball);
+
     this.data.nature = set.nature && this.data.main.natures.get(set.nature) || undefined;
+    if (set.nature && !this.data.nature) throw new SetValidationError("nature", set.nature);
   }
 
   toObject(): MinimalSet {
