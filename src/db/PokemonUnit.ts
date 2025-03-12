@@ -1,7 +1,8 @@
 import { SpeciesName } from "@pkmn/data";
-import { db, IPokemonUnitWithId } from "./db";
+import { db, type IPokemonUnitWithId, type IPokemonUnit } from "./db";
 import { tracePokemon } from "../utils/pkmnUtils";
-import { PokemonSet } from "../utils/setUtils";
+import { type PokemonSet } from "../utils/setUtils";
+import { DatabaseError } from "../errors";
 
 export class PokemonUnit {
   static async getAll(): Promise<IPokemonUnitWithId[]> {
@@ -33,5 +34,18 @@ export class PokemonUnit {
       playthrough,
       data: pkmn.pack(),
     });
+  }
+  
+  static async update(id: number, payload: IPokemonUnit) {
+    const t = db.transaction("pkmn", "readwrite");
+
+    const old = await t.store.get(id);
+    if (!old) throw new DatabaseError("notFound", { store: "pkmn", key: id });
+    
+    const newFile = Object.assign({}, old, payload);
+    await Promise.all([
+      t.store.put(newFile),
+      t.done,
+    ]);
   }
 }
