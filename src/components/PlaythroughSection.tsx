@@ -1,6 +1,6 @@
 import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { SpeciesPokemonSmall } from "../components/SpeciesPokemonSmall";
-import { SetUtils } from "../utils/setUtils";
+import { unpackSet } from "../utils/setUtils";
 import { useSignal, useSignalEffect } from "@preact/signals";
 import { IPlaythrough, IPokemonUnitWithId } from "../db/db";
 import { PokemonUnit } from "../db/PokemonUnit";
@@ -54,7 +54,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           <GenProvider gen={ playthrough.gen }>
             { units.value.length === 0 && <Placeholder /> }
             { units.value.map(({ id, data }) => (
-              <SpeciesPokemonSmall key={ id } pkmn={ SetUtils.unpackSet(data)! } />
+              <SpeciesPokemonSmall key={ id } pkmn={ unpackSet(data, playthrough.gen)! } />
             )) }
           </GenProvider>
         </div>
