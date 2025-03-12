@@ -3,6 +3,7 @@ import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { MoveSmall } from "./MoveSmall";
 import { PokemonSet } from "../utils/setUtils";
 import { ImgUtils } from "../utils/imgUtils";
+import { MoveInvalid } from "./MoveInvalid";
 
 export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
@@ -16,11 +17,6 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
   );
 
   const itemIcon = (pkmn.isGen(2) && pkmn.data.item) ? ImgUtils.getItem(pkmn.data.item.name) : undefined;
-
-  const paddedMoves = [
-    ...pkmn.moves,
-    ...Array<undefined>(4 - pkmn.moves.length).fill(undefined),
-  ];
 
   return (
     <article
@@ -90,7 +86,8 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
 
       <div class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] gap-2 items-end
         col-span-full bg-gray-100 rounded-xl p-1">
-        {paddedMoves.map((move) => (<MoveSmall name={move} />))}
+        {pkmn.data.moves.map((move) => (<MoveSmall move={move} />))}
+        {Array<void>(4 - pkmn.moves.length).fill().map(() => (<MoveInvalid />))}
       </div>
     </article>
   )

@@ -1,13 +1,9 @@
+import type { Move } from "@pkmn/data";
 import { useContext } from "preact/hooks";
-import { MoveInvalid } from "./MoveInvalid";
 import { GenContext } from "../contexts/GenContext";
 
-export function MoveSmall({ name }: { name?: string }) {
-  const { gen, data } = useContext(GenContext);
-
-  const move = name && data.moves.get(name);
-
-  if (!move) return <MoveInvalid name={ name } />
+export function MoveSmall({ move }: { move: Move }) {
+  const { gen } = useContext(GenContext);
 
   const hasCategory = gen >= 4;
 
