@@ -5,7 +5,7 @@ import { Footer } from "./layouts/Footer";
 
 export function App() {
   return (
-    <div class="flex flex-col bg-stone-200 font-nunito">
+    <div class="flex flex-col bg-stone-200 font-nunito min-h-screen">
       <Header />
       <Navigation />
       <Main />

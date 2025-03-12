@@ -18,7 +18,7 @@ export function SavedPlaythroughs() {
   }, [showModal.value]);
 
   return (
-    <main class="grid grid-cols-1 grid-rows-1">
+    <main class="grid grid-cols-1 grid-rows-1 grow">
       <div class="col-span-full row-span-full flex flex-col gap-4 pt-4 pb-4">
         { playthroughs.value.map((playthrough) => (<PlaythroughSection key={ playthrough.name } playthrough={ playthrough }/>))}
         <button
