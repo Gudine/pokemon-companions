@@ -4,7 +4,7 @@ import { useEffect } from "preact/hooks";
 import { Playthrough } from "../db/Playthrough";
 import { FormHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "preact/compat";
 import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
-import { importSet, PokemonSet } from "../utils/setUtils";
+import { importSetWithErrors, PokemonSet } from "../utils/setUtils";
 import { Button } from "./common/Button";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IPlaythrough } from "../db/db";
@@ -40,12 +40,18 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
   }, [playthroughs, playthrough]);
 
   const handleData: TextareaHTMLAttributes["onChange"] = (ev) => {
-    const set = importSet(
-      ev.currentTarget.value,
-      generation.value ?? 9
-    );
+    try {
+      pkmn.value = importSetWithErrors(
+        ev.currentTarget.value,
+        generation.value ?? 9,
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        dataError.value = err.message;
+      }
 
-    pkmn.value = set;
+      pkmn.value = undefined;
+    }
   };
 
   const handlePlaythrough: SelectHTMLAttributes["onChange"] = (ev) => {
