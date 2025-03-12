@@ -59,10 +59,8 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
               <span class="text-pink-400 text-xs">&nbsp;<FaVenus title="Female" /></span>
             )}
           </>)}
-          { pkmn.level != null && <>
-            <span class="font-bold text-xs"> Lv.</span>
-            <span class="font-bold">{pkmn.level}</span>
-          </>}
+          <span class="font-bold text-xs"> Lv.</span>
+          <span class="font-bold">{pkmn.level}</span>
         </div>
       </div>
       <div class="text-sm text-center">
@@ -77,13 +75,17 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
             </p>
           ))}
         </div>
-        <p class="text-xs pb-0.5 pt-1">Ability:</p>
-        <p>{pkmn.isGen(3) && pkmn.data.ability.name}</p>
-        <p class="text-xs pb-0.5 pt-1">Held item:</p>
-        <p class="flex justify-center items-end gap-0.5">
-          {itemIcon && <span class="self-center" style={ itemIcon.css } />}
-          {pkmn.isGen(2) && pkmn.data.item?.name || "No item"}
-        </p>
+        {pkmn.isGen(3) && (<>
+          <p class="text-xs pb-0.5 pt-1">Ability:</p>
+          <p>{pkmn.data.ability.name}</p>
+        </>)}
+        {pkmn.isGen(2) && (<>
+          <p class="text-xs pb-0.5 pt-1">Held item:</p>
+          <p class="flex justify-center items-end gap-0.5">
+            {itemIcon && <span class="self-center" style={ itemIcon.css } />}
+            {pkmn.data.item?.name || "No item"}
+          </p>
+        </>)}
       </div>
 
       <div class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] gap-2 items-end
