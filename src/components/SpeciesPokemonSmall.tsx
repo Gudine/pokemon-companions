@@ -4,6 +4,7 @@ import { MoveSmall } from "./MoveSmall";
 import { PokemonSet } from "../utils/setUtils";
 import { ImgUtils } from "../utils/imgUtils";
 import { MoveInvalid } from "./MoveInvalid";
+import { ComponentChildren } from "preact";
 
 export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);
@@ -17,6 +18,22 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
   );
 
   const itemIcon = (pkmn.isGen(2) && pkmn.data.item) ? ImgUtils.getItem(pkmn.data.item.name) : undefined;
+
+  const dataItems: [string, ComponentChildren][] = [["Type", <div class="flex flex-row justify-center">
+    {species.types.map((type) => (
+      <p
+        class="rounded-sm text-white basis-1/2 bg-type-unknown"
+        style={{ backgroundColor: `var(--color-type-${type.toLowerCase()})` }}
+      >
+        {type}
+      </p>
+    ))}
+  </div>]];
+  if (pkmn.isGen(3)) dataItems.push(["Ability", pkmn.data.ability.name]);
+  if (pkmn.isGen(2)) dataItems.push(["Held item", (<div class="flex flex-row justify-center items-end gap-0.5">
+    {itemIcon && <span class="self-center" style={ itemIcon.css } />}
+    {pkmn.data.item?.name || "No item"}
+  </div>)]);
 
   return (
     <article
@@ -59,30 +76,12 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
           <span class="font-bold">{pkmn.level}</span>
         </div>
       </div>
-      <div class="text-sm text-center">
-        <p class="text-xs">Type:</p>
-        <div class="flex flex-row justify-center">
-          {species.types.map((type) => (
-            <p
-              class="rounded-sm text-white basis-1/2 bg-type-unknown"
-              style={{ backgroundColor: `var(--color-type-${type.toLowerCase()})` }}
-            >
-              {type}
-            </p>
-          ))}
-        </div>
-        {pkmn.isGen(3) && (<>
-          <p class="text-xs pb-0.5 pt-1">Ability:</p>
-          <p>{pkmn.data.ability.name}</p>
-        </>)}
-        {pkmn.isGen(2) && (<>
-          <p class="text-xs pb-0.5 pt-1">Held item:</p>
-          <p class="flex justify-center items-end gap-0.5">
-            {itemIcon && <span class="self-center" style={ itemIcon.css } />}
-            {pkmn.data.item?.name || "No item"}
-          </p>
-        </>)}
-      </div>
+      <dl class="text-sm text-center flex flex-col justify-center gap-1">
+        {dataItems.map(([dtValue, ddValue]) => (<div class="flex flex-col gap-0.5">
+          <dt class="text-xs">{dtValue}:</dt>
+          <dd>{ddValue}</dd>
+        </div>))}
+      </dl>
 
       <div class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] gap-2 items-end
         col-span-full bg-gray-100 rounded-xl p-1">
