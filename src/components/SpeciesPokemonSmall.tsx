@@ -50,7 +50,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
         <div class="bg-gray-100 rounded-xl w-full
           pb-0.5 pt-0.5 pl-1 pr-1
           text-center text-sm">
-          <span class="font-bold">{ pkmn.name || pkmn.species }</span>
+          <span class="font-bold">{ pkmn.name || species.name }</span>
           {pkmn.isGen(2) && (<>
             { pkmn.gender === "M" && (
               <span class="text-blue-600 text-xs">&nbsp;<FaMars title="Male" /></span>
