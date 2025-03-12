@@ -1,16 +1,13 @@
 import { useComputed, useSignal, useSignalEffect } from "@preact/signals";
 import { Modal } from "./common/Modal";
-import { SpeciesName } from "@pkmn/dex";
 import { useEffect } from "preact/hooks";
 import { Playthrough } from "../db/Playthrough";
 import { FormHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "preact/compat";
 import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
-import { tracePokemon } from "../utils/pkmnUtils";
-import { PartialPkmnSet, SetUtils } from "../utils/setUtils";
+import { importSet, PokemonSet } from "../utils/setUtils";
 import { Button } from "./common/Button";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IPlaythrough } from "../db/db";
-import { gens } from "../data";
 import { GenProvider } from "../contexts/GenContext";
 import { PokemonUnit } from "../db/PokemonUnit";
 
@@ -22,7 +19,7 @@ interface Props {
 export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Props) {
   const isSaving = useSignal(false);
 
-  const pkmn = useSignal<PartialPkmnSet>();
+  const pkmn = useSignal<PokemonSet>();
   const playthroughs = useSignal<IPlaythrough[]>([]);
   
   const playthrough = useSignal<string>(defaultPlaythrough ?? "");
@@ -43,24 +40,12 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
   }, [playthroughs, playthrough]);
 
   const handleData: TextareaHTMLAttributes["onChange"] = (ev) => {
-    const set = SetUtils.importSet(
+    const set = importSet(
       ev.currentTarget.value,
-      generation.value ? gens.get(generation.value) : undefined
+      generation.value ?? 9
     );
 
-    if (!set) {
-      pkmn.value = undefined;
-      return;
-    }
-
-    const traced = tracePokemon(set.species as SpeciesName);
-
-    if (traced) {
-      set.species = traced[1];
-      pkmn.value = set;
-    } else {
-      pkmn.value = undefined;
-    }
+    pkmn.value = set;
   };
 
   const handlePlaythrough: SelectHTMLAttributes["onChange"] = (ev) => {
