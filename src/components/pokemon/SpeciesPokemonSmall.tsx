@@ -3,6 +3,7 @@ import type { PokemonSet } from "@/utils/setUtils";
 import { FaMars, FaVenus } from "react-icons/fa6";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { ImgUtils } from "@/utils/imgUtils";
+import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
 import { MoveInvalid } from "@/components/move/MoveInvalid";
 
@@ -19,16 +20,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
 
   const itemIcon = (pkmn.isGen(2) && pkmn.data.item) ? ImgUtils.getItem(pkmn.data.item.name) : undefined;
 
-  const dataItems: [string, ComponentChildren][] = [["Type", <div class="flex flex-row justify-center">
-    {species.types.map((type) => (
-      <p
-        class="rounded-sm text-white basis-1/2 bg-type-unknown"
-        style={{ backgroundColor: `var(--color-type-${type.toLowerCase()})` }}
-      >
-        {type}
-      </p>
-    ))}
-  </div>]];
+  const dataItems: [string, ComponentChildren][] = [["Type", <Types types={ species.types } />]];
   if (pkmn.isGen(3)) dataItems.push(["Ability", pkmn.data.ability.name]);
   if (pkmn.isGen(2)) dataItems.push(["Held item", (<div class="flex flex-row justify-center items-end gap-0.5">
     {itemIcon && <span class="self-center" style={ itemIcon.css } />}
