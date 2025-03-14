@@ -1,14 +1,14 @@
+import type { FormHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "preact/compat";
 import { useComputed, useSignal } from "@preact/signals";
-import { Playthrough } from "../db/Playthrough";
-import { FormHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "preact/compat";
-import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
-import { importSetWithErrors, PokemonSet } from "../utils/setUtils";
-import { Button } from "./common/Button";
 import { AiOutlineLoading } from "react-icons/ai";
-import { GenProvider } from "../contexts/GenContext";
-import { PokemonUnit } from "../db/PokemonUnit";
-import { SetValidationError } from "../errors";
-import { useDBResource } from "../hooks/useDBResource";
+import { GenProvider } from "@/contexts/GenContext";
+import { Playthrough } from "@/db/Playthrough";
+import { PokemonUnit } from "@/db/PokemonUnit";
+import { SetValidationError } from "@/errors";
+import { useDBResource } from "@/hooks/useDBResource";
+import { importSetWithErrors, type PokemonSet } from "@/utils/setUtils";
+import { Button } from "@/components/common/Button";
+import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
 
 interface Props {
   close: () => void;

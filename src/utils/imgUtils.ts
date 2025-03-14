@@ -1,5 +1,5 @@
-import { GenderName, SpeciesName } from "@pkmn/data";
-import { Icons, Sprites } from "@pkmn/img"
+import type { GenderName, SpeciesName } from "@pkmn/data";
+import { Icons, Sprites } from "@pkmn/img";
 
 const gen = 5;
 const protocol = window.location.protocol.slice(0, -1) as "http" | "https";

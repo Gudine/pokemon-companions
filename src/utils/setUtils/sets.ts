@@ -1,4 +1,4 @@
-import { PokemonSet, StatID, StatsTable } from "@pkmn/data";
+import type { PokemonSet, StatID, StatsTable } from "@pkmn/data";
 
 type DeepPartial<T> = T extends (infer U)[] ? DeepPartial<U>[] : T extends object ? {
   [P in keyof T]?: DeepPartial<T[P]>;

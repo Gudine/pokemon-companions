@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes } from "preact/compat";
+import type { ButtonHTMLAttributes } from "preact/compat";
 
 export function Button({
   children,

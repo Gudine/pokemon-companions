@@ -1,8 +1,8 @@
 import { useSignal } from "@preact/signals";
-import { AddPlaythroughModal } from "../components/AddPlaythroughModal";
-import { SavedPlaythroughs } from "./SavedPlaythroughs";
-import { Loading } from "../components/common/Loading";
 import { Suspense } from "preact/compat";
+import { AddPlaythroughModal } from "@/components/playthrough/AddPlaythroughModal";
+import { Loading } from "@/components/common/Loading";
+import { SavedPlaythroughs } from "./SavedPlaythroughs";
 
 export function SavedPlaythroughsContainer() {
   const showModal = useSignal(false);

@@ -1,7 +1,7 @@
 import type { Ability, GenderName, Generation, GenerationNum, ID, Item, Move, Nature, Specie, StatsTable } from '@pkmn/data';
-import { gens } from '../../data';
-import { MinimalSet, Sets } from './sets';
-import { SetValidationError } from '../../errors';
+import { gens } from '@/data';
+import { SetValidationError } from '@/errors';
+import { type MinimalSet, Sets } from './sets';
 
 type UpToFour<T> = [T] | [T, T] | [T, T, T] | [T, T, T, T];
 

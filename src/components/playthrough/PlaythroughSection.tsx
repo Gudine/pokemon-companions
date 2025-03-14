@@ -1,10 +1,10 @@
+import type { IPlaythrough } from "@/db/db";
 import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { useSignal } from "@preact/signals";
-import { IPlaythrough } from "../db/db";
-import { AddPokemonModalContainer } from "./AddPokemonModalContainer";
-import { PlaythroughSectionList } from "./PlaythroughSectionList";
 import { Suspense } from "preact/compat";
-import { Loading } from "./common/Loading";
+import { Loading } from "@/components/common/Loading";
+import { AddPokemonModalContainer } from "@/components/pokemon/AddPokemonModalContainer";
+import { PlaythroughSectionList } from "./PlaythroughSectionList";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
   const showModal = useSignal(false);

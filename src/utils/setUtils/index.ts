@@ -1,8 +1,8 @@
-import { MinimalSet, Sets } from './sets';
+import { type MinimalSet, Sets } from './sets';
 import {
   PokemonSetGen1, PokemonSetGen2, PokemonSetGen3,
   PokemonSetGen7, PokemonSetGen8, PokemonSetGen9,
-  PokemonSets,
+  type PokemonSets,
 } from "./classes";
 
 const pokemonSets: { [Key in keyof PokemonSets]: (set: MinimalSet) => PokemonSets[Key] } = {

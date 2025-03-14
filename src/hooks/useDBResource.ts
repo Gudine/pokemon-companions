@@ -1,5 +1,5 @@
 import type { IndexNames, StoreKey, StoreNames } from "idb";
-import type { PokemonDB } from "../db/db";
+import type { PokemonDB } from "@/db/db";
 import { CACHE, useResource } from "./useResource";
 
 type BaseMap<T extends StoreNames<PokemonDB>> = {

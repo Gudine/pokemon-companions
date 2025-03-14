@@ -1,10 +1,10 @@
 import type { FormHTMLAttributes } from "preact/compat";
+import type { GenerationNum } from "@pkmn/data";
 import { useComputed, useSignal } from "@preact/signals";
 import { AiOutlineLoading } from "react-icons/ai";
-import { Modal } from "./common/Modal";
-import { Button } from "./common/Button";
-import { GenerationNum } from "@pkmn/data";
-import { Playthrough } from "../db/Playthrough";
+import { Playthrough } from "@/db/Playthrough";
+import { Modal } from "@/components/common/Modal";
+import { Button } from "@/components/common/Button";
 
 const GENS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 

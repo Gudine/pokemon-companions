@@ -1,10 +1,10 @@
+import type { ComponentChildren } from "preact";
+import type { PokemonSet } from "@/utils/setUtils";
 import { FaMars, FaVenus } from "react-icons/fa6";
-import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
-import { MoveSmall } from "./MoveSmall";
-import { PokemonSet } from "../utils/setUtils";
-import { ImgUtils } from "../utils/imgUtils";
-import { MoveInvalid } from "./MoveInvalid";
-import { ComponentChildren } from "preact";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { ImgUtils } from "@/utils/imgUtils";
+import { MoveSmall } from "@/components/move/MoveSmall";
+import { MoveInvalid } from "@/components/move/MoveInvalid";
 
 export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
   const [isVisible, elemRef] = useIntersectionObserver(true);

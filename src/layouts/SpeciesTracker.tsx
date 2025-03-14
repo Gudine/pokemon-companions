@@ -1,7 +1,7 @@
-import { pokemonList } from "../pokemonList";
-import { SpeciesBig } from "../components/SpeciesBig";
-import { PokemonUnit } from "../db/PokemonUnit";
-import { useDBResource } from "../hooks/useDBResource";
+import { SpeciesBig } from "@/components/species/SpeciesBig";
+import { PokemonUnit } from "@/db/PokemonUnit";
+import { useDBResource } from "@/hooks/useDBResource";
+import { pokemonList } from "@/pokemonList";
 
 export function SpeciesTracker() {
   const formSet = useDBResource(

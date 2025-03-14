@@ -1,6 +1,6 @@
-import { Specie, SpeciesName } from "@pkmn/data";
-import { defaultGen } from "../data";
-import { pokemonList } from "../pokemonList";
+import type { Specie, SpeciesName } from "@pkmn/data";
+import { defaultGen } from "@/data";
+import { pokemonList } from "@/pokemonList";
 
 export function getImmediateParent(pkmn: Specie) {
   return pkmn.name.endsWith("-Totem")

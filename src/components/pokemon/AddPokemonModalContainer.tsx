@@ -1,6 +1,6 @@
-import { Modal } from "./common/Modal";
 import { Suspense } from "preact/compat";
-import { Loading } from "./common/Loading";
+import { Modal } from "@/components/common/Modal";
+import { Loading } from "@/components/common/Loading";
 import { AddPokemonModal } from "./AddPokemonModal";
 
 interface Props {

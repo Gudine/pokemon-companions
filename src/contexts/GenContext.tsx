@@ -1,7 +1,7 @@
 import type { Generation, GenerationNum } from "@pkmn/data";
+import type { PropsWithChildren } from "preact/compat";
 import { createContext } from "preact";
-import { PropsWithChildren } from "preact/compat";
-import { defaultGen, gens } from "../data";
+import { defaultGen, gens } from "@/data";
 
 interface IGenContext {
   gen: GenerationNum;

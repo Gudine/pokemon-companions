@@ -1,6 +1,6 @@
-import { selectedPage } from "../globalState";
-import { SavedPlaythroughsContainer } from "./SavedPlaythroughsContainer";
+import { selectedPage } from "@/globalState";
 import { SpeciesTrackerContainer } from "./SpeciesTrackerContainer";
+import { SavedPlaythroughsContainer } from "./SavedPlaythroughsContainer";
 
 export function Main() {
   if (selectedPage.value === "species") return <SpeciesTrackerContainer />;

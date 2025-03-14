@@ -1,10 +1,10 @@
-import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
-import { unpackSet } from "../utils/setUtils";
-import { IPlaythrough } from "../db/db";
-import { PokemonUnit } from "../db/PokemonUnit";
-import { Placeholder } from "./common/Placeholder";
-import { GenProvider } from "../contexts/GenContext";
-import { useDBResource } from "../hooks/useDBResource";
+import type { IPlaythrough } from "@/db/db";
+import { GenProvider } from "@/contexts/GenContext";
+import { PokemonUnit } from "@/db/PokemonUnit";
+import { useDBResource } from "@/hooks/useDBResource";
+import { unpackSet } from "@/utils/setUtils";
+import { Placeholder } from "@/components/common/Placeholder";
+import { SpeciesPokemonSmall } from "@/components/pokemon/SpeciesPokemonSmall";
 
 export function PlaythroughSectionList({ playthrough }: { playthrough: IPlaythrough }) {
   const units = useDBResource(

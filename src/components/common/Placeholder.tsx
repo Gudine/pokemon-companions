@@ -1,4 +1,4 @@
-import { ImgUtils } from "../../utils/imgUtils";
+import { ImgUtils } from "@/utils/imgUtils";
 
 export function Placeholder() {
   const image = ImgUtils.getSubstitute();

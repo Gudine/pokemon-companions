@@ -1,5 +1,5 @@
 import { Suspense } from "preact/compat";
-import { Loading } from "../components/common/Loading";
+import { Loading } from "@/components/common/Loading";
 import { SpeciesTracker } from "./SpeciesTracker";
 
 export function SpeciesTrackerContainer() {

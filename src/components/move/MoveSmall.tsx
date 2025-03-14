@@ -1,6 +1,6 @@
 import type { Move } from "@pkmn/data";
 import { useContext } from "preact/hooks";
-import { GenContext } from "../contexts/GenContext";
+import { GenContext } from "@/contexts/GenContext";
 
 export function MoveSmall({ move }: { move: Move }) {
   const { gen } = useContext(GenContext);

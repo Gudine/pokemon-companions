@@ -1,10 +1,10 @@
 import { SpeciesName } from "@pkmn/data";
 import { db, type IPokemonUnitWithId, type IPokemonUnit } from "./db";
-import { tracePokemon } from "../utils/pkmnUtils";
-import { type PokemonSet, importFromObject } from "../utils/setUtils";
-import { type MinimalSet, Sets } from "../utils/setUtils/sets";
-import { DatabaseError } from "../errors";
-import { markDBAsStale } from "../hooks/useDBResource";
+import { DatabaseError } from "@/errors";
+import { markDBAsStale } from "@/hooks/useDBResource";
+import { tracePokemon } from "@/utils/pkmnUtils";
+import { type PokemonSet, importFromObject } from "@/utils/setUtils";
+import { type MinimalSet, Sets } from "@/utils/setUtils/sets";
 
 export class PokemonUnit {
   static async getAll(): Promise<IPokemonUnitWithId[]> {

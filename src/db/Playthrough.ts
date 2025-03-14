@@ -1,7 +1,7 @@
-import { GenerationNum } from "@pkmn/data";
-import { db, IPlaythrough } from "./db";
-import { DatabaseError } from "../errors";
-import { markDBAsStale } from "../hooks/useDBResource";
+import type { GenerationNum } from "@pkmn/data";
+import { db, type IPlaythrough } from "./db";
+import { DatabaseError } from "@/errors";
+import { markDBAsStale } from "@/hooks/useDBResource";
 
 export class Playthrough {
   static async getAll(): Promise<IPlaythrough[]> {

@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes } from "preact/compat";
+import type { AnchorHTMLAttributes } from "preact/compat";
 
 export function Link({
   children,

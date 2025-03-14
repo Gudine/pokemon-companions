@@ -1,4 +1,4 @@
-import { selectedPage } from "../globalState";
+import { selectedPage } from "@/globalState";
 
 export function Navigation() {
   return (

@@ -1,4 +1,4 @@
-import { Data, Generations } from "@pkmn/data";
+import { type Data, Generations } from "@pkmn/data";
 import { Dex } from "@pkmn/dex";
 
 export function isFinalStage(pkmn: Data & { kind: "Species" }) {

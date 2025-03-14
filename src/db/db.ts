@@ -1,6 +1,6 @@
 import type { GenerationNum, SpeciesName } from "@pkmn/data";
-import { openDB, DBSchema } from "idb";
-import { PokemonSet } from "../utils/setUtils";
+import type { PokemonSet } from "@/utils/setUtils";
+import { openDB, type DBSchema } from "idb";
 
 export interface IPokemonUnit {
   id?: number,

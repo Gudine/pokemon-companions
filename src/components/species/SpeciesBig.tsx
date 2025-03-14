@@ -1,7 +1,7 @@
-import { SpeciesName } from "@pkmn/data";
-import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
-import { defaultGen } from "../data";
-import { ImgUtils } from "../utils/imgUtils";
+import type { SpeciesName } from "@pkmn/data";
+import { defaultGen } from "@/data";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { ImgUtils } from "@/utils/imgUtils";
 
 interface Props {
   name: SpeciesName;
