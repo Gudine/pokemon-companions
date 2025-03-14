@@ -4,6 +4,7 @@ import {
   PokemonSetGen7, PokemonSetGen8, PokemonSetGen9,
   type PokemonSets,
 } from "./classes";
+import { SetValidationError } from '@/errors';
 
 const pokemonSets: { [Key in keyof PokemonSets]: (set: MinimalSet) => PokemonSets[Key] } = {
   1: (set) => PokemonSetGen1.create(set),
@@ -44,7 +45,7 @@ export function importSet<T extends keyof PokemonSets>(buf: string, gen: T) {
 export function importSetWithErrors<T extends keyof PokemonSets>(buf: string, gen: T) {
   const imported = Sets.importSet(buf);
 
-  if (!imported) throw new Error("Invalid data");
+  if (!imported) throw new SetValidationError("", undefined, "Invalid data");
 
   return importFromObject(imported, gen);
 }
