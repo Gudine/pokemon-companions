@@ -1,6 +1,6 @@
-import type { FormHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "preact/compat";
-import { useComputed, useSignal } from "@preact/signals";
+import { useSignal } from "@preact/signals";
 import { AiOutlineLoading } from "react-icons/ai";
+import { useForm, type SubmitHandler, type Validate } from "react-hook-form";
 import { GenProvider } from "@/contexts/GenContext";
 import { Playthrough } from "@/db/Playthrough";
 import { PokemonUnit } from "@/db/PokemonUnit";
@@ -15,142 +15,129 @@ interface Props {
   playthrough?: string;
 }
 
+interface Inputs {
+  playthrough: string,
+  data: string,
+}
+
 export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Props) {
-  const isSaving = useSignal(false);
-  
-  const pkmn = useSignal<PokemonSet>();
   const playthroughs = useDBResource(
-    () => Promise.all([Playthrough.getAll(), new Promise<void>((res) => setTimeout(() => res(), 15000))]).then((res) => res[0]),
+    Playthrough.getAll,
     "playthrough",
     {},
   );
+
+  const { register, handleSubmit, setError, watch, formState: { isSubmitting, errors, isValid } } = useForm<Inputs>({
+    mode: "onChange",
+    criteriaMode: "all",
+    defaultValues: {
+      playthrough: defaultPlaythrough,
+    },
+  });
   
-  const playthrough = useSignal<string>(defaultPlaythrough ?? "");
-
-  const generation = useComputed(() => playthroughs.find((p) => p.name === playthrough.value)?.gen);
-
-  const dataError = useSignal("Invalid Pokémon data");
-  const playthroughError = useSignal(defaultPlaythrough === undefined ? "Playthrough must be selected" : "");
+  const pkmn = useSignal<PokemonSet>();
   
-  const submitDisabled = useComputed(() => !!dataError.value || !!playthroughError.value || isSaving.value);
+  const generation = playthroughs.find((p) => p.name === watch("playthrough"))?.gen;
 
-  const handleData: TextareaHTMLAttributes["onChange"] = (ev) => {
-    if (!ev.currentTarget.value) {
+  const validateData: Validate<string, Inputs> = (value) => {
+    if (!value) {
       pkmn.value = undefined;
-      dataError.value = "Invalid Pokémon data";
-      return;
+      return false;
     }
 
     try {
       pkmn.value = importSetWithErrors(
-        ev.currentTarget.value,
-        generation.value ?? 9,
+        value,
+        generation ?? 9,
       );
-      dataError.value = "";
+      return true;
     } catch (err) {
+      pkmn.value = undefined;
+
       if (err instanceof SetValidationError) {
-        dataError.value = err.message;
+        return err.message;
       } else {
         throw err;
       }
-
-      pkmn.value = undefined;
     }
   };
 
-  const handlePlaythrough: SelectHTMLAttributes["onChange"] = (ev) => {
-    playthrough.value = ev.currentTarget.value;
-    playthroughError.value = ev.currentTarget.selectedOptions[0].disabled ? "Playthrough must be selected" : "";
-  }
-
-  const handleSubmit: FormHTMLAttributes["onSubmit"] = async (ev) => {
-    ev.preventDefault();
-
-    if (isSaving.value) throw new Error("Tried to save Pokémon while saving another one");
-    isSaving.value = true;
-
+  const onSubmit: SubmitHandler<Inputs> = async ({ playthrough }) => {
     try {
-      await PokemonUnit.add(pkmn.value!, playthrough.value);
+      await PokemonUnit.add(
+        pkmn.value!,
+        playthrough,
+      );
       close();
     } catch (err) {
       if (err instanceof Error && err.message.match(/^Species .+? not found$/)) {
-        dataError.value = err.message;
+        setError("data", {
+          type: "database",
+          message: err.message,
+        });
       }
     }
-
-    isSaving.value = false;
   }
 
   return (
     <form
-      onSubmit={ handleSubmit }
+      onSubmit={ handleSubmit(onSubmit) }
       class="w-full h-full
       grid grid-cols-2 grid-rows-[max-content_max-content_1fr_max-content] gap-2"
     >
       <p class="text-xl font-bold text-center col-span-2">Add new Pokémon</p>
 
-      <div class="row-span-3 flex flex-col">
-        <label for="pokemon-data">
-          Data:
-        </label>
+      <label class="row-span-3 flex flex-col">
+        Data:
         <textarea
           class="bg-gray-100 border-2 border-stone-500 rounded-lg
             pt-1 pb-1 pl-2 pr-2
           disabled:bg-gray-300 text-stone-700
             grow"
-          id="pokemon-data"
-          name="data"
-          required
           spellcheck={ false }
-          disabled={ isSaving }
-          onChange={handleData}
+          disabled={ isSubmitting }
+          {...register("data", {
+            required: "Pokémon data must be set",
+            validate: validateData,
+          })}
         />
         <p class="text-sm text-red-500 empty:before:inline-block">
-          {dataError}
+          {errors.data?.message ?? ""}
         </p>
-      </div>
+      </label>
       
-      <div class="flex flex-col">
-        <label for="pokemon-playthrough">
+      <fieldset disabled={ isSubmitting || defaultPlaythrough !== undefined }>
+        <label class="flex flex-col">
           Playthrough:
-        </label>
-        <select
-          class="bg-gray-100 border-2 border-stone-500 rounded-lg
-            pt-1 pb-1 pl-2 pr-2
-          disabled:bg-gray-300 text-stone-700
-          invalid:text-stone-500 *:text-stone-700"
-          id="pokemon-playthrough"
-          name="playthrough"
-          required
-          onChange={ handlePlaythrough }
-          disabled={ isSaving.value || defaultPlaythrough !== undefined }
-        >
-          <option selected={playthrough.value === ""} disabled class="hidden" value="">
-            -- Select Playthrough --
-          </option>
-          {playthroughs.map((currPlaythrough) => <option
-            value={currPlaythrough.name}
-            selected={ currPlaythrough.name === playthrough.value }
+          <select
+            class="bg-gray-100 border-2 border-stone-500 rounded-lg
+              pt-1 pb-1 pl-2 pr-2
+            disabled:bg-gray-300 text-stone-700
+            invalid:text-stone-500 *:text-stone-700"
+            {...register("playthrough", { required: "Playthrough must be selected" })}
           >
-            {currPlaythrough.name}
-          </option>)}
-        </select>
-        <p class="text-sm text-red-500 empty:before:inline-block">
-          {playthroughError}
-        </p>
-      </div>
+            <option disabled class="hidden" value="">
+              -- Select Playthrough --
+            </option>
+            {playthroughs.map((currPlaythrough) => <option value={currPlaythrough.name}>{currPlaythrough.name}</option>)}
+          </select>
+          <p class="text-sm text-red-500 empty:before:inline-block">
+            {errors.playthrough?.message ?? ""}
+          </p>
+        </label>
+      </fieldset>
       
       <div class="flex flex-col">
         <p>Preview:</p>
-        <GenProvider gen={ generation.value }>
+        <GenProvider gen={ generation }>
           {pkmn.value && (<div class="self-center w-max">
             <SpeciesPokemonSmall pkmn={ pkmn.value }/>
           </div>)}
         </GenProvider>
       </div>
 
-      <Button class="justify-self-end" type="submit" disabled={submitDisabled}>
-        { !isSaving.value
+      <Button class="justify-self-end" type="submit" disabled={!(isValid || isSubmitting)}>
+        { !isSubmitting
           ? "Submit"
           /* @ts-expect-error */
           : <AiOutlineLoading className="animate-spin" /> }
