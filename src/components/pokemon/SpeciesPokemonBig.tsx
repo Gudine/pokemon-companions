@@ -1,0 +1,217 @@
+import type { ComponentChildren } from "preact";
+import type { PokemonSet } from "@/utils/setUtils";
+import { Dex } from "@pkmn/dex";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { ImgUtils } from "@/utils/imgUtils";
+import { Types } from "@/components/common/Types";
+import { MoveSmall } from "@/components/move/MoveSmall";
+import { MoveInvalid } from "@/components/move/MoveInvalid";
+
+const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
+
+// Source: https://math.stackexchange.com/a/107254
+const LOGGINESS = 0.65;
+
+const graphFunctionBuilder = (length: number) => (x: number) => {
+  const v = Math.min(length, Math.max(0, x));
+
+  return (((v + 1) ** LOGGINESS - 1) / ((length + 1) ** LOGGINESS - 1));
+};
+
+const graphFunction = graphFunctionBuilder(600);
+
+function batched<T>(arr: T[], n: number): T[][] {
+  if (n < 1) throw new Error("n must be at least one");
+
+  const result: T[][] = [];
+
+  for (let i = 0; i < arr.length; i += 1) {
+    const element = arr[i];
+    const index = Math.floor(i / n);
+    if (!result[index]) result.push([]);
+    result[index].push(element);
+  }
+  
+  return result;
+}
+
+export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
+  const [isVisible, elemRef] = useIntersectionObserver(true);
+  
+  const { species } = pkmn.data;
+
+  const image = ImgUtils.getPokemon(
+    species.name,
+    pkmn.isGen(2) && pkmn.shiny,
+    (pkmn.isGen(2) && pkmn.gender) || undefined,
+  );
+
+  const itemIcon = (pkmn.isGen(2) && pkmn.data.item) ? ImgUtils.getItem(pkmn.data.item.name) : undefined;
+  
+  const dataItems: [string, ComponentChildren][] = [];
+
+  dataItems.push(["Type", <Types types={ species.types } />]);
+  dataItems.push(["Level", pkmn.level]);
+
+  if (pkmn.isGen(3)) dataItems.push(["Ability", pkmn.data.ability.name]);
+
+  if (pkmn.isGen(2)) dataItems.push(
+    ["Gender", pkmn.gender ?? "N/A"],
+    ["Held item", (<div class="flex flex-row justify-center items-end gap-0.5">
+      {itemIcon && <span class="self-center -m-[2px]" style={ itemIcon.css } />}
+      {pkmn.data.item?.name || "No item"}
+    </div>)],
+    ["Is shiny?", pkmn.shiny ? "True" : "False"],
+    ["Happiness", pkmn.happiness ?? "Unspecified"],
+  );
+
+  if (pkmn.isGen(3)) dataItems.push(["Pokéball", pkmn.pokeball ?? "Unspecified"]);
+
+  if (pkmn.isGen(7)) dataItems.push(["Hidden Power type", pkmn.hpType ? <Types types={ [pkmn.data.main.types.get(pkmn.hpType)!.name] } /> : "Unspecified"]);
+
+  if (pkmn.gen === 8 && pkmn.isGen(8)) dataItems.push(
+    ["Dynamax level", pkmn.dynamaxLevel ?? "Unspecified"],
+    ["G-Max factor", pkmn.gigantamax ? "True" : "False"],
+  );
+
+  if (pkmn.isGen(9)) dataItems.push(["Tera type", pkmn.teraType ? <Types types={ [pkmn.data.main.types.get(pkmn.teraType)!.name] } /> : "Unspecified"]);
+
+  const stats = [...pkmn.data.main.stats]
+    .sort((a, b) => STAT_ORDER.indexOf(a) - STAT_ORDER.indexOf(b))
+    .filter((stat) => pkmn.gen !== 1 || stat !== "spd")
+    .map((stat) => {
+      const value = pkmn.data.main.stats.calc(
+        stat,
+        species.baseStats[stat],
+        pkmn.ivs[stat],
+        pkmn.evs[stat],
+        pkmn.level,
+        (pkmn.isGen(3) && pkmn.data.nature) || undefined,
+      );
+
+      return {
+        id: stat,
+        name: pkmn.gen === 1 && stat === "spa" ? "Special" : Dex.stats.mediumNames[stat],
+        iv: pkmn.ivs[stat],
+        ev: pkmn.evs[stat],
+        width: graphFunction(value),
+        value,
+      };
+    });
+
+  return (
+    <article
+      ref={elemRef}
+      class="grid grid-cols-4 grid-rows-[repeat(3,max-content)] content-between gap-1
+        rounded-xl p-1 w-156
+        border-4 border-type-unknown-dark bg-type-unknown-light
+        hover:bg-stone-200"
+      style={{
+        backgroundColor: `var(--color-type-${species.types[0].toLowerCase()}-light)`,
+        borderColor: `var(--color-type-${(species.types[1] ?? species.types[0]).toLowerCase()}-dark)`,
+      }}
+    >
+      <div class="flex flex-col items-center justify-evenly gap-0.5">
+        <div class={`bg-gray-100 rounded-2xl w-8/10
+          pb-0.5 pt-0.5 pl-1 pr-1
+          text-center text-sm`}>
+          <span class="">{ species.name }</span>
+        </div>
+        { isVisible.value ? <img
+          src={ image.url }
+          width={ image.w }
+          height={ image.h }
+          title={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
+          alt={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
+          style={ { imageRendering: image.pixelated ? "pixelated" : "auto" } }
+          class="rounded-xl bg-gray-100"
+        /> : <div class="rounded-xl bg-gray-100" style={ {
+          width: image.w,
+          height: image.h
+        } } /> }
+        <div class={`bg-gray-100 rounded-md w-9/10
+          pb-0.5 pt-0.5 pl-1 pr-1
+          text-center text-sm ${(!pkmn.name || pkmn.name === species.name) && "text-stone-500"}`}>
+          <span class="">{ pkmn.name ?? species.name }</span>
+        </div>
+      </div>
+      <dl class="text-sm text-center col-span-3
+        grid grid-flow-col justify-evenly auto-cols-[minmax(0,33%)] gap-1">
+        {batched(dataItems, 3).map((items) => (<div class="flex flex-col justify-evenly gap-1">
+          {items.map(([dtValue, ddValue]) => (<div class={`flex flex-col gap-0.5`}>
+            <dt class="text-xs">{dtValue}:</dt>
+            <dd>{ddValue}</dd>
+          </div>))}
+        </div>))}
+      </dl>
+
+      <div class="grid grid-cols-4 gap-2 items-end
+        row-start-2 col-span-full bg-gray-100 rounded-xl p-1">
+          {pkmn.data.moves.map((move) => (<MoveSmall move={move} />))}
+          {Array<void>(4 - pkmn.moves.length).fill().map(() => (<MoveInvalid />))}
+      </div>
+
+      <div class="row-start-3 col-span-full
+        bg-gray-100 p-1 rounded-xl gap-0.5">
+        <div class="grid grid-rows-[max-content] auto-rows-fr grid-cols-[max-content_max-content_8fr_1fr_1fr] gap-0.5 rounded-lg overflow-hidden">
+          <div class="col-span-full grid grid-cols-subgrid *:bg-type-steel-light">
+            <div class="text-center col-span-2 pt-0.5 pb-0.5">
+              {pkmn.isGen(3) && (<>
+                <p class="text-xs">Nature:</p>
+                <p>{pkmn.data.nature?.name || "Unspecified"}</p>
+              </>)}
+            </div>
+            <p class="flex items-end justify-center pt-0.5 pb-0.5">Stats</p>
+            <p class="flex items-end justify-center pt-0.5 pb-0.5">EVs</p>
+            <p class="flex items-end justify-center pt-0.5 pb-0.5">IVs</p>
+          </div>
+          { stats.map(({ id, name, iv, ev, width, value }) => (
+            <div class="col-span-full grid grid-cols-subgrid">
+              <div
+                class="col-span-2 grid grid-cols-subgrid gap-1.5 pt-0.5 pb-0.5"
+                style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
+              >
+                <p class="text-right pl-1">{name}:</p>
+                <p class="text-right pr-1">{value}</p>
+              </div>
+              <div
+                class="p-0.5"
+                style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
+              >
+                <div
+                  class={`h-full border-2`}
+                  style={{
+                    background: width !== 1
+                      ? `var(--color-stat-${id})`
+                      : `linear-gradient(125deg,
+                        var(--color-stat-${id}) 84%, var(--color-stat-${id}-light) 85%,
+                        var(--color-stat-${id}-light) 92%, var(--color-stat-${id}) 92%,
+                        var(--color-stat-${id}) 94%, var(--color-stat-${id}-light) 95%)`,
+                    borderColor: `var(--color-stat-${id}-dark)`,
+                    width: `${width * 100}%`,
+                  }}
+                />
+              </div>
+              <div
+                class="text-center"
+                style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
+              >
+                <p class={`pt-0.5 pb-0.5 ${ev === undefined ? "bg-gray-600/35" : ""}`}>
+                  {ev ?? 0}
+                </p>
+              </div>
+              <div
+                class="text-center"
+                style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
+              >
+                <p class={`pt-0.5 pb-0.5 ${iv === undefined ? "bg-gray-600/35" : ""}`}>
+                  {iv ?? 31}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </article>
+  )
+}

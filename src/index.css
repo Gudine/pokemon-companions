@@ -122,4 +122,28 @@
   --color-attack-status: #828282;
   --color-attack-status-light: #AEAEAE;
   --color-attack-status-dark: #555555;
+
+  --color-stat-hp: #69DC12;
+  --color-stat-hp-light: #9EE865;
+  --color-stat-hp-dark: #448F0C;
+
+  --color-stat-atk: #EFCC18;
+  --color-stat-atk-light: #F5DE69;
+  --color-stat-atk-dark: #9B8510;
+
+  --color-stat-def: #E86412;
+  --color-stat-def-light: #F09A65;
+  --color-stat-def-dark: #97410C;
+
+  --color-stat-spa: #14C3F1;
+  --color-stat-spa-light: #66D8F6;
+  --color-stat-spa-dark: #0D7F9D;
+
+  --color-stat-spd: #4A6ADF;
+  --color-stat-spd-light: #899EEA;
+  --color-stat-spd-dark: #304591;
+
+  --color-stat-spe: #D51DAD;
+  --color-stat-spe-light: #E46CCA;
+  --color-stat-spe-dark: #8B1370;
 }
