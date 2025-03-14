@@ -19,13 +19,15 @@ export class PokemonSetGen1 {
 
   // * Available since: Gen 1
   // * Required: No
-  // * If not required, defaults to: 0 for every stat
-  evs: StatsTable;
+  // * If not required, defaults to: empty object
+  // * If undefined, is treated as: 0 for every stat
+  evs: Partial<StatsTable>;
 
   // * Available since: Gen 1
   // * Required: No
-  // * If not required, defaults to: 31 for every stat
-  ivs: StatsTable;
+  // * If not required, defaults to: empty object
+  // * If undefined, is treated as: 31 for every stat
+  ivs: Partial<StatsTable>;
 
   // * Available since: Gen 1
   // * Required: Yes (at least one, at most four)
@@ -68,8 +70,8 @@ export class PokemonSetGen1 {
     this.level = set.level;
     this.name = (!set.name || set.name === speciesData.name || set.name === this.species) ? undefined : set.name;
 
-    this.evs = data.stats.fill(set.evs ?? {}, 0);
-    this.ivs = data.stats.fill(set.ivs ?? {}, 31);
+    this.evs = set.evs ?? {};
+    this.ivs = set.ivs ?? {};
   }
 
   pack() {
