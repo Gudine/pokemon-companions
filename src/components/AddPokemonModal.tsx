@@ -29,8 +29,6 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
 
   const dataError = useSignal("Invalid Pokémon data");
   const playthroughError = useSignal(defaultPlaythrough === undefined ? "Playthrough must be selected" : "");
-
-  useSignalEffect(() => { dataError.value = pkmn.value ? "" : "Invalid Pokémon data" });
   
   const submitDisabled = useComputed(() => !!dataError.value || !!playthroughError.value || isSaving.value);
 
@@ -41,11 +39,18 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
   }, [playthroughs, playthrough]);
 
   const handleData: TextareaHTMLAttributes["onChange"] = (ev) => {
+    if (!ev.currentTarget.value) {
+      pkmn.value = undefined;
+      dataError.value = "Invalid Pokémon data";
+      return;
+    }
+
     try {
       pkmn.value = importSetWithErrors(
         ev.currentTarget.value,
         generation.value ?? 9,
       );
+      dataError.value = "";
     } catch (err) {
       if (err instanceof SetValidationError) {
         dataError.value = err.message;
