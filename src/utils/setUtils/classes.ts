@@ -233,11 +233,15 @@ export class PokemonSetGen7 extends PokemonSetGen3 {
   protected constructor(set: MinimalSet, gen: PokemonSetGen7["gen"]) {
     super(set, gen);
 
+    const hpTypeData = set.hpType && this.data.main.types.get(set.hpType) || undefined;
+    if (set.hpType && !hpTypeData) throw new SetValidationError("hpType", set.hpType);
+
     const hiddenPower = this.moves.find((move) => move.startsWith("hiddenpower"));
-    const hpCalc = this.data.main.types.get(this.data.main.types.getHiddenPower(this.ivs).type)!.id;
-    const hpTypeId = set.hpType === undefined ? undefined : this.data.main.types.get(set.hpType)?.id;
+    const hpCalc = this.data.main.types.get(
+      this.data.main.types.getHiddenPower(this.data.main.stats.fill({ ...this.ivs }, 31)).type
+    )!;
     
-    this.hpType = (!hiddenPower && hpTypeId && hpTypeId !== hpCalc) ? hpTypeId : undefined;
+    this.hpType = (!hiddenPower && hpTypeData && hpTypeData.id !== hpCalc.id) ? hpTypeData.id : undefined;
   }
 
   toObject(): MinimalSet {
@@ -294,8 +298,10 @@ export class PokemonSetGen9 extends PokemonSetGen8 {
 
   protected constructor(set: MinimalSet, gen: PokemonSetGen9["gen"]) {
     super(set, gen);
-    
-    this.teraType = set.teraType && this.data.main.types.get(set.teraType)?.id || undefined;
+
+    const teraTypeData = set.teraType && this.data.main.types.get(set.teraType) || undefined;
+    if (set.teraType && !teraTypeData) throw new SetValidationError("teraType", set.teraType);
+    this.teraType = teraTypeData?.id;
   }
 
   toObject(): MinimalSet {
