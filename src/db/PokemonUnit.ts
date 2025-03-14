@@ -4,6 +4,7 @@ import { tracePokemon } from "../utils/pkmnUtils";
 import { type PokemonSet, importFromObject } from "../utils/setUtils";
 import { type MinimalSet, Sets } from "../utils/setUtils/sets";
 import { DatabaseError } from "../errors";
+import { markDBAsStale } from "../hooks/useDBResource";
 
 export class PokemonUnit {
   static async getAll(): Promise<IPokemonUnitWithId[]> {
@@ -29,12 +30,14 @@ export class PokemonUnit {
 
     const [species, form] = result;
 
-    await db.add("pkmn", {
+    const key = await db.add("pkmn", {
       species,
       form,
       playthrough,
       data: pkmn.pack(),
     });
+
+    markDBAsStale("pkmn", { key, species, form, playthrough });
   }
   
   static async update(id: number, payload: IPokemonUnit) {
@@ -48,6 +51,13 @@ export class PokemonUnit {
       t.store.put(newFile),
       t.done,
     ]);
+
+    markDBAsStale("pkmn", {
+      key: id,
+      species: [old.species, newFile.species],
+      form: [old.form, newFile.form],
+      playthrough: [old.playthrough, newFile.playthrough],
+    });
   }
   
   static async updateSet(id: number, payload: Omit<MinimalSet, "species">) {
@@ -70,6 +80,13 @@ export class PokemonUnit {
       t.objectStore("pkmn").put({ ...old, data: newInstance.pack() }),
       t.done,
     ]);
+
+    markDBAsStale("pkmn", {
+      key: id,
+      species: old.species,
+      form: old.form,
+      playthrough: old.playthrough,
+    });
 
     return newInstance;
   }
