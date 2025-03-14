@@ -1,25 +1,14 @@
 import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
-import { SpeciesPokemonSmall } from "../components/SpeciesPokemonSmall";
-import { unpackSet } from "../utils/setUtils";
-import { useSignal, useSignalEffect } from "@preact/signals";
-import { IPlaythrough, IPokemonUnitWithId } from "../db/db";
-import { PokemonUnit } from "../db/PokemonUnit";
+import { useSignal } from "@preact/signals";
+import { IPlaythrough } from "../db/db";
 import { AddPokemonModal } from "./AddPokemonModal";
-import { Placeholder } from "./common/Placeholder";
-import { GenProvider } from "../contexts/GenContext";
+import { PlaythroughSectionList } from "./PlaythroughSectionList";
+import { Suspense } from "preact/compat";
+import { Loading } from "./common/Loading";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
   const showModal = useSignal(false);
   const collapsed = useSignal(true);
-  const units = useSignal<IPokemonUnitWithId[]>([]);
-  
-  useSignalEffect(() => {
-    (async () => {
-      if (collapsed.value === false && showModal.value === false) {
-        units.value = await PokemonUnit.getByPlaythrough(playthrough.name);
-      }
-    })();
-  });
   
   return (
     <section>
@@ -51,12 +40,9 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
         <div class="flex flex-row flex-wrap justify-evenly
         bg-indigo-200 border-indigo-700 border-t-0 border-2 border-dashed
           gap-2 p-2 pb-6 mb-2">
-          <GenProvider gen={ playthrough.gen }>
-            { units.value.length === 0 && <Placeholder /> }
-            { units.value.map((info) => ({ ...info, set: unpackSet(info.data, playthrough.gen) }))
-              .filter(({ set }) => set !== undefined)
-              .map(({ id, set }) => (<SpeciesPokemonSmall key={ id } pkmn={ set! } />))}
-          </GenProvider>
+          <Suspense fallback={ <Loading /> }>
+            <PlaythroughSectionList playthrough={ playthrough } />
+          </Suspense>
         </div>
       )}
       { showModal.value && (<AddPokemonModal
