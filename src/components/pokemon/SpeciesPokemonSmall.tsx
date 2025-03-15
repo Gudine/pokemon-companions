@@ -32,8 +32,7 @@ export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
       ref={elemRef}
       class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] content-between gap-1
         rounded-xl p-1 w-80
-        border-4 border-type-unknown-dark bg-type-unknown-light
-        hover:bg-stone-200"
+        border-4 border-type-unknown-dark bg-type-unknown-light"
       style={{
         backgroundColor: `var(--color-type-${species.types[0].toLowerCase()}-light)`,
         borderColor: `var(--color-type-${(species.types[1] ?? species.types[0]).toLowerCase()}-dark)`,
