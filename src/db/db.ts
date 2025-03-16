@@ -6,7 +6,7 @@ export interface IPokemonUnit {
   id?: number,
   species: SpeciesName,
   form: SpeciesName,
-  playthrough: IPlaythrough["name"],
+  playthrough: IPlaythroughWithId["id"],
   data: ReturnType<PokemonSet["pack"]>,
 }
 
@@ -15,9 +15,14 @@ export interface IPokemonUnitWithId extends IPokemonUnit {
 }
 
 export interface IPlaythrough {
+  id?: number,
   name: string,
   date: Date,
   gen: GenerationNum,
+}
+
+export interface IPlaythroughWithId extends IPlaythrough {
+  id: number,
 }
 
 export interface PokemonDB extends DBSchema {
@@ -33,8 +38,9 @@ export interface PokemonDB extends DBSchema {
 
   playthrough: {
     value: IPlaythrough,
-    key: IPlaythrough["name"],
+    key: IPlaythroughWithId["id"],
     indexes: {
+      name: IPlaythrough["name"],
       date: IPlaythrough["date"],
     },
   },
@@ -47,7 +53,8 @@ const db = await openDB<PokemonDB>("mainDB", 1, {
     pkmnStore.createIndex("form", "form", { unique: false });
     pkmnStore.createIndex("playthrough", "playthrough", { unique: false });
 
-    const playthroughStore = db.createObjectStore("playthrough", { keyPath: "name" });
+    const playthroughStore = db.createObjectStore("playthrough", { keyPath: "id", autoIncrement: true });
+    playthroughStore.createIndex("name", "name", { unique: true });
     playthroughStore.createIndex("date", "date", { unique: false });
   },
 });

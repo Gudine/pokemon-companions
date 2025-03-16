@@ -5,7 +5,7 @@ import { AddPokemonModal } from "./AddPokemonModal";
 
 interface Props {
   close: () => void;
-  playthrough?: string;
+  playthrough?: number;
 }
 
 export function AddPokemonModalContainer({ close, playthrough: defaultPlaythrough }: Props) {

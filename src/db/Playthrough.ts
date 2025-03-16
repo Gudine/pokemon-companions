@@ -1,38 +1,33 @@
 import type { GenerationNum } from "@pkmn/data";
-import { db, type IPlaythrough } from "./db";
+import { db, type IPlaythrough, type IPlaythroughWithId } from "./db";
 import { DatabaseError } from "@/errors";
 import { markDBAsStale } from "@/hooks/useDBResource";
 
 export class Playthrough {
-  static async getAll(): Promise<IPlaythrough[]> {
-    return (await db.getAll("playthrough")).sort((a, b) => b.date.valueOf() - a.date.valueOf());
+  static async getAll(): Promise<IPlaythroughWithId[]> {
+    return (await db.getAll("playthrough") as IPlaythroughWithId[])
+      .sort((a, b) => b.date.valueOf() - a.date.valueOf());
   }
 
-  static async getByName(name: string): Promise<IPlaythrough | undefined> {
-    return await db.get("playthrough", name);
+  static async getByName(name: string): Promise<IPlaythroughWithId | undefined> {
+    return await db.getFromIndex("playthrough", "name", name) as IPlaythroughWithId | undefined;
   }
 
   static async add(name: string, date: Date, gen: GenerationNum) {
-    try {
-      await db.add("playthrough", {
-        name,
-        date,
-        gen,
-      });
-      
-      markDBAsStale("playthrough", { key: name, date });
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "ConstraintError") {
-        throw new DatabaseError("alreadyExists", { store: "playthrough", key: name });
-      }
-    }
+    const key = await db.add("playthrough", {
+      name,
+      date,
+      gen,
+    });
+    
+    markDBAsStale("playthrough", { key, name, date });
   }
 
-  static async update(name: string, payload: Omit<IPlaythrough, "name">) {
+  static async update(id: number, payload: IPlaythrough) {
     const t = db.transaction("playthrough", "readwrite");
 
-    const old = await t.store.get(name);
-    if (!old) throw new DatabaseError("notFound", { store: "playthrough", key: name });
+    const old = await t.store.get(id);
+    if (!old) throw new DatabaseError("notFound", { store: "playthrough", key: id });
     
     const newFile = Object.assign({}, old, payload);
     await Promise.all([
@@ -40,20 +35,28 @@ export class Playthrough {
       t.done,
     ]);
       
-    markDBAsStale("playthrough", { key: name, date: [old.date, newFile.date] });
+    markDBAsStale("playthrough", {
+      key: id,
+      name: [old.name, newFile.name],
+      date: [old.date, newFile.date],
+    });
   }
 
-  static async delete(name: string) {
+  static async delete(id: number) {
     const t = db.transaction("playthrough", "readwrite");
 
     try {
-      const playthrough = await t.store.get(name);
-      await t.store.delete(name);
+      const playthrough = await t.store.get(id);
+      await t.store.delete(id);
       
-      markDBAsStale("playthrough", { key: name, date: playthrough!.date });
+      markDBAsStale("playthrough", {
+        key: id,
+        name: playthrough!.name,
+        date: playthrough!.date
+      });
     } catch (err) {
       if (err instanceof DOMException && err.name === "InvalidStateError") {
-        throw new DatabaseError("notFound", { store: "playthrough", key: name });
+        throw new DatabaseError("notFound", { store: "playthrough", key: id });
       }
     }
   }

@@ -1,4 +1,4 @@
-import type { IPlaythrough } from "@/db/db";
+import type { IPlaythroughWithId } from "@/db/db";
 import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { useSignal } from "@preact/signals";
 import { Suspense } from "preact/compat";
@@ -6,7 +6,7 @@ import { Loading } from "@/components/common/Loading";
 import { AddPokemonModalContainer } from "@/components/pokemon/AddPokemonModalContainer";
 import { PlaythroughSectionList } from "./PlaythroughSectionList";
 
-export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
+export function PlaythroughSection({ playthrough }: { playthrough: IPlaythroughWithId }) {
   const showModal = useSignal(false);
   const collapsed = useSignal(true);
   
@@ -47,7 +47,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
       )}
       { showModal.value && (<AddPokemonModalContainer
         close={ () => showModal.value = false }
-        playthrough={ playthrough.name }
+        playthrough={ playthrough.id }
         />
       ) }
     </section>

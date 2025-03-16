@@ -19,11 +19,11 @@ export class PokemonUnit {
     return await db.getAllFromIndex("pkmn", "form", form) as IPokemonUnitWithId[];
   }
 
-  static async getByPlaythrough(playthrough: string): Promise<IPokemonUnitWithId[]> {
+  static async getByPlaythrough(playthrough: number): Promise<IPokemonUnitWithId[]> {
     return await db.getAllFromIndex("pkmn", "playthrough", playthrough) as IPokemonUnitWithId[];
   }
 
-  static async add(pkmn: PokemonSet, playthrough: string) {
+  static async add(pkmn: PokemonSet, playthrough: number) {
     const result = tracePokemon(pkmn.data.species.name);
 
     if (!result) throw new Error(`Species ${pkmn.species} not found`);

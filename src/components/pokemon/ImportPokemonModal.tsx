@@ -12,11 +12,11 @@ import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
 
 interface Props {
   close: () => void;
-  playthrough?: string;
+  playthrough?: number;
 }
 
 interface Inputs {
-  playthrough: string,
+  playthrough: number,
   data: string,
 }
 
@@ -37,7 +37,7 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
   
   const pkmn = useSignal<PokemonSet>();
   
-  const generation = playthroughs.find((p) => p.name === watch("playthrough"))?.gen;
+  const generation = playthroughs.find((p) => p.id === watch("playthrough"))?.gen;
 
   const validateData: Validate<string, Inputs> = (value) => {
     if (!value) {
@@ -114,12 +114,12 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
               pt-1 pb-1 pl-2 pr-2
             disabled:bg-gray-300 text-stone-700
             invalid:text-stone-500 *:text-stone-700"
-            {...register("playthrough", { required: "Playthrough must be selected" })}
+            {...register("playthrough", { required: "Playthrough must be selected", valueAsNumber: true })}
           >
             <option disabled class="hidden" value="">
               -- Select Playthrough --
             </option>
-            {playthroughs.map((currPlaythrough) => <option value={currPlaythrough.name}>{currPlaythrough.name}</option>)}
+            {playthroughs.map((currPlaythrough) => <option value={currPlaythrough.id}>{currPlaythrough.name}</option>)}
           </select>
           <p class="text-sm text-red-500 empty:before:inline-block">
             {errors.playthrough?.message ?? ""}

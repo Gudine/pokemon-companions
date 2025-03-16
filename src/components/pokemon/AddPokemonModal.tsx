@@ -17,11 +17,11 @@ import { SpeciesPokemonBigForm, type SpeciesPokemonBigFormInputs } from "./Speci
 
 interface Props {
   close: () => void;
-  playthrough?: string;
+  playthrough?: number;
 }
 
 interface Inputs extends SpeciesPokemonBigFormInputs {
-  playthrough: string,
+  playthrough: number,
   species: string,
 }
 
@@ -63,7 +63,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
     formState: { isSubmitting, errors, isValid },
   } = formHook;
   
-  const generation = playthroughs.find((p) => p.name === watch("playthrough"))?.gen;
+  const generation = playthroughs.find((p) => p.id === watch("playthrough"))?.gen;
   const data = gens.get(generation ?? 9);
 
   const speciesList = useMemo(() => [...data.species].filter((species) => tracePokemon(species.name)), [data]);
@@ -183,12 +183,12 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
               pt-1 pb-1 pl-2 pr-2
             disabled:bg-gray-300 text-stone-700
             invalid:text-stone-500 *:text-stone-700"
-            {...register("playthrough", { required: "Playthrough must be selected" })}
+            {...register("playthrough", { required: "Playthrough must be selected", valueAsNumber: true })}
           >
             <option disabled class="hidden" value="">
               -- Select Playthrough --
             </option>
-            {playthroughs.map((currPlaythrough) => <option value={currPlaythrough.name}>{currPlaythrough.name}</option>)}
+            {playthroughs.map((currPlaythrough) => <option value={currPlaythrough.id}>{currPlaythrough.name}</option>)}
           </select>
         </label>
 

@@ -1,4 +1,4 @@
-import type { IPlaythrough } from "@/db/db";
+import type { IPlaythroughWithId } from "@/db/db";
 import { GenProvider } from "@/contexts/GenContext";
 import { PokemonUnit } from "@/db/PokemonUnit";
 import { useDBResource } from "@/hooks/useDBResource";
@@ -6,11 +6,11 @@ import { unpackSet } from "@/utils/setUtils";
 import { Placeholder } from "@/components/common/Placeholder";
 import { SpeciesPokemonBig } from "@/components/pokemon/SpeciesPokemonBig";
 
-export function PlaythroughSectionList({ playthrough }: { playthrough: IPlaythrough }) {
+export function PlaythroughSectionList({ playthrough }: { playthrough: IPlaythroughWithId }) {
   const units = useDBResource(
-    () => PokemonUnit.getByPlaythrough(playthrough.name),
+    () => PokemonUnit.getByPlaythrough(playthrough.id),
     "pkmn",
-    { playthrough: playthrough.name },
+    { playthrough: playthrough.id },
   );
   
   return (
