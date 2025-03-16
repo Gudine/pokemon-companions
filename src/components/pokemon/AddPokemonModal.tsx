@@ -1,13 +1,14 @@
 import type { SpeciesName } from "@pkmn/data";
 import type { MinimalSet } from "@/utils/setUtils/sets";
-import { useMemo } from "preact/hooks";
+import { useEffect, useMemo } from "preact/hooks";
 import { AiOutlineLoading } from "react-icons/ai";
-import { FormProvider, useForm, type SubmitHandler, type UseFormReturn, type Validate } from "react-hook-form";
+import { FormProvider, useForm, type DefaultValues, type SubmitHandler, type UseFormReturn, type Validate } from "react-hook-form";
 import { GenProvider } from "@/contexts/GenContext";
 import { gens } from "@/data";
 import { Playthrough } from "@/db/Playthrough";
 import { PokemonUnit } from "@/db/PokemonUnit";
 import { DatabaseError, SetValidationError } from "@/errors";
+import { storedFormData } from "@/globalState";
 import { importFromObject } from "@/utils/setUtils";
 import { tracePokemon } from "@/utils/pkmnUtils";
 import { useDBResource } from "@/hooks/useDBResource";
@@ -15,7 +16,7 @@ import { Button } from "@/components/common/Button";
 import { Combobox } from "@/components/common/Combobox";
 import { SpeciesPokemonBigForm, type SpeciesPokemonBigFormInputs } from "./SpeciesPokemonBigForm";
 
-interface Inputs extends SpeciesPokemonBigFormInputs {
+export interface PokemonFormInputs extends SpeciesPokemonBigFormInputs {
   playthrough: number,
   species: string,
 }
@@ -31,6 +32,54 @@ function findMessage(obj: any): string | undefined {
   }
 }
 
+function getValuesFromStore(): DefaultValues<PokemonFormInputs> {
+  return {
+    playthrough: storedFormData.value.playthrough !== undefined && !isNaN(storedFormData.value.playthrough!)
+      ? storedFormData.value.playthrough
+      : "" as unknown as number,
+    species: storedFormData.value.species ?? "",
+    
+    name: storedFormData.value.name,
+    happiness: storedFormData.value.happiness,
+    ability: storedFormData.value.ability,
+    gender: storedFormData.value.gender ?? "",
+    item: storedFormData.value.item,
+    shiny: storedFormData.value.shiny ?? false,
+    pokeball: storedFormData.value.pokeball,
+    hpType: storedFormData.value.hpType ?? "",
+    dynamaxLevel: storedFormData.value.dynamaxLevel,
+    gigantamax: storedFormData.value.gigantamax ?? false,
+    teraType: storedFormData.value.teraType ?? "",
+
+    level: storedFormData.value.level,
+    nature: storedFormData.value.nature ?? "",
+
+    ivs: {
+      hp: storedFormData.value.ivs?.hp,
+      atk: storedFormData.value.ivs?.atk,
+      def: storedFormData.value.ivs?.def,
+      spa: storedFormData.value.ivs?.spa,
+      spd: storedFormData.value.ivs?.spd,
+      spe: storedFormData.value.ivs?.spe,
+    },
+    evs: {
+      hp: storedFormData.value.evs?.hp,
+      atk: storedFormData.value.evs?.atk,
+      def: storedFormData.value.evs?.def,
+      spa: storedFormData.value.evs?.spa,
+      spd: storedFormData.value.evs?.spd,
+      spe: storedFormData.value.evs?.spe,
+    },
+
+    move: [
+      storedFormData.value.move?.[0],
+      storedFormData.value.move?.[1],
+      storedFormData.value.move?.[2],
+      storedFormData.value.move?.[3],
+    ],
+  };
+}
+
 export function AddPokemonModal() {
   const playthroughs = useDBResource(
     Playthrough.getAll,
@@ -38,23 +87,15 @@ export function AddPokemonModal() {
     {},
   );
 
-  const formHook = useForm<Inputs>({
+  const formHook = useForm<PokemonFormInputs>({
     mode: "onChange",
     criteriaMode: "all",
-    defaultValues: {
-      playthrough: "" as unknown as number,
-      species: "",
-      gender: "",
-      shiny: false,
-      hpType: "",
-      teraType: "",
-      nature: "",
-      gigantamax: false,
-    },
+    defaultValues: getValuesFromStore(),
   });
 
   const {
-    register, handleSubmit, setValue, setError, watch,
+    register, handleSubmit, setValue, setError,
+    watch, getValues, reset, trigger,
     formState: { isSubmitting, errors, isValid },
   } = formHook;
   
@@ -64,6 +105,71 @@ export function AddPokemonModal() {
   const speciesList = useMemo(() => [...data.species].filter((species) => tracePokemon(species.name)), [data]);
 
   const speciesName = watch("species");
+
+  const saveToStore = () => {
+    const values = getValues();
+
+    storedFormData.value = {
+      playthrough: values.playthrough,
+      species: values.species,
+      
+      name: values.name,
+      happiness: values.happiness,
+      ability: values.ability,
+      gender: values.gender,
+      item: values.item,
+      shiny: values.shiny,
+      pokeball: values.pokeball,
+      hpType: values.hpType,
+      dynamaxLevel: values.dynamaxLevel,
+      gigantamax: values.gigantamax,
+      teraType: values.teraType,
+
+      level: values.level,
+      nature: values.nature,
+
+      ivs: {
+        hp: values?.ivs?.hp,
+        atk: values?.ivs?.atk,
+        def: values?.ivs?.def,
+        spa: values?.ivs?.spa,
+        spd: values?.ivs?.spd,
+        spe: values?.ivs?.spe,
+      },
+      evs: {
+        hp: values?.evs?.hp,
+        atk: values?.evs?.atk,
+        def: values?.evs?.def,
+        spa: values?.evs?.spa,
+        spd: values?.evs?.spd,
+        spe: values?.evs?.spe,
+      },
+
+      move: [
+        values?.move?.[0],
+        values?.move?.[1],
+        values?.move?.[2],
+        values?.move?.[3],
+      ],
+    }
+  };
+
+  useEffect(() => {
+    return saveToStore;
+  }, [formHook]);
+
+  useEffect(() => {
+    const [move, ability, item, pokeball] = getValues(["move", "ability", "item", "pokeball"]);
+
+    if (ability) trigger("ability");
+    if (item) trigger("item");
+    if (pokeball) trigger("pokeball");
+    
+    if (move?.[0]) trigger("move.0");
+    if (move?.[1]) trigger("move.1");
+    if (move?.[2]) trigger("move.2");
+    if (move?.[3]) trigger("move.3");
+  }, [generation]);
   
   const validateData = ((value, formValues?) => {
     if (!value || !tracePokemon(value as SpeciesName) || data.species.get(value as SpeciesName)?.name !== value) {
@@ -77,9 +183,9 @@ export function AddPokemonModal() {
     }
 
     return true;
-  }) satisfies Validate<string, Inputs>;
+  }) satisfies Validate<string, PokemonFormInputs>;
 
-  const onSubmit: SubmitHandler<Inputs> = async (values) => {
+  const onSubmit: SubmitHandler<PokemonFormInputs> = async (values) => {
     const minimal: MinimalSet = {
       name: values.name || undefined,
       species: values.species,
@@ -123,7 +229,9 @@ export function AddPokemonModal() {
         pkmn,
         values.playthrough,
       );
-      reset();
+
+      storedFormData.value = {};
+      reset(getValuesFromStore());
     } catch (err) {
       if (err instanceof SetValidationError) {
         setError("species", {
@@ -196,7 +304,7 @@ export function AddPokemonModal() {
             <FormProvider {...formHook}>
               { validateData(speciesName) && (<SpeciesPokemonBigForm
                 speciesName={ speciesName }
-                formHook={ formHook as UseFormReturn<Inputs | SpeciesPokemonBigFormInputs> }
+                formHook={ formHook as UseFormReturn<PokemonFormInputs | SpeciesPokemonBigFormInputs> }
               />) }
             </FormProvider>
           </GenProvider>
