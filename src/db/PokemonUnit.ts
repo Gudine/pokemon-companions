@@ -1,5 +1,5 @@
 import { SpeciesName } from "@pkmn/data";
-import { db, type IPokemonUnitWithId, type IPokemonUnit } from "./db";
+import { db, type IPokemonUnit } from "./db";
 import { DatabaseError } from "@/errors";
 import { markDBAsStale } from "@/hooks/useDBResource";
 import { tracePokemon } from "@/utils/pkmnUtils";
@@ -7,20 +7,20 @@ import { type PokemonSet, importFromObject } from "@/utils/setUtils";
 import { type MinimalSet, Sets } from "@/utils/setUtils/sets";
 
 export class PokemonUnit {
-  static async getAll(): Promise<IPokemonUnitWithId[]> {
-    return await db.getAll("pkmn") as IPokemonUnitWithId[];
+  static async getAll(): Promise<IPokemonUnit[]> {
+    return await db.getAll("pkmn") as IPokemonUnit[];
   }
 
-  static async getBySpecies(species: SpeciesName): Promise<IPokemonUnitWithId[]> {
-    return await db.getAllFromIndex("pkmn", "species", species) as IPokemonUnitWithId[];
+  static async getBySpecies(species: SpeciesName): Promise<IPokemonUnit[]> {
+    return await db.getAllFromIndex("pkmn", "species", species) as IPokemonUnit[];
   }
 
-  static async getByForm(form: SpeciesName): Promise<IPokemonUnitWithId[]> {
-    return await db.getAllFromIndex("pkmn", "form", form) as IPokemonUnitWithId[];
+  static async getByForm(form: SpeciesName): Promise<IPokemonUnit[]> {
+    return await db.getAllFromIndex("pkmn", "form", form) as IPokemonUnit[];
   }
 
-  static async getByPlaythrough(playthrough: number): Promise<IPokemonUnitWithId[]> {
-    return await db.getAllFromIndex("pkmn", "playthrough", playthrough) as IPokemonUnitWithId[];
+  static async getByPlaythrough(playthrough: number): Promise<IPokemonUnit[]> {
+    return await db.getAllFromIndex("pkmn", "playthrough", playthrough) as IPokemonUnit[];
   }
 
   static async add(pkmn: PokemonSet, playthrough: number) {
@@ -40,7 +40,7 @@ export class PokemonUnit {
     markDBAsStale("pkmn", { key, species, form, playthrough });
   }
   
-  static async update(id: number, payload: IPokemonUnit) {
+  static async update(id: number, payload: Omit<IPokemonUnit, "id">) {
     const t = db.transaction("pkmn", "readwrite");
 
     const old = await t.store.get(id);

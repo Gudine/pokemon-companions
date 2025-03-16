@@ -1,16 +1,16 @@
 import type { GenerationNum } from "@pkmn/data";
-import { db, type IPlaythrough, type IPlaythroughWithId } from "./db";
+import { db, type IPlaythrough } from "./db";
 import { DatabaseError } from "@/errors";
 import { markDBAsStale } from "@/hooks/useDBResource";
 
 export class Playthrough {
-  static async getAll(): Promise<IPlaythroughWithId[]> {
-    return (await db.getAll("playthrough") as IPlaythroughWithId[])
+  static async getAll(): Promise<IPlaythrough[]> {
+    return (await db.getAll("playthrough") as IPlaythrough[])
       .sort((a, b) => b.date.valueOf() - a.date.valueOf());
   }
 
-  static async getByName(name: string): Promise<IPlaythroughWithId | undefined> {
-    return await db.getFromIndex("playthrough", "name", name) as IPlaythroughWithId | undefined;
+  static async getByName(name: string): Promise<IPlaythrough | undefined> {
+    return await db.getFromIndex("playthrough", "name", name) as IPlaythrough | undefined;
   }
 
   static async add(name: string, date: Date, gen: GenerationNum) {
@@ -23,7 +23,7 @@ export class Playthrough {
     markDBAsStale("playthrough", { key, name, date });
   }
 
-  static async update(id: number, payload: IPlaythrough) {
+  static async update(id: number, payload: Omit<IPlaythrough, "id">) {
     const t = db.transaction("playthrough", "readwrite");
 
     const old = await t.store.get(id);

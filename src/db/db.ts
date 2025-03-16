@@ -3,32 +3,24 @@ import type { PokemonSet } from "@/utils/setUtils";
 import { openDB, type DBSchema } from "idb";
 
 export interface IPokemonUnit {
-  id?: number,
+  id: number,
   species: SpeciesName,
   form: SpeciesName,
-  playthrough: IPlaythroughWithId["id"],
+  playthrough: IPlaythrough["id"],
   data: ReturnType<PokemonSet["pack"]>,
 }
 
-export interface IPokemonUnitWithId extends IPokemonUnit {
-  id: number,
-}
-
 export interface IPlaythrough {
-  id?: number,
+  id: number,
   name: string,
   date: Date,
   gen: GenerationNum,
 }
 
-export interface IPlaythroughWithId extends IPlaythrough {
-  id: number,
-}
-
 export interface PokemonDB extends DBSchema {
   pkmn: {
-    value: IPokemonUnit,
-    key: IPokemonUnitWithId["id"],
+    value: Omit<IPokemonUnit, "id"> & Partial<Pick<IPokemonUnit, "id">>,
+    key: IPokemonUnit["id"],
     indexes: {
       species: IPokemonUnit["species"],
       form: IPokemonUnit["form"],
@@ -37,8 +29,8 @@ export interface PokemonDB extends DBSchema {
   },
 
   playthrough: {
-    value: IPlaythrough,
-    key: IPlaythroughWithId["id"],
+    value: Omit<IPlaythrough, "id"> & Partial<Pick<IPlaythrough, "id">>,
+    key: IPlaythrough["id"],
     indexes: {
       name: IPlaythrough["name"],
       date: IPlaythrough["date"],
