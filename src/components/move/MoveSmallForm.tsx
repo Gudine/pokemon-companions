@@ -53,7 +53,8 @@ export function MoveSmallForm({ formHook, index }: Props) {
         />
       </div>
       <p
-        class="text-xs text-gray-100 pb-0.5 pt-0.5 pl-1 pr-1 bg-type-unknown rounded-bl-xl"
+        class={`text-xs text-gray-100 pb-0.5 pt-0.5 pl-1 pr-1
+          bg-type-unknown rounded-bl-xl ${!hasCategory ? "rounded-br-xl" : ""}`}
         style={move ? { backgroundColor: `var(--color-type-${move.type.toLowerCase()})`} : {}}
       >
         {move?.type || "--"}
