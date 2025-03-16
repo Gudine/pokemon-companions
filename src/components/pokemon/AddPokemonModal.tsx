@@ -1,23 +1,39 @@
-import { useSignal } from "@preact/signals";
+import type { SpeciesName } from "@pkmn/data";
+import type { MinimalSet } from "@/utils/setUtils/sets";
+import { useMemo } from "preact/hooks";
 import { AiOutlineLoading } from "react-icons/ai";
-import { useForm, type SubmitHandler, type Validate } from "react-hook-form";
+import { FormProvider, useForm, type SubmitHandler, type UseFormReturn, type Validate } from "react-hook-form";
 import { GenProvider } from "@/contexts/GenContext";
+import { gens } from "@/data";
 import { Playthrough } from "@/db/Playthrough";
 import { PokemonUnit } from "@/db/PokemonUnit";
-import { SetValidationError } from "@/errors";
+import { DatabaseError, SetValidationError } from "@/errors";
+import { importFromObject } from "@/utils/setUtils";
+import { tracePokemon } from "@/utils/pkmnUtils";
 import { useDBResource } from "@/hooks/useDBResource";
-import { importSetWithErrors, type PokemonSet } from "@/utils/setUtils";
 import { Button } from "@/components/common/Button";
-import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
+import { Combobox } from "@/components/common/Combobox";
+import { SpeciesPokemonBigForm, type SpeciesPokemonBigFormInputs } from "./SpeciesPokemonBigForm";
 
 interface Props {
   close: () => void;
   playthrough?: string;
 }
 
-interface Inputs {
+interface Inputs extends SpeciesPokemonBigFormInputs {
   playthrough: string,
-  data: string,
+  species: string,
+}
+
+function findMessage(obj: any): string | undefined {
+  for (const entry of Object.values<any>(obj)) {
+    if (entry.message) return entry.message;
+    
+    if (typeof entry === "object") {
+      const found = findMessage(entry);
+      if (found) return found;
+    }
+  }
 }
 
 export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Props) {
@@ -27,51 +43,100 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
     {},
   );
 
-  const { register, handleSubmit, setError, watch, formState: { isSubmitting, errors, isValid } } = useForm<Inputs>({
+  const formHook = useForm<Inputs>({
     mode: "onChange",
     criteriaMode: "all",
     defaultValues: {
       playthrough: defaultPlaythrough,
+      species: "",
+      gender: "",
+      shiny: false,
+      hpType: "",
+      teraType: "",
+      nature: "",
+      gigantamax: false,
     },
   });
-  
-  const pkmn = useSignal<PokemonSet>();
+
+  const {
+    register, handleSubmit, setValue, setError, watch,
+    formState: { isSubmitting, errors, isValid },
+  } = formHook;
   
   const generation = playthroughs.find((p) => p.name === watch("playthrough"))?.gen;
+  const data = gens.get(generation ?? 9);
 
-  const validateData: Validate<string, Inputs> = (value) => {
-    if (!value) {
-      pkmn.value = undefined;
+  const speciesList = useMemo(() => [...data.species].filter((species) => tracePokemon(species.name)), [data]);
+
+  const speciesName = watch("species");
+  
+  const validateData = ((value, formValues?) => {
+    if (!value || !tracePokemon(value as SpeciesName) || data.species.get(value as SpeciesName)?.name !== value) {
       return false;
     }
 
-    try {
-      pkmn.value = importSetWithErrors(
-        value,
-        generation ?? 9,
-      );
-      return true;
-    } catch (err) {
-      pkmn.value = undefined;
+    const species = data.species.get(value as SpeciesName)!;
 
-      if (err instanceof SetValidationError) {
-        return err.message;
-      } else {
-        throw err;
-      }
+    if (formValues?.gender && (species.gender ? formValues.gender !== species.gender : !["M", "F"].includes(formValues.gender))) {
+      setValue("gender", "");
     }
-  };
 
-  const onSubmit: SubmitHandler<Inputs> = async ({ playthrough }) => {
+    return true;
+  }) satisfies Validate<string, Inputs>;
+
+  const onSubmit: SubmitHandler<Inputs> = async (values) => {
+    const minimal: MinimalSet = {
+      name: values.name || undefined,
+      species: values.species,
+      item: values.item || undefined,
+      ability: values.ability || undefined,
+      nature: values.nature || undefined,
+      gender: values.gender || undefined,
+      level: !isNaN(values.level!) && values.level || undefined,
+      shiny: values.shiny || undefined,
+      happiness: !isNaN(values.happiness!) && values.happiness || undefined,
+      pokeball: values.pokeball || undefined,
+      hpType: values.hpType || undefined,
+      dynamaxLevel: !isNaN(values.dynamaxLevel!) && values.dynamaxLevel || undefined,
+      gigantamax: values.gigantamax || undefined,
+      teraType: values.teraType || undefined,
+      
+      evs: {
+        hp: !isNaN(values.evs?.hp!) && values.evs?.hp || undefined,
+        atk: !isNaN(values.evs?.atk!) && values.evs?.atk || undefined,
+        def: !isNaN(values.evs?.def!) && values.evs?.def || undefined,
+        spa: !isNaN(values.evs?.spa!) && values.evs?.spa || undefined,
+        spd: !isNaN(values.evs?.spd!) && values.evs?.spd || undefined,
+        spe: !isNaN(values.evs?.spe!) && values.evs?.spe || undefined,
+      },
+      ivs: {
+        hp: !isNaN(values.ivs?.hp!) && values.ivs?.hp || undefined,
+        atk: !isNaN(values.ivs?.atk!) && values.ivs?.atk || undefined,
+        def: !isNaN(values.ivs?.def!) && values.ivs?.def || undefined,
+        spa: !isNaN(values.ivs?.spa!) && values.ivs?.spa || undefined,
+        spd: !isNaN(values.ivs?.spd!) && values.ivs?.spd || undefined,
+        spe: !isNaN(values.ivs?.spe!) && values.ivs?.spe || undefined,
+      },
+
+      moves: values.move?.filter((move) => move !== undefined).filter((move) => move),
+    }
+    
     try {
+      const pkmn = importFromObject(minimal, generation ?? 9);
+      
       await PokemonUnit.add(
-        pkmn.value!,
-        playthrough,
+        pkmn,
+        values.playthrough,
       );
       close();
     } catch (err) {
-      if (err instanceof Error && err.message.match(/^Species .+? not found$/)) {
-        setError("data", {
+      if (err instanceof SetValidationError) {
+        setError("species", {
+          type: "setValidation",
+          message: err.message,
+        });
+      } else if (err instanceof DatabaseError) {
+        setError("species", {
           type: "database",
           message: err.message,
         });
@@ -82,34 +147,38 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
   return (
     <form
       onSubmit={ handleSubmit(onSubmit) }
-      class="w-full h-full
-      grid grid-cols-2 grid-rows-[max-content_max-content_1fr_max-content] gap-2"
+      class="w-full h-full flex flex-col gap-2"
     >
       <p class="text-xl font-bold text-center col-span-2">Add new Pokémon</p>
+      <fieldset
+        class="grid grid-cols-[1fr_1fr] grid-rows-[max-content_max-content_1fr] gap-2"
+        disabled={ isSubmitting }
+      >
+        <div class="flex flex-col">
+          <label for="pokemon-species">Species:</label>
+          <Combobox
+            id="pokemon-species"
+            class="flex flex-col relative
+              bg-gray-100 border-2 border-stone-500 rounded-lg text-stone-700
+              pt-1 pb-1 pl-2 pr-2"
+            register={register("species", {
+              required: true,
+              validate: validateData,
+            })}
+            watch={() => watch("species")}
+            setValue={(v) => { setValue("species", v, {
+              shouldDirty: true,
+              shouldTouch: true,
+              shouldValidate: true,
+            }) }}
+            datalist={speciesList.map((species) => species.name)}
+          />
+        </div>
 
-      <label class="row-span-3 flex flex-col">
-        Data:
-        <textarea
-          class="bg-gray-100 border-2 border-stone-500 rounded-lg
-            pt-1 pb-1 pl-2 pr-2
-          disabled:bg-gray-300 text-stone-700
-            grow"
-          spellcheck={ false }
-          disabled={ isSubmitting }
-          {...register("data", {
-            required: "Pokémon data must be set",
-            validate: validateData,
-          })}
-        />
-        <p class="text-sm text-red-500 empty:before:inline-block">
-          {errors.data?.message ?? ""}
-        </p>
-      </label>
-      
-      <fieldset disabled={ isSubmitting || defaultPlaythrough !== undefined }>
         <label class="flex flex-col">
           Playthrough:
           <select
+            disabled={ isSubmitting || defaultPlaythrough !== undefined }
             class="bg-gray-100 border-2 border-stone-500 rounded-lg
               pt-1 pb-1 pl-2 pr-2
             disabled:bg-gray-300 text-stone-700
@@ -121,20 +190,23 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
             </option>
             {playthroughs.map((currPlaythrough) => <option value={currPlaythrough.name}>{currPlaythrough.name}</option>)}
           </select>
-          <p class="text-sm text-red-500 empty:before:inline-block">
-            {errors.playthrough?.message ?? ""}
-          </p>
         </label>
+
+        <p class="text-sm text-center text-red-500 col-span-2 empty:before:inline-block">
+          {findMessage(errors)}
+        </p>
+        
+        <div class="flex justify-center items-center col-span-2">
+          <GenProvider gen={ generation }>
+            <FormProvider {...formHook}>
+              { validateData(speciesName) && (<SpeciesPokemonBigForm
+                speciesName={ speciesName }
+                formHook={ formHook as UseFormReturn<Inputs | SpeciesPokemonBigFormInputs> }
+              />) }
+            </FormProvider>
+          </GenProvider>
+        </div>
       </fieldset>
-      
-      <div class="flex flex-col">
-        <p>Preview:</p>
-        <GenProvider gen={ generation }>
-          {pkmn.value && (<div class="self-center w-max">
-            <SpeciesPokemonSmall pkmn={ pkmn.value }/>
-          </div>)}
-        </GenProvider>
-      </div>
 
       <Button class="justify-self-end" type="submit" disabled={!(isValid || isSubmitting)}>
         { !isSubmitting
