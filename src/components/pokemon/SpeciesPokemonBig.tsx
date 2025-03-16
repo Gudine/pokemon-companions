@@ -171,16 +171,16 @@ export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
                 class="text-center"
                 style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
               >
-                <p class={`pt-0.5 pb-0.5 ${ev === undefined ? "bg-gray-600/35" : ""}`}>
-                  {ev ?? 0}
+                <p class="pt-0.5 pb-0.5">
+                  {ev ?? "--"}
                 </p>
               </div>
               <div
                 class="text-center"
                 style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
               >
-                <p class={`pt-0.5 pb-0.5 ${iv === undefined ? "bg-gray-600/35" : ""}`}>
-                  {iv ?? 31}
+                <p class="pt-0.5 pb-0.5">
+                  {iv ?? "--"}
                 </p>
               </div>
             </div>
