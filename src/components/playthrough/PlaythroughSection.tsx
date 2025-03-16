@@ -5,9 +5,11 @@ import { Suspense } from "preact/compat";
 import { Loading } from "@/components/common/Loading";
 import { AddPokemonModalContainer } from "@/components/pokemon/AddPokemonModalContainer";
 import { PlaythroughSectionList } from "./PlaythroughSectionList";
+import { AddPlaythroughModal } from "./AddPlaythroughModal";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
-  const showModal = useSignal(false);
+  const showPokemonModal = useSignal(false);
+  const showPlaythroughModal = useSignal(false);
   const collapsed = useSignal(true);
   
   return (
@@ -23,12 +25,13 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
             { collapsed.value ? <FaChevronRight title="Expand" /> : <FaChevronDown title="Collapse" /> }
           </button>
           <button
+            onClick={ () => showPlaythroughModal.value = true }
             class={`cursor-pointer flex ${collapsed.value ? "invisible" : ""}`}
           >
             <FaPencil title="Edit playthrough" />
           </button>
           <button
-            onClick={ () => showModal.value = true }
+            onClick={ () => showPokemonModal.value = true }
             class={`cursor-pointer flex ${collapsed.value ? "invisible" : ""}`}
           >
             <FaUserPlus title="Add Pokémon" />
@@ -45,11 +48,14 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           </Suspense>
         </div>
       )}
-      { showModal.value && (<AddPokemonModalContainer
-        close={ () => showModal.value = false }
+      { showPokemonModal.value && (<AddPokemonModalContainer
+        close={ () => showPokemonModal.value = false }
         playthrough={ playthrough.id }
-        />
-      ) }
+      />) }
+      { showPlaythroughModal.value && (<AddPlaythroughModal
+        close={ () => showPlaythroughModal.value = false }
+        playthrough={ playthrough }
+      />)}
     </section>
   )
 }

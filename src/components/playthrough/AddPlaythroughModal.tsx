@@ -1,4 +1,5 @@
 import type { GenerationNum } from "@pkmn/data";
+import type { IPlaythrough } from "@/db/db";
 import { AiOutlineLoading } from "react-icons/ai";
 import { Playthrough } from "@/db/Playthrough";
 import { Modal } from "@/components/common/Modal";
@@ -14,27 +15,37 @@ interface Inputs {
   gen: GenerationNum,
 }
 
-export function AddPlaythroughModal({ close }: { close: () => void }) {
+export function AddPlaythroughModal({ close, playthrough }: { close: () => void, playthrough?: IPlaythrough }) {
   const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid } } = useForm<Inputs>({
     mode: "onChange",
-    defaultValues: { gen: GENS[GENS.length - 1] },
+    defaultValues: {
+      name: playthrough?.name,
+      date: playthrough?.date.toISOString().slice(0, 10) as unknown as Date,
+      gen: playthrough?.gen ?? GENS[GENS.length - 1],
+    },
   });
 
   const onSubmit: SubmitHandler<Inputs> = async ({ name, date, gen }) => {
-    try {
-      await Playthrough.add(
-        name,
-        date,
-        gen,
-      );
-
+    if (playthrough) {
+      await Playthrough.update(playthrough.id, { name, date });
+  
       close();
-    } catch (err) {
-      if (err instanceof DatabaseError) {
-        setError("name", {
-          type: "database",
-          message: "Name already exists",
-        });
+    } else {
+      try {
+        await Playthrough.add(
+          name,
+          date,
+          gen,
+        );
+  
+        close();
+      } catch (err) {
+        if (err instanceof DatabaseError) {
+          setError("name", {
+            type: "database",
+            message: "Name already exists",
+          });
+        }
       }
     }
   }
@@ -45,7 +56,9 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
         onSubmit={ handleSubmit(onSubmit) }
         class="w-full h-full flex flex-col justify-around"
       >
-        <p class="text-xl font-bold text-center">Add new playthrough</p>
+        <p class="text-xl font-bold text-center">
+          {playthrough ? "Edit playthrough" : "Add new playthrough"}
+        </p>
 
         <label class="flex flex-col">
             Name:
@@ -86,7 +99,7 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
             class="bg-gray-100 border-2 border-stone-500 rounded-lg
               pt-1 pb-1 pl-2 pr-2
             disabled:bg-gray-300 text-stone-700"
-            disabled={ isSubmitting }
+            disabled={ !!playthrough || isSubmitting }
             {...register("gen", { valueAsNumber: true })}
           >
             {GENS.map((genId) => <option value={genId}>{genId}</option>)}
