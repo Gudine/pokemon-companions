@@ -9,7 +9,7 @@ export function SpeciesTracker() {
     "pkmn",
   );
 
-  return [...pokemonList].slice(0,50).map(([name, forms]) => (
+  return [...pokemonList].map(([name, forms]) => (
     <SpeciesBig
       key={ name }
       name={ name }
