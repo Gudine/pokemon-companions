@@ -24,6 +24,7 @@ export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
   );
 
   const itemIcon = (pkmn.isGen(2) && pkmn.data.item) ? ImgUtils.getItem(pkmn.data.item.name) : undefined;
+  const pokeballIcon = (pkmn.isGen(3) && pkmn.data.pokeball) ? ImgUtils.getItem(pkmn.data.pokeball.name) : undefined;
   
   const dataItems: [string, ComponentChildren][] = [];
 
@@ -42,7 +43,10 @@ export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
     ["Happiness", pkmn.happiness ?? "Unspecified"],
   );
 
-  if (pkmn.isGen(3)) dataItems.push(["Pokéball", pkmn.pokeball ?? "Unspecified"]);
+  if (pkmn.isGen(3)) dataItems.push(["Pokéball", (<div class="flex flex-row justify-center items-end gap-0.5">
+    {pokeballIcon && <span class="self-center -m-[2px]" style={ pokeballIcon.css } />}
+    {pkmn.data.pokeball?.name || "Unspecified"}
+  </div>)]);
 
   if (pkmn.isGen(7)) dataItems.push(["Hidden Power type", pkmn.hpType ? <Types types={ [pkmn.data.main.types.get(pkmn.hpType)!.name] } /> : "Unspecified"]);
 
