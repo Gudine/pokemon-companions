@@ -3,12 +3,11 @@ import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons
 import { useSignal } from "@preact/signals";
 import { Suspense } from "preact/compat";
 import { Loading } from "@/components/common/Loading";
-import { AddPokemonModalContainer } from "@/components/pokemon/AddPokemonModalContainer";
 import { PlaythroughSectionList } from "./PlaythroughSectionList";
 import { AddPlaythroughModal } from "./AddPlaythroughModal";
+import { selectedPage, storedFormData } from "@/globalState";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
-  const showPokemonModal = useSignal(false);
   const showPlaythroughModal = useSignal(false);
   const collapsed = useSignal(true);
   
@@ -31,7 +30,10 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
             <FaPencil title="Edit playthrough" />
           </button>
           <button
-            onClick={ () => showPokemonModal.value = true }
+            onClick={ () => {
+              storedFormData.value = { playthrough: playthrough.id };
+              selectedPage.value = "pokemonWorkshop";
+            } }
             class={`cursor-pointer flex ${collapsed.value ? "invisible" : ""}`}
           >
             <FaUserPlus title="Add Pokémon" />
@@ -50,10 +52,6 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           </Suspense>
         </div>
       )}
-      { showPokemonModal.value && (<AddPokemonModalContainer
-        close={ () => showPokemonModal.value = false }
-        playthrough={ playthrough.id }
-      />) }
       { showPlaythroughModal.value && (<AddPlaythroughModal
         close={ () => showPlaythroughModal.value = false }
         playthrough={ playthrough }
