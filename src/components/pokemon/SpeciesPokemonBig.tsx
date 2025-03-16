@@ -92,11 +92,6 @@ export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
       }}
     >
       <div class="flex flex-col items-center justify-evenly gap-0.5">
-        <div class={`bg-gray-100 rounded-2xl w-8/10
-          pb-0.5 pt-0.5 pl-1 pr-1
-          text-center text-sm`}>
-          <span class="">{ species.name }</span>
-        </div>
         { isVisible.value ? <img
           src={ image.url }
           width={ image.w }
@@ -109,9 +104,9 @@ export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
           width: image.w,
           height: image.h
         } } /> }
-        <div class={`bg-gray-100 rounded-md w-9/10
+        <div class="bg-gray-100 rounded-md w-9/10
           pb-0.5 pt-0.5 pl-1 pr-1
-          text-center text-sm ${(!pkmn.name || pkmn.name === species.name) && "text-stone-500"}`}>
+          text-center text-sm">
           <span class="">{ pkmn.name ?? species.name }</span>
         </div>
       </div>
