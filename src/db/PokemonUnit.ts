@@ -40,7 +40,7 @@ export class PokemonUnit {
     markDBAsStale("pkmn", { key, species, form, playthrough });
   }
   
-  static async update(id: number, payload: Omit<IPokemonUnit, "id">) {
+  static async update(id: number, payload: Partial<Omit<IPokemonUnit, "id">>) {
     const t = db.transaction("pkmn", "readwrite");
 
     const old = await t.store.get(id);

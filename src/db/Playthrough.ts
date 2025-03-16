@@ -23,7 +23,7 @@ export class Playthrough {
     markDBAsStale("playthrough", { key, name, date });
   }
 
-  static async update(id: number, payload: Omit<IPlaythrough, "id">) {
+  static async update(id: number, payload: Partial<Omit<IPlaythrough, "id">>) {
     const t = db.transaction("playthrough", "readwrite");
 
     const old = await t.store.get(id);
