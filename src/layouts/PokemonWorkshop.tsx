@@ -1,13 +1,13 @@
 import { Suspense } from "preact/compat";
 import { Loading } from "@/components/common/Loading";
-import { AddPokemonModal } from "@/components/pokemon/AddPokemonModal";
+import { AddPokemonForm } from "@/components/pokemon/AddPokemonForm";
 
 export function PokemonWorkshop() {
   return (
     <main class="grid grid-cols-1 grid-rows-1 grow">
       <div class="col-span-full row-span-full flex flex-col gap-4 p-4">
         <Suspense fallback={ <Loading /> }>
-          <AddPokemonModal />
+          <AddPokemonForm />
         </Suspense>
       </div>
     </main>

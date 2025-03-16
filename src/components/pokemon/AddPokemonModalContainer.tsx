@@ -1,7 +1,7 @@
 import { Suspense } from "preact/compat";
 import { Modal } from "@/components/common/Modal";
 import { Loading } from "@/components/common/Loading";
-import { AddPokemonModal } from "./AddPokemonModal";
+import { ImportPokemonModal } from "./ImportPokemonModal";
 
 interface Props {
   close: () => void;
@@ -12,7 +12,7 @@ export function AddPokemonModalContainer({ close, playthrough: defaultPlaythroug
   return (
     <Modal close={ close } class="w-9/10 h-9/10">
       <Suspense fallback={ <Loading /> }>
-        <AddPokemonModal close={ close } playthrough={ defaultPlaythrough } />
+        <ImportPokemonModal close={ close } playthrough={ defaultPlaythrough } />
       </Suspense>
     </Modal>
   )

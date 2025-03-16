@@ -80,7 +80,7 @@ function getValuesFromStore(): DefaultValues<PokemonFormInputs> {
   };
 }
 
-export function AddPokemonModal() {
+export function AddPokemonForm() {
   const playthroughs = useDBResource(
     Playthrough.getAll,
     "playthrough",
