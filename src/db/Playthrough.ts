@@ -14,13 +14,23 @@ export class Playthrough {
   }
 
   static async add(name: string, date: Date, gen: GenerationNum) {
-    const key = await db.add("playthrough", {
-      name,
-      date,
-      gen,
-    });
-    
-    markDBAsStale("playthrough", { key, name, date });
+    try {
+      const key = await db.add("playthrough", {
+        name,
+        date,
+        gen,
+      });
+
+      markDBAsStale("playthrough", { key, name, date });
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "ConstraintError") {
+        throw new DatabaseError("alreadyExists", {
+          store: "playthrough",
+          key: "name",
+          value: name,
+        });
+      }
+    }
   }
 
   static async update(id: number, payload: Partial<Omit<IPlaythrough, "id">>) {
