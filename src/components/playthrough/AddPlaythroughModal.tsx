@@ -87,7 +87,7 @@ export function AddPlaythroughModal({ close }: { close: () => void }) {
               pt-1 pb-1 pl-2 pr-2
             disabled:bg-gray-300 text-stone-700"
             disabled={ isSubmitting }
-            {...register("gen")}
+            {...register("gen", { valueAsNumber: true })}
           >
             {GENS.map((genId) => <option value={genId}>{genId}</option>)}
           </select>
