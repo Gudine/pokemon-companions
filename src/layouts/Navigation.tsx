@@ -6,18 +6,18 @@ export function Navigation() {
       bg-indigo-700 text-gray-100
       text-xl text-center">
       <a
-        onClick={() => selectedPage.value = "species"}
+        onClick={() => selectedPage.value = "speciesTracker"}
         class={`p-3 grow cursor-pointer border-1 border-indigo-700
           hover:bg-gray-100 hover:text-indigo-700
-          ${selectedPage.value === "species" ? "bg-gray-100 text-indigo-700" : ""}`}
+          ${selectedPage.value === "speciesTracker" ? "bg-gray-100 text-indigo-700" : ""}`}
       >
         Species tracker
       </a>
       <a
-        onClick={() => selectedPage.value = "pokemon"}
+        onClick={() => selectedPage.value = "savedPlaythroughs"}
         class={`p-3 grow cursor-pointer border-1 border-indigo-700
           hover:bg-gray-100 hover:text-indigo-700
-          ${selectedPage.value === "pokemon" ? "bg-gray-100 text-indigo-700" : ""}`}
+          ${selectedPage.value === "savedPlaythroughs" ? "bg-gray-100 text-indigo-700" : ""}`}
       >
         Saved playthroughs
       </a>
