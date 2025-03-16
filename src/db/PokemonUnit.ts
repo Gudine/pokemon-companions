@@ -44,7 +44,7 @@ export class PokemonUnit {
     const t = db.transaction("pkmn", "readwrite");
 
     const old = await t.store.get(id);
-    if (!old) throw new DatabaseError("notFound", { store: "pkmn", key: id });
+    if (!old) throw new DatabaseError("notFound", { store: "pkmn", key: "id", value: id });
     
     const newFile = Object.assign({}, old, payload);
     await Promise.all([
@@ -64,10 +64,14 @@ export class PokemonUnit {
     const t = db.transaction(["pkmn", "playthrough"], "readwrite");
 
     const old = await t.objectStore("pkmn").get(id);
-    if (!old) throw new DatabaseError("notFound", { store: "pkmn", key: id });
+    if (!old) throw new DatabaseError("notFound", { store: "pkmn", key: "id", value: id });
 
     const playthrough = await t.objectStore("playthrough").get(old.playthrough);
-    if (!playthrough) throw new DatabaseError("notFound", { store: "playthrough", key: old.playthrough }, { store: "pkmn", key: id });
+    if (!playthrough) throw new DatabaseError(
+      "notFound",
+      { store: "playthrough", key: "id", value: old.playthrough },
+      { store: "pkmn", key: "id", value: id }
+    );
   
     const oldSet = Sets.unpackSet(old.data);
     if (!oldSet) throw new Error(`Stored set for Pokémon #${id} is invalid`);

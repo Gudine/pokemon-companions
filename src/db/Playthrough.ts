@@ -27,7 +27,11 @@ export class Playthrough {
     const t = db.transaction("playthrough", "readwrite");
 
     const old = await t.store.get(id);
-    if (!old) throw new DatabaseError("notFound", { store: "playthrough", key: id });
+    if (!old) throw new DatabaseError("notFound", {
+      store: "playthrough",
+      key: "id",
+      value: id,
+    });
     
     const newFile = Object.assign({}, old, payload);
     await Promise.all([
@@ -56,7 +60,7 @@ export class Playthrough {
       });
     } catch (err) {
       if (err instanceof DOMException && err.name === "InvalidStateError") {
-        throw new DatabaseError("notFound", { store: "playthrough", key: id });
+        throw new DatabaseError("notFound", { store: "playthrough", key: "id", value: id });
       }
     }
   }
