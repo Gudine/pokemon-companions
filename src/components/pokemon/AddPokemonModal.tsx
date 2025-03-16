@@ -15,11 +15,6 @@ import { Button } from "@/components/common/Button";
 import { Combobox } from "@/components/common/Combobox";
 import { SpeciesPokemonBigForm, type SpeciesPokemonBigFormInputs } from "./SpeciesPokemonBigForm";
 
-interface Props {
-  close: () => void;
-  playthrough?: number;
-}
-
 interface Inputs extends SpeciesPokemonBigFormInputs {
   playthrough: number,
   species: string,
@@ -36,7 +31,7 @@ function findMessage(obj: any): string | undefined {
   }
 }
 
-export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Props) {
+export function AddPokemonModal() {
   const playthroughs = useDBResource(
     Playthrough.getAll,
     "playthrough",
@@ -47,7 +42,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
     mode: "onChange",
     criteriaMode: "all",
     defaultValues: {
-      playthrough: defaultPlaythrough,
+      playthrough: "" as unknown as number,
       species: "",
       gender: "",
       shiny: false,
@@ -119,7 +114,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
       },
 
       moves: values.move?.filter((move) => move !== undefined).filter((move) => move),
-    }
+    };
     
     try {
       const pkmn = importFromObject(minimal, generation ?? 9);
@@ -128,7 +123,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
         pkmn,
         values.playthrough,
       );
-      close();
+      reset();
     } catch (err) {
       if (err instanceof SetValidationError) {
         setError("species", {
@@ -178,7 +173,7 @@ export function AddPokemonModal({ close, playthrough: defaultPlaythrough }: Prop
         <label class="flex flex-col">
           Playthrough:
           <select
-            disabled={ isSubmitting || defaultPlaythrough !== undefined }
+            disabled={ isSubmitting }
             class="bg-gray-100 border-2 border-stone-500 rounded-lg
               pt-1 pb-1 pl-2 pr-2
             disabled:bg-gray-300 text-stone-700

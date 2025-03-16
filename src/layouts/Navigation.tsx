@@ -21,6 +21,14 @@ export function Navigation() {
       >
         Saved playthroughs
       </a>
+      <a
+        onClick={() => selectedPage.value = "pokemonWorkshop"}
+        class={`p-3 grow cursor-pointer border-1 border-indigo-700
+          hover:bg-gray-100 hover:text-indigo-700
+          ${selectedPage.value === "pokemonWorkshop" ? "bg-gray-100 text-indigo-700" : ""}`}
+      >
+        Pokémon workshop
+      </a>
     </nav>
   )
 }
