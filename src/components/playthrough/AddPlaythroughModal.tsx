@@ -54,7 +54,7 @@ export function AddPlaythroughModal({ close, playthrough }: { close: () => void,
     <Modal close={ close } class="w-80 h-100">
       <form
         onSubmit={ handleSubmit(onSubmit) }
-        class="w-full h-full flex flex-col justify-around"
+        class="w-full h-full flex flex-col justify-around grow"
       >
         <p class="text-xl font-bold text-center">
           {playthrough ? "Edit playthrough" : "Add new playthrough"}
