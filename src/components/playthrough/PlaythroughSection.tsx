@@ -36,7 +36,9 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           >
             <FaUserPlus title="Add Pokémon" />
           </button>
-          <h2>[{playthrough.date.toLocaleDateString()}] {playthrough.name}</h2>
+          <h2>[{playthrough.date.toLocaleDateString(undefined, {
+            timeZone: "UTC", year: "numeric", month: "2-digit", day: "2-digit",
+          })}] {playthrough.name}</h2>
         </div>
       </header>
       { !collapsed.value && (
