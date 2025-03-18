@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { join, basename, dirname } from "path";
+import { join, dirname } from "path";
 import { setTimeout as sleep } from "timers/promises";
 import { SpeciesName } from "@pkmn/data";
 import { Sprites, Icons } from "@pkmn/img";
@@ -14,17 +14,22 @@ async function exists(path: string) {
   }
 }
 
-async function downloadImage(url: string) {
-  const outPath = join("public", new URL(url).pathname);
+const invalidURLs: string[] = [];
 
-  if (basename(url) === "0.png") {
-    throw new Error("Image not found");
-  }
+async function downloadImage(url: string) {
+  const pathname = new URL(url).pathname;
+  const outPath = join("public", pathname);
 
   if (await exists(outPath)) return;
   console.log(`Downloading ${url}...`);
 
-  const imgData = await fetch(url).then((res) => res.arrayBuffer());
+  const fetched = await fetch(url);
+  if (!fetched.ok) {
+    invalidURLs.push(pathname);
+    return;
+  }
+
+  const imgData = await fetched.arrayBuffer();
 
   await fs.mkdir(dirname(outPath), { recursive: true });
   await fs.writeFile(outPath, Buffer.from(imgData));
@@ -58,3 +63,5 @@ for (const item of defaultGen.items) {
 }
 
 await downloadImage(Sprites.getSubstitute({ gen: "gen5" }).url);
+
+fs.writeFile(join("src", "invalidImages.json"), JSON.stringify(invalidURLs));
