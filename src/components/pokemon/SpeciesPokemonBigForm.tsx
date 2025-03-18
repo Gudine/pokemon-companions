@@ -30,7 +30,7 @@ interface Props {
 }
 
 export function SpeciesPokemonBigForm({ formHook, speciesName }: Props) {
-  const { register, watch, setValue } = formHook;
+  const { register, watch } = formHook;
   const { gen, data } = useContext(GenContext);
 
   const species = data.species.get(speciesName)!;
@@ -65,15 +65,11 @@ export function SpeciesPokemonBigForm({ formHook, speciesName }: Props) {
     id="pokemon-ability"
     class="[text-align:inherit] bg-gray-100 rounded-md"
     placeholder={ species.abilities[0] }
-    register={register("ability", {
+    name="ability"
+    formHook={ formHook }
+    registerOpts={{
       validate: (v) => (v && (data.abilities.get(v)?.name !== v)) ? `Ability "${v}" not found` : true
-    })}
-    watch={() => watch("ability") || ""}
-    setValue={(v) => { setValue("ability", v, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    }) }}
+    }}
     datalist={[...data.abilities].map((ability) => ability.name).filter((name) => !Object.values(species.abilities).includes(name))}
     defaultList={Object.values(species.abilities)}
   />)]);
@@ -93,15 +89,11 @@ export function SpeciesPokemonBigForm({ formHook, speciesName }: Props) {
       id="pokemon-item"
       class="[text-align:inherit] bg-gray-100 rounded-md"
       placeholder="Unspecified"
-      register={register("item", {
+      name="item"
+      formHook={formHook}
+      registerOpts={{
         validate: (v) => (v && (data.items.get(v)?.name !== v)) ? `Item "${v}" not found` : true
-      })}
-      watch={() => watch("item") || ""}
-      setValue={(v) => { setValue("item", v, {
-        shouldDirty: true,
-        shouldTouch: true,
-        shouldValidate: true,
-      }) }}
+      }}
       datalist={[...data.items].map((item) => item.name)}
     />)],
     ["pokemon-shiny", "Is shiny?", (<select
@@ -131,15 +123,11 @@ export function SpeciesPokemonBigForm({ formHook, speciesName }: Props) {
     id="pokemon-pokeball"
     class="[text-align:inherit] bg-gray-100 rounded-md"
     placeholder="Unspecified"
-    register={register("pokeball", {
+    name="pokeball"
+    formHook={formHook}
+    registerOpts={{
       validate: (v) => (v && (!data.items.get(v)?.isPokeball || data.items.get(v)?.name !== v)) ? `Pokéball "${v}" not found` : true
-    })}
-    watch={() => watch("pokeball") || ""}
-    setValue={(v) => { setValue("pokeball", v, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    }) }}
+    }}
     datalist={[...data.items].filter((item) => item.isPokeball).map((item) => item.name)}
   />)]);
 

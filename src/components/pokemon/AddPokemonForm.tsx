@@ -264,16 +264,9 @@ export function AddPokemonForm() {
             class="flex flex-col relative
               bg-gray-100 border-2 border-stone-500 rounded-lg text-stone-700
               pt-1 pb-1 pl-2 pr-2"
-            register={register("species", {
-              required: true,
-              validate: validateData,
-            })}
-            watch={() => watch("species")}
-            setValue={(v) => { setValue("species", v, {
-              shouldDirty: true,
-              shouldTouch: true,
-              shouldValidate: true,
-            }) }}
+            name="species"
+            formHook={formHook}
+            registerOpts={{ required: true, validate: validateData }}
             datalist={speciesList.map((species) => species.name)}
           />
         </div>

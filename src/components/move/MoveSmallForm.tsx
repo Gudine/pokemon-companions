@@ -19,7 +19,7 @@ interface Props {
 
 export function MoveSmallForm({ formHook, index }: Props) {
   const { data, gen } = useContext(GenContext);
-  const { register, setValue, watch } = formHook;
+  const { watch } = formHook;
 
   const moveName = watch(`move.${index}`);
   const move = moveName && data.moves.get(moveName) || undefined;
@@ -42,13 +42,9 @@ export function MoveSmallForm({ formHook, index }: Props) {
         <Combobox
           class="rounded-t-xl [text-align:inherit] text-sm bg-gray-100 pb-0.5 pt-0.5 pl-1 pr-1"
           placeholder={ "--" }
-          register={register(`move.${index}`, { validate })}
-          watch={() => watch(`move.${index}`) || ""}
-          setValue={(v) => { setValue(`move.${index}`, v, {
-            shouldDirty: true,
-            shouldTouch: true,
-            shouldValidate: true,
-          }) }}
+          name={`move.${index}`}
+          formHook={formHook}
+          registerOpts={{ validate }}
           datalist={[...data.moves].filter((move) => !move.isMax && !move.isZ).map((move) => move.name)}
         />
       </div>
