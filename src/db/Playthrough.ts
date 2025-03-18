@@ -57,11 +57,15 @@ export class Playthrough {
   }
 
   static async delete(id: number) {
-    const t = db.transaction("playthrough", "readwrite");
+    const t = db.transaction(["playthrough", "pkmn"], "readwrite");
 
     try {
-      const playthrough = await t.store.get(id);
-      await t.store.delete(id);
+      const playthrough = await t.objectStore("playthrough").get(id);
+      await t.objectStore("playthrough").delete(id);
+
+      for await (const cursor of t.objectStore("pkmn").index("playthrough").iterate(id)) {
+        await cursor.delete();
+      }
       
       markDBAsStale("playthrough", {
         key: id,
