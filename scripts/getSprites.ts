@@ -3,7 +3,6 @@ import { join, basename, dirname } from "path";
 import { setTimeout as sleep } from "timers/promises";
 import { SpeciesName } from "@pkmn/data";
 import { Sprites, Icons } from "@pkmn/img";
-import { pokemonList } from "../src/pokemonList";
 import { defaultGen } from "../src/data";
 
 async function exists(path: string) {
@@ -50,17 +49,8 @@ async function downloadImages(name: SpeciesName) {
   }
 }
 
-let i = 0;
-
-for (const [name, forms] of pokemonList) {
-  console.log(`${i + 1} / ${pokemonList.size}`);
-  i += 1;
-
-  await downloadImages(name);
-
-  for (const formName of forms) {
-    await downloadImages(formName);
-  }
+for (const species of defaultGen.species) {
+  await downloadImages(species.name);
 }
 
 for (const item of defaultGen.items) {
