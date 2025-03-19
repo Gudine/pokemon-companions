@@ -62,7 +62,10 @@ export function tracePokemon(form: SpeciesName, _data?: Generation) {
 
     for (const [species, forms] of pokemonList) {
       for (const name of genealogy) {
-        if (forms.includes(name) && isFinalStage(name, _data)) result.push([species, name]);
+        if (forms.includes(name) && isFinalStage(name, _data)) {
+          result.push([species, name]);
+          break;
+        }
       }
     }
 
