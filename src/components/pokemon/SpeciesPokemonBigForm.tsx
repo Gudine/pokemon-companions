@@ -27,13 +27,15 @@ export interface SpeciesPokemonBigFormInputs extends SpeciesPokemonBigFormStatsI
 interface Props {
   formHook: UseFormReturn<SpeciesPokemonBigFormInputs>,
   speciesName: string,
+  grouping?: string,
 }
 
-export function SpeciesPokemonBigForm({ formHook, speciesName }: Props) {
+export function SpeciesPokemonBigForm({ formHook, speciesName, grouping }: Props) {
   const { register, watch } = formHook;
   const { gen, data } = useContext(GenContext);
 
   const species = data.species.get(speciesName)!;
+  const genderSpecies = grouping && data.species.get(grouping) || species;
   const shiny = watch("shiny");
   const gender = watch("gender");
 
@@ -81,9 +83,9 @@ export function SpeciesPokemonBigForm({ formHook, speciesName }: Props) {
       {...register("gender", { required: "Gender must be selected" })}
     >
       <option disabled class="hidden" value="">Unspecified</option>
-      {species.gender === "N" && <option class="text-stone-900" value="N">N/A</option>}
-      {(!species.gender || species.gender === "M") && <option class="text-stone-900" value="M">Male</option>}
-      {(!species.gender || species.gender === "F") && <option class="text-stone-900" value="F">Female</option>}
+      {genderSpecies.gender === "N" && <option class="text-stone-900" value="N">N/A</option>}
+      {(!genderSpecies.gender || genderSpecies.gender === "M") && <option class="text-stone-900" value="M">Male</option>}
+      {(!genderSpecies.gender || genderSpecies.gender === "F") && <option class="text-stone-900" value="F">Female</option>}
     </select>)],
     ["pokemon-item", "Held item", (<Combobox
       id="pokemon-item"
