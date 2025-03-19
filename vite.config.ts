@@ -9,6 +9,11 @@ export default defineConfig({
     preact(),
     tailwindcss(),
   ],
+  build: {
+    // For top-level await
+    target: ['es2022', 'edge89', 'firefox89', 'chrome89', 'safari15'],
+  },
+  base: "/pokemon-individuals/",
   resolve: {
     alias: [
       {
