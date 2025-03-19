@@ -230,7 +230,10 @@ export function AddPokemonForm() {
     try {
       const pkmn = importFromObject(minimal, generation ?? 9);
 
-      const [species, form] = tracePokemon(values.grouping as SpeciesName, data)[0];
+      const [species, form] = tracePokemon(
+        (values.grouping as SpeciesName | undefined) || groupings[0],
+        data
+      )[0];
       
       await PokemonUnit.add(
         pkmn,
@@ -252,6 +255,8 @@ export function AddPokemonForm() {
           type: "database",
           message: err.message,
         });
+      } else {
+        throw err;
       }
     }
   }
