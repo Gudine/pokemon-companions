@@ -1,15 +1,17 @@
 import type { GenderName, SpeciesName } from "@pkmn/data";
-import { Icons, Sprites } from "@pkmn/img";
 import type { CSSProperties } from "preact/compat";
+import { Icons, Sprites } from "@pkmn/img";
 import imageIndicesRaw from "../imageIndices.json";
 
 const [normalIndices, shinyIndices] = imageIndicesRaw;
 
 const GRID_WIDTH = 40;
 
+const BASE_URL = new URL(import.meta.env.BASE_URL, location.origin);
+
 const gen = 5;
 const protocol = window.location.protocol.slice(0, -1) as "http" | "https";
-const domain = window.location.host;
+const domain = BASE_URL.host + BASE_URL.pathname;
 
 export const ImgUtils = new class {
   getPokemon(species: SpeciesName, shiny?: boolean, gender?: GenderName): { css: CSSProperties } {
@@ -24,13 +26,13 @@ export const ImgUtils = new class {
       imageRendering: "pixelated",
 
       ...(index >= 0 ? {
-        backgroundImage:  `url("/sprites/pokemon${shiny ? "shiny" : ""}-sheet.webp")`,
+        backgroundImage: `url("${new URL(`sprites/pokemon${shiny ? "shiny" : ""}-sheet.webp`, BASE_URL)}")`,
         backgroundPositionX: `-${(index % GRID_WIDTH) * 96}px`,
         backgroundPositionY: `-${Math.floor(index / GRID_WIDTH) * 96}px`,
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "scroll",
       } : {
-        background: 'url("/sprites/0.png")',
+        backgroundImage: `url("${new URL("sprites/0.png", BASE_URL)}")`,
       }),
     } };
   }
