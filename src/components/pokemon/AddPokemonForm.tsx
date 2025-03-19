@@ -197,7 +197,7 @@ export function AddPokemonForm() {
       item: values.item || undefined,
       ability: values.ability || undefined,
       nature: values.nature || undefined,
-      gender: values.gender || undefined,
+      gender: values.gender === "N" ? undefined : (values.gender || undefined),
       level: !isNaN(values.level!) && values.level || undefined,
       shiny: values.shiny || undefined,
       happiness: !isNaN(values.happiness!) && values.happiness || undefined,
