@@ -1,7 +1,6 @@
 import type { ComponentChildren } from "preact";
 import type { PokemonSet } from "@/utils/setUtils";
 import { Dex } from "@pkmn/dex";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { ImgUtils } from "@/utils/imgUtils";
 import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
@@ -13,8 +12,6 @@ const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
 const graphFunction = graphFunctionBuilder(600);
 
 export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
-  const [isVisible, elemRef] = useIntersectionObserver(true);
-  
   const { species } = pkmn.data;
 
   const image = ImgUtils.getPokemon(
@@ -82,7 +79,6 @@ export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
 
   return (
     <article
-      ref={elemRef}
       class="grid grid-cols-4 grid-rows-[repeat(3,max-content)] content-between gap-1
         rounded-xl p-1 w-170
         border-4 border-type-unknown-dark bg-type-unknown-light"
@@ -92,18 +88,13 @@ export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
       }}
     >
       <div class="flex flex-col items-center justify-evenly gap-0.5">
-        { isVisible.value ? <img
-          src={ image.url }
-          width={ image.w }
-          height={ image.h }
+        <span
+          role="img"
+          aria-label={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
           title={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
-          alt={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
-          style={ { imageRendering: image.pixelated ? "pixelated" : "auto" } }
+          style={ image.css }
           class="rounded-xl bg-gray-100"
-        /> : <div class="rounded-xl bg-gray-100" style={ {
-          width: image.w,
-          height: image.h
-        } } /> }
+        />
         <div class="bg-gray-100 rounded-md w-9/10
           pb-0.5 pt-0.5 pl-1 pr-1
           text-center text-sm">

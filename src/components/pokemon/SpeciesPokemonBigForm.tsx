@@ -189,13 +189,11 @@ export function SpeciesPokemonBigForm({ formHook, speciesName, grouping }: Props
       }}
     >
       <div class="flex flex-col items-center justify-evenly gap-0.5">
-        <img
-          src={ image.url }
-          width={ image.w }
-          height={ image.h }
+        <span
+          role="img"
+          aria-label={ `${gen >= 2 && shiny ? "Shiny " : ""}${species.name}` }
           title={ `${gen >= 2 && shiny ? "Shiny " : ""}${species.name}` }
-          alt={ `${gen >= 2 && shiny ? "Shiny " : ""}${species.name}` }
-          style={ { imageRendering: image.pixelated ? "pixelated" : "auto" } }
+          style={ image.css }
           class="rounded-xl bg-gray-100"
         />
 

@@ -1,19 +1,38 @@
 import type { GenderName, SpeciesName } from "@pkmn/data";
 import { Icons, Sprites } from "@pkmn/img";
-import invalidImagesArr from "../invalidImages.json";
+import type { CSSProperties } from "preact/compat";
+import imageIndicesRaw from "../imageIndices.json";
 
-const invalidImages = new Set(invalidImagesArr);
+const [normalIndices, shinyIndices] = imageIndicesRaw;
+
+const GRID_WIDTH = 40;
 
 const gen = 5;
 const protocol = window.location.protocol.slice(0, -1) as "http" | "https";
 const domain = window.location.host;
 
 export const ImgUtils = new class {
-  getPokemon(species: SpeciesName, shiny?: boolean, gender?: GenderName) {
-    const result = Sprites.getPokemon(species, { gen, protocol, domain, shiny, gender });
+  getPokemon(species: SpeciesName, shiny?: boolean, gender?: GenderName): { css: CSSProperties } {
+    const pathname = new URL(Sprites.getPokemon(species, { gen, shiny, gender }).url).pathname;
+    
+    const index = shiny ? shinyIndices.indexOf(pathname) : normalIndices.indexOf(pathname);
 
-    if (!invalidImages.has(new URL(result.url).pathname)) return result;
-    return { ...result, url: "/sprites/0.png" };
+    return { css: {
+      display: "inline-block",
+      width: "96px",
+      height: "96px",
+      imageRendering: "pixelated",
+
+      ...(index >= 0 ? {
+        backgroundImage:  `url("/sprites/pokemon${shiny ? "shiny" : ""}-sheet.webp")`,
+        backgroundPositionX: `-${(index % GRID_WIDTH) * 96}px`,
+        backgroundPositionY: `-${Math.floor(index / GRID_WIDTH) * 96}px`,
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "scroll",
+      } : {
+        background: 'url("/sprites/0.png")',
+      }),
+    } };
   }
 
   getPokemonIcon(species: SpeciesName, gender?: GenderName) {
