@@ -26,4 +26,3 @@ dist-ssr
 # Project-specific
 public/sprites/*
 !public/sprites/0.png
-src/invalidImages.json
