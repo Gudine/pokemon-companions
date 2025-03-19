@@ -35,7 +35,7 @@ const exclusions = [
 const forms: Specie[] = [];
 
 for (const pkmn of defaultGen.species) {
-  if (!isFinalStage(pkmn) || getImmediateParent(pkmn) || exclusions.includes(pkmn.name)) continue;
+  if (!isFinalStage(pkmn.name) || getImmediateParent(pkmn) || exclusions.includes(pkmn.name)) continue;
 
   forms.push(pkmn);
 }
