@@ -2,7 +2,6 @@ import { SpeciesName } from "@pkmn/data";
 import { db, type IPokemonUnit } from "./db";
 import { DatabaseError } from "@/errors";
 import { markDBAsStale } from "@/hooks/useDBResource";
-import { tracePokemon } from "@/utils/pkmnUtils";
 import { type PokemonSet, importFromObject } from "@/utils/setUtils";
 import { type MinimalSet, Sets } from "@/utils/setUtils/sets";
 
@@ -23,13 +22,12 @@ export class PokemonUnit {
     return await db.getAllFromIndex("pkmn", "playthrough", playthrough) as IPokemonUnit[];
   }
 
-  static async add(pkmn: PokemonSet, playthrough: number) {
-    const result = tracePokemon(pkmn.data.species.name);
-
-    if (!result) throw new Error(`Species ${pkmn.species} not found`);
-
-    const [species, form] = result;
-
+  static async add(
+    pkmn: PokemonSet,
+    species: SpeciesName,
+    form: SpeciesName,
+    playthrough: number,
+  ) {
     const key = await db.add("pkmn", {
       species,
       form,

@@ -1,6 +1,6 @@
 import type { SpeciesName } from "@pkmn/data";
 import type { MinimalSet } from "@/utils/setUtils/sets";
-import { useEffect, useMemo } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FormProvider, useForm, type DefaultValues, type SubmitHandler, type UseFormReturn, type Validate } from "react-hook-form";
 import { GenProvider } from "@/contexts/GenContext";
@@ -102,8 +102,6 @@ export function AddPokemonForm() {
   const generation = playthroughs.find((p) => p.id === watch("playthrough"))?.gen;
   const data = gens.get(generation ?? 9);
 
-  const speciesList = useMemo(() => [...data.species].filter((species) => tracePokemon(species.name)), [data]);
-
   const speciesName = watch("species");
 
   const saveToStore = () => {
@@ -172,7 +170,7 @@ export function AddPokemonForm() {
   }, [generation]);
   
   const validateData = ((value, formValues?) => {
-    if (!value || !tracePokemon(value as SpeciesName) || data.species.get(value as SpeciesName)?.name !== value) {
+    if (!value || !tracePokemon(value as SpeciesName).length || data.species.get(value as SpeciesName)?.name !== value) {
       return false;
     }
 
@@ -224,9 +222,14 @@ export function AddPokemonForm() {
     
     try {
       const pkmn = importFromObject(minimal, generation ?? 9);
+
+      // Remove later
+      const [species, form] = tracePokemon(pkmn.data.species.name)[0];
       
       await PokemonUnit.add(
         pkmn,
+        species,
+        form,
         values.playthrough,
       );
 
@@ -267,7 +270,7 @@ export function AddPokemonForm() {
             name="species"
             formHook={formHook}
             registerOpts={{ required: true, validate: validateData }}
-            datalist={speciesList.map((species) => species.name)}
+            datalist={[...data.species].map((species) => species.name)}
           />
         </div>
 

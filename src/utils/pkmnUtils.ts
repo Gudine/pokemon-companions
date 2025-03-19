@@ -1,4 +1,4 @@
-import type { Specie, SpeciesName } from "@pkmn/data";
+import type { Generation, Specie, SpeciesName } from "@pkmn/data";
 import { defaultGen } from "@/data";
 import { pokemonList } from "@/pokemonList";
 
@@ -8,34 +8,56 @@ export function getImmediateParent(pkmn: Specie) {
     : pkmn.changesFrom;
 }
 
-export function getGenealogy(pkmn: Specie) {
-  const tree: SpeciesName[] = [];
+export function getGenealogies(pkmn: Specie): SpeciesName[][] | undefined {
+  const parentName = getImmediateParent(pkmn) ?? pkmn.name;
 
-  const immediateParent = getImmediateParent(pkmn);
-  if (!immediateParent) tree.push(pkmn.name);
+  const parentData = defaultGen.species.get(parentName);
+  if (!parentData) return;
 
-  let parent = immediateParent ?? pkmn.baseSpecies;
+  const immediateNext = getImmediateParent(parentData);
+  const nextNames = immediateNext ? [immediateNext] : parentData.evos?.length
+    ? parentData.evos : [parentData.baseSpecies];
+  
+  return nextNames.flatMap((nextName) => {
+    if (nextName === parentData.name) return [[parentName]];
 
-  while (true) {
-    const parentData = defaultGen.species.get(parent);
-
-    if (!parentData) return;
-    if (parentData.name === tree[tree.length - 1]) return tree;
-    tree.push(parentData.name);
-
-    parent = getImmediateParent(parentData) ?? parentData.baseSpecies;
-  }
+    const nextData = defaultGen.species.get(nextName);
+    if (!nextData) return;
+  
+    const nextGenealogy = getGenealogies(nextData);
+    if (!nextGenealogy) return;
+  
+    return nextGenealogy.map((genealogy) => [parentName, ...genealogy]);
+  }).filter((elem) => elem !== undefined);
 }
 
-export function tracePokemon(form: SpeciesName): [species: SpeciesName, form: SpeciesName] | undefined {
+export function isFinalStage(pkmn: Specie, data: Generation = defaultGen) {
+  const evos = pkmn.evos
+    ?.map((evo) => data.species.get(evo))
+    .filter((evo) => evo !== undefined)
+    .filter((evo) => evo.gen <= pkmn.gen);
+  
+  if (!evos?.length) return true;
+
+  if (pkmn.gender) return false;
+
+  return (
+    evos.every((evo) => evo.gender)
+    && new Set(evos.map((evo) => evo.gender)).size === 1
+  );
+}
+
+export function tracePokemon(form: SpeciesName) {
   const data = defaultGen.species.get(form);
-  if (!data) return;
+  if (!data) return [];
 
-  const genealogy = getGenealogy(data);
+  const genealogies = getGenealogies(data);
 
-  for (const [species, forms] of pokemonList) {
-    for (const name of genealogy ?? []) {
-      if (forms.includes(name)) return [species, name];
+  return genealogies?.map<[species: SpeciesName, form: SpeciesName] | undefined>((genealogy) => {
+    for (const [species, forms] of pokemonList) {
+      for (const name of genealogy) {
+        if (forms.includes(name)) return [species, name];
+      }
     }
-  }
+  }).filter((genealogy) => genealogy !== undefined) ?? [];
 }

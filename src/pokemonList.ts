@@ -1,6 +1,6 @@
-import { SpeciesName } from "@pkmn/data";
+import { SpeciesName, type Specie } from "@pkmn/data";
 import { defaultGen } from "./data";
-import { getImmediateParent } from "./utils/pkmnUtils";
+import { getImmediateParent, isFinalStage } from "./utils/pkmnUtils";
 
 const exclusions = [
   // Pokémon that have no move or ability difference
@@ -32,24 +32,22 @@ const exclusions = [
   "Sinistcha-Masterpiece",
 ];
 
-const elligiblePokemon = defaultGen.species;
+const forms: Specie[] = [];
 
-const forms: SpeciesName[] = [];
+for (const pkmn of defaultGen.species) {
+  if (!isFinalStage(pkmn) || getImmediateParent(pkmn) || exclusions.includes(pkmn.name)) continue;
 
-for (const pkmn of elligiblePokemon) {
-  if (getImmediateParent(pkmn) || exclusions.includes(pkmn.name)) continue;
-
-  forms.push(pkmn.name);
+  forms.push(pkmn);
 }
 
 const unsortedPokemonList: Map<SpeciesName, SpeciesName[]> = new Map();
 
-for (const form of [...forms].sort((a, b) => elligiblePokemon.get(a)!.num - elligiblePokemon.get(b)!.num)) {
-  const base = elligiblePokemon.get(form)!.baseSpecies;
+for (const form of forms.sort((a, b) => a.num - b.num)) {
+  const base = form.baseSpecies;
 
   if (!unsortedPokemonList.has(base)) unsortedPokemonList.set(base, []);
 
-  unsortedPokemonList.get(base)!.push(form);
+  unsortedPokemonList.get(base)!.push(form.name);
 }
 
-export const pokemonList = new Map([...unsortedPokemonList].sort((a, b) => elligiblePokemon.get(a[0])!.num - elligiblePokemon.get(b[0])!.num));
+export const pokemonList = new Map([...unsortedPokemonList].sort((a, b) => defaultGen.species.get(a[0])!.num - defaultGen.species.get(b[0])!.num));
