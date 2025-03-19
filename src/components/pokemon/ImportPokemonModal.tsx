@@ -9,6 +9,8 @@ import { useDBResource } from "@/hooks/useDBResource";
 import { importSetWithErrors, type PokemonSet } from "@/utils/setUtils";
 import { Button } from "@/components/common/Button";
 import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
+import { tracePokemon } from "@/utils/pkmnUtils";
+import type { SpeciesName } from "@pkmn/data";
 
 interface Props {
   close: () => void;
@@ -17,6 +19,7 @@ interface Props {
 
 interface Inputs {
   playthrough: number,
+  grouping: string,
   data: string,
 }
 
@@ -27,17 +30,20 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
     {},
   );
 
-  const { register, handleSubmit, setError, watch, formState: { isSubmitting, errors, isValid } } = useForm<Inputs>({
+  const { register, handleSubmit, setValue, setError, clearErrors, watch, formState: { isSubmitting, errors, isValid } } = useForm<Inputs>({
     mode: "onChange",
     criteriaMode: "all",
     defaultValues: {
       playthrough: defaultPlaythrough,
+      grouping: "",
     },
   });
   
   const pkmn = useSignal<PokemonSet>();
   
   const generation = playthroughs.find((p) => p.id === watch("playthrough"))?.gen;
+
+  const groupings = pkmn.value && tracePokemon(pkmn.value.data.species.name, pkmn.value.data.main).map((grouping) => grouping[1]);
 
   const validateData: Validate<string, Inputs> = (value) => {
     if (!value) {
@@ -53,6 +59,8 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
       return true;
     } catch (err) {
       pkmn.value = undefined;
+      setValue("grouping", "");
+      clearErrors("grouping");
 
       if (err instanceof SetValidationError) {
         return err.message;
@@ -62,10 +70,44 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
     }
   };
 
-  const onSubmit: SubmitHandler<Inputs> = async ({ playthrough }) => {
+  const validateGrouping: Validate<string | undefined, Inputs> = (value) => {
+    if (!pkmn.value || !value) return false;
+    const species = pkmn.value.data.main.species.get(value);
+
+    if (!species) return false;
+
+    if (!pkmn.value.isGen(2)) return true;
+
+    if (species.gender === "N" && pkmn.value.gender) {
+      return `Gender cannot be specified for species ${species.name}`;
+    }
+
+    if (species.gender === "M" && pkmn.value.gender !== "M") {
+      return `Gender must be male for species ${species.name}`;
+    }
+
+    if (species.gender === "F" && pkmn.value.gender !== "F") {
+      return `Gender must be female for species ${species.name}`;
+    }
+
+    if (!pkmn.value.gender) {
+      return `Gender must be specified for species ${species.name}`;
+    }
+    
+    return true;
+  };
+
+  const onSubmit: SubmitHandler<Inputs> = async ({ playthrough, grouping }) => {
     try {
+      const [species, form] = tracePokemon(
+        (grouping as SpeciesName | undefined) || groupings![0],
+        pkmn.value!.data.main,
+      )[0];
+      
       await PokemonUnit.add(
         pkmn.value!,
+        species,
+        form,
         playthrough,
       );
       close();
@@ -83,11 +125,11 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
     <form
       onSubmit={ handleSubmit(onSubmit) }
       class="w-full h-full
-      grid grid-cols-2 grid-rows-[max-content_max-content_1fr_max-content] gap-2"
+      grid grid-cols-2 grid-rows-[max-content_max-content_max-content_1fr_max-content] gap-2"
     >
       <p class="text-xl font-bold text-center col-span-2">Add new Pokémon</p>
 
-      <label class="row-span-3 flex flex-col">
+      <label class="row-span-4 flex flex-col">
         Data:
         <textarea
           class="bg-gray-100 border-2 border-stone-500 rounded-lg
@@ -106,7 +148,10 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
         </p>
       </label>
       
-      <fieldset disabled={ isSubmitting || defaultPlaythrough !== undefined }>
+      <fieldset
+        class={(!groupings || groupings.length <= 1) ? "row-span-2" : ""}
+        disabled={ isSubmitting || defaultPlaythrough !== undefined }
+      >
         <label class="flex flex-col">
           Playthrough:
           <select
@@ -126,6 +171,31 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
           </p>
         </label>
       </fieldset>
+      
+
+      {groupings && groupings.length > 1 && (<label class="flex flex-col grow">
+        Grouping*:
+        <select
+          disabled={ isSubmitting }
+          class="bg-gray-100 border-2 border-stone-500 rounded-lg
+            pt-1 pb-1 pl-2 pr-2
+          disabled:bg-gray-300 text-stone-700
+          invalid:text-stone-500 *:text-stone-700"
+          {...register("grouping", {
+            required: "Grouping must be selected",
+            validate: validateGrouping,
+            deps: ["data"],
+          })}
+        >
+          <option disabled class="hidden" value="">
+            -- Select Grouping --
+          </option>
+          {groupings.map((grouping) => <option value={grouping}>{grouping}</option>)}
+        </select>
+        <p class="text-sm text-red-500 empty:before:inline-block">
+          {errors.grouping?.message ?? ""}
+        </p>
+      </label>)}
       
       <div class="flex flex-col">
         <p>Preview:</p>
