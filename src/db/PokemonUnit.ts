@@ -92,4 +92,24 @@ export class PokemonUnit {
 
     return newInstance;
   }
+
+  static async delete(id: number) {
+    const t = db.transaction("pkmn", "readwrite");
+
+    try {
+      const pkmn = await t.store.get(id);
+      await t.store.delete(id);
+
+      markDBAsStale("pkmn", {
+        key: id,
+        species: pkmn!.species,
+        form: pkmn!.form,
+        playthrough: pkmn!.playthrough,
+      });
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "InvalidStateError") {
+        throw new DatabaseError("notFound", { store: "pkmn", key: "id", value: id });
+      }
+    }
+  }
 }
