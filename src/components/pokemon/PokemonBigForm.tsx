@@ -6,6 +6,7 @@ import { ImgUtils } from "@/utils/imgUtils";
 import { MoveSmallForm, type MoveSmallFormInputs } from "@/components/move/MoveSmallForm";
 import { PokemonBigFormStats, type PokemonBigFormStatsInputs } from "./PokemonBigFormStats";
 import { PokemonBigFormData, type PokemonBigFormDataInputs } from "./PokemonBigFormData";
+import { MoveInvalid } from "../move/MoveInvalid";
 
 export interface PokemonBigFormInputs extends PokemonBigFormStatsInputs, PokemonBigFormDataInputs, MoveSmallFormInputs {
   name?: string,
@@ -24,6 +25,13 @@ export function PokemonBigForm({ formHook, speciesName, grouping }: Props) {
   const species = data.species.get(speciesName)!;
   const shiny = watch("shiny");
   const gender = watch("gender");
+  const moves = watch("move");
+  let validMoves = 0;
+
+  if (moves) for (const move of moves) {
+    if (!move || (data.moves.get(move)?.name !== move)) break;
+    validMoves += 1;
+  }
 
   const image = ImgUtils.getPokemon(
     species.name,
@@ -69,10 +77,10 @@ export function PokemonBigForm({ formHook, speciesName, grouping }: Props) {
 
       <div class="grid grid-cols-4 gap-2 items-end
         row-start-2 col-span-full bg-gray-100 rounded-xl p-1">
-          {Array<void>(4).fill().map((_v, i) => (
+          {([0, 1, 2, 3] as const).map((i) => (validMoves < i) ? <MoveInvalid /> : (
             <MoveSmallForm
               key={`move${i}`}
-              index={i as 0 | 1 | 2 | 3}
+              index={i}
               formHook={formHook}
             />
           ))}

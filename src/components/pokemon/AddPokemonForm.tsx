@@ -191,6 +191,13 @@ export function AddPokemonForm() {
   }) satisfies Validate<string, PokemonFormInputs>;
 
   const onSubmit: SubmitHandler<PokemonFormInputs> = async (values) => {
+    const moves: string[] = [];
+    
+    if (values.move) for (const move of values.move) {
+      if (!move) break;
+      moves.push(move);
+    }
+
     const minimal: MinimalSet = {
       name: values.name || undefined,
       species: values.species,
@@ -224,7 +231,7 @@ export function AddPokemonForm() {
         spe: !isNaN(values.ivs?.spe!) && values.ivs?.spe || undefined,
       },
 
-      moves: values.move?.filter((move) => move !== undefined).filter((move) => move),
+      moves,
     };
     
     try {
