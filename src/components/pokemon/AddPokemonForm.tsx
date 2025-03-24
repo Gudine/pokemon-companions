@@ -14,9 +14,9 @@ import { tracePokemon } from "@/utils/pkmnUtils";
 import { useDBResource } from "@/hooks/useDBResource";
 import { Button } from "@/components/common/Button";
 import { Combobox } from "@/components/common/Combobox";
-import { SpeciesPokemonBigForm, type SpeciesPokemonBigFormInputs } from "./SpeciesPokemonBigForm";
+import { PokemonBigForm, type PokemonBigFormInputs } from "./PokemonBigForm";
 
-export interface PokemonFormInputs extends SpeciesPokemonBigFormInputs {
+export interface PokemonFormInputs extends PokemonBigFormInputs {
   playthrough: number,
   grouping?: string,
   species: string,
@@ -328,10 +328,10 @@ export function AddPokemonForm() {
         <div class="flex justify-center items-center col-span-2">
           <GenProvider gen={ generation }>
             <FormProvider {...formHook}>
-              { validateData(speciesName) && (<SpeciesPokemonBigForm
+              { validateData(speciesName) && (<PokemonBigForm
                 speciesName={ speciesName }
                 grouping={ grouping }
-                formHook={ formHook as UseFormReturn<PokemonFormInputs | SpeciesPokemonBigFormInputs> }
+                formHook={ formHook as UseFormReturn<PokemonFormInputs | PokemonBigFormInputs> }
               />) }
             </FormProvider>
           </GenProvider>

@@ -11,7 +11,7 @@ const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
 
 const graphFunction = graphFunctionBuilder(600);
 
-export function SpeciesPokemonBig({ pkmn }: { pkmn: PokemonSet }) {
+export function PokemonBig({ pkmn }: { pkmn: PokemonSet }) {
   const { species } = pkmn.data;
 
   const image = ImgUtils.getPokemon(

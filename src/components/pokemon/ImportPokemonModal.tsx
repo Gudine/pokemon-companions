@@ -8,7 +8,7 @@ import { SetValidationError } from "@/errors";
 import { useDBResource } from "@/hooks/useDBResource";
 import { importSetWithErrors, type PokemonSet } from "@/utils/setUtils";
 import { Button } from "@/components/common/Button";
-import { SpeciesPokemonSmall } from "./SpeciesPokemonSmall";
+import { PokemonSmall } from "./PokemonSmall";
 import { tracePokemon } from "@/utils/pkmnUtils";
 import type { SpeciesName } from "@pkmn/data";
 
@@ -201,7 +201,7 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
         <p>Preview:</p>
         <GenProvider gen={ generation }>
           {pkmn.value && (<div class="self-center w-max">
-            <SpeciesPokemonSmall pkmn={ pkmn.value }/>
+            <PokemonSmall pkmn={ pkmn.value }/>
           </div>)}
         </GenProvider>
       </div>

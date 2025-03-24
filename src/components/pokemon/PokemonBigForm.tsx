@@ -4,20 +4,20 @@ import { useContext } from "preact/hooks";
 import { GenContext } from "@/contexts/GenContext";
 import { ImgUtils } from "@/utils/imgUtils";
 import { MoveSmallForm, type MoveSmallFormInputs } from "@/components/move/MoveSmallForm";
-import { SpeciesPokemonBigFormStats, type SpeciesPokemonBigFormStatsInputs } from "./SpeciesPokemonBigFormStats";
-import { SpeciesPokemonBigFormData, type SpeciesPokemonBigFormDataInputs } from "./SpeciesPokemonBigFormData";
+import { PokemonBigFormStats, type PokemonBigFormStatsInputs } from "./PokemonBigFormStats";
+import { PokemonBigFormData, type PokemonBigFormDataInputs } from "./PokemonBigFormData";
 
-export interface SpeciesPokemonBigFormInputs extends SpeciesPokemonBigFormStatsInputs, SpeciesPokemonBigFormDataInputs, MoveSmallFormInputs {
+export interface PokemonBigFormInputs extends PokemonBigFormStatsInputs, PokemonBigFormDataInputs, MoveSmallFormInputs {
   name?: string,
 }
 
 interface Props {
-  formHook: UseFormReturn<SpeciesPokemonBigFormInputs>,
+  formHook: UseFormReturn<PokemonBigFormInputs>,
   speciesName: string,
   grouping?: string,
 }
 
-export function SpeciesPokemonBigForm({ formHook, speciesName, grouping }: Props) {
+export function PokemonBigForm({ formHook, speciesName, grouping }: Props) {
   const { register, watch } = formHook;
   const { gen, data } = useContext(GenContext);
 
@@ -61,7 +61,7 @@ export function SpeciesPokemonBigForm({ formHook, speciesName, grouping }: Props
         />
       </div>
 
-      <SpeciesPokemonBigFormData
+      <PokemonBigFormData
         formHook={formHook}
         speciesName={ speciesName }
         grouping={ grouping }
@@ -78,7 +78,7 @@ export function SpeciesPokemonBigForm({ formHook, speciesName, grouping }: Props
           ))}
       </div>
 
-      <SpeciesPokemonBigFormStats
+      <PokemonBigFormStats
         speciesName={ speciesName }
         formHook={formHook}
       />

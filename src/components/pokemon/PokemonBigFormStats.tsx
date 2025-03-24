@@ -9,7 +9,7 @@ const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
 
 const graphFunction = graphFunctionBuilder(600);
 
-export interface SpeciesPokemonBigFormStatsInputs {
+export interface PokemonBigFormStatsInputs {
   level?: number,
   nature?: string,
 
@@ -18,11 +18,11 @@ export interface SpeciesPokemonBigFormStatsInputs {
 }
 
 interface Props {
-  formHook: UseFormReturn<SpeciesPokemonBigFormStatsInputs>,
+  formHook: UseFormReturn<PokemonBigFormStatsInputs>,
   speciesName: string,
 }
 
-export function SpeciesPokemonBigFormStats({ formHook, speciesName }: Props) {
+export function PokemonBigFormStats({ formHook, speciesName }: Props) {
   const { register, watch } = formHook;
   const { gen, data } = useContext(GenContext);
 

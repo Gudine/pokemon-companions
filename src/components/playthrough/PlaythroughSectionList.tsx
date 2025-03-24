@@ -4,7 +4,7 @@ import { PokemonUnit } from "@/db/PokemonUnit";
 import { useDBResource } from "@/hooks/useDBResource";
 import { unpackSet } from "@/utils/setUtils";
 import { Placeholder } from "@/components/common/Placeholder";
-import { SpeciesPokemonBig } from "@/components/pokemon/SpeciesPokemonBig";
+import { PokemonBig } from "@/components/pokemon/PokemonBig";
 
 export function PlaythroughSectionList({ playthrough }: { playthrough: IPlaythrough }) {
   const units = useDBResource(
@@ -18,7 +18,7 @@ export function PlaythroughSectionList({ playthrough }: { playthrough: IPlaythro
       { units.length === 0 && <Placeholder /> }
       { units.map((info) => ({ ...info, set: unpackSet(info.data, playthrough.gen) }))
         .filter(({ set }) => set !== undefined)
-        .map(({ id, set }) => (<SpeciesPokemonBig key={ id } pkmn={ set! } />))}
+        .map(({ id, set }) => (<PokemonBig key={ id } pkmn={ set! } />))}
     </GenProvider>
   )
 }

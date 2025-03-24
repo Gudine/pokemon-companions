@@ -6,7 +6,7 @@ import { batched } from "@/utils/miscUtils";
 import { Types } from "@/components/common/Types";
 import { Combobox } from "@/components/common/Combobox";
 
-export interface SpeciesPokemonBigFormDataInputs {
+export interface PokemonBigFormDataInputs {
   level?: number,
 
   happiness?: number,
@@ -22,12 +22,12 @@ export interface SpeciesPokemonBigFormDataInputs {
 }
 
 interface Props {
-  formHook: UseFormReturn<SpeciesPokemonBigFormDataInputs>,
+  formHook: UseFormReturn<PokemonBigFormDataInputs>,
   speciesName: string,
   grouping?: string,
 }
 
-export function SpeciesPokemonBigFormData({ formHook, speciesName, grouping }: Props) {
+export function PokemonBigFormData({ formHook, speciesName, grouping }: Props) {
   const { register } = formHook;
   const { gen, data } = useContext(GenContext);
 

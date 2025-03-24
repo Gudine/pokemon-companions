@@ -6,7 +6,7 @@ import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
 import { MoveInvalid } from "@/components/move/MoveInvalid";
 
-export function SpeciesPokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
+export function PokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
   const { species } = pkmn.data;
 
   const image = ImgUtils.getPokemon(
