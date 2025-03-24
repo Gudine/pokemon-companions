@@ -1,7 +1,7 @@
 import type { IPlaythrough } from "@/db/db";
 import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { useSignal } from "@preact/signals";
-import { Suspense } from "preact/compat";
+import { createPortal, Suspense } from "preact/compat";
 import { Loading } from "@/components/common/Loading";
 import { PlaythroughSectionList } from "./PlaythroughSectionList";
 import { AddPlaythroughModal } from "./AddPlaythroughModal";
@@ -52,10 +52,10 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           </Suspense>
         </div>
       )}
-      { showPlaythroughModal.value && (<AddPlaythroughModal
+      { showPlaythroughModal.value && createPortal(<AddPlaythroughModal
         close={ () => showPlaythroughModal.value = false }
         playthrough={ playthrough }
-      />)}
+      />, document.body)}
     </section>
   )
 }

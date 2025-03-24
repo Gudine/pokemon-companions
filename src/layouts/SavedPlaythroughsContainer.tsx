@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals";
-import { Suspense } from "preact/compat";
+import { createPortal, Suspense } from "preact/compat";
 import { AddPlaythroughModal } from "@/components/playthrough/AddPlaythroughModal";
 import { Loading } from "@/components/common/Loading";
 import { SavedPlaythroughs } from "./SavedPlaythroughs";
@@ -22,7 +22,7 @@ export function SavedPlaythroughsContainer() {
           </button>
         </Suspense>
       </div>
-      { showModal.value && <AddPlaythroughModal close={ () => showModal.value = false } />}
+      { showModal.value && createPortal(<AddPlaythroughModal close={ () => showModal.value = false } />, document.body)}
     </main>
   )
 }
