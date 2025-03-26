@@ -5,6 +5,36 @@
   color: var(--color-stone-900);
 }
 
+@supports (scrollbar-color: auto) {
+  * {
+    scrollbar-color: var(--color-indigo-800) var(--color-stone-200);
+    scrollbar-width: thin;
+  }
+}
+
+@supports selector(::-webkit-scrollbar) {
+  ::-webkit-scrollbar {
+    background-color: var(--color-stone-200);
+  }
+
+  ::-webkit-scrollbar:vertical {
+    width: --spacing(2);
+  }
+
+  ::-webkit-scrollbar:horizontal {
+    height: --spacing(2);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-indigo-800);
+    border-radius: var(--radius-sm);
+  }
+
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+
 :has(.modal) {
   overflow: hidden;
 }
