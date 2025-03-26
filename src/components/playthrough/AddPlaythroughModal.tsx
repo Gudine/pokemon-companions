@@ -79,7 +79,7 @@ export function AddPlaythroughModal({ close, playthrough }: { close: () => void,
             Name:
           <input
             class="bg-gray-100 border-2 border-stone-500 rounded-lg
-              pt-1 pb-1 pl-2 pr-2
+              px-2 py-1
             disabled:bg-gray-300 text-stone-700"
             type="text"
             disabled={ isSubmitting || isDeleting.value }
@@ -95,7 +95,7 @@ export function AddPlaythroughModal({ close, playthrough }: { close: () => void,
           Date:
           <input
             class="bg-gray-100 border-2 border-stone-500 rounded-lg
-              pt-1 pb-1 pl-2 pr-2
+              px-2 py-1
             disabled:bg-gray-300 text-stone-700"
             type="date"
             disabled={ isSubmitting || isDeleting.value }
@@ -112,7 +112,7 @@ export function AddPlaythroughModal({ close, playthrough }: { close: () => void,
           Generation:
           <select
             class="bg-gray-100 border-2 border-stone-500 rounded-lg
-              pt-1 pb-1 pl-2 pr-2
+              px-2 py-1
             disabled:bg-gray-300 text-stone-700"
             disabled={ !!playthrough || isSubmitting || isDeleting.value }
             {...register("gen", { valueAsNumber: true })}

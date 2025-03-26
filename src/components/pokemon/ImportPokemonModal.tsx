@@ -142,7 +142,7 @@ function ImportPokemonModalInner({ close, playthrough: defaultPlaythrough }: Pro
         Data:
         <textarea
           class="bg-gray-100 border-2 border-stone-500 rounded-lg
-            pt-1 pb-1 pl-2 pr-2
+            px-2 py-1
           disabled:bg-gray-300 text-stone-700
             grow"
           spellcheck={ false }
@@ -165,7 +165,7 @@ function ImportPokemonModalInner({ close, playthrough: defaultPlaythrough }: Pro
           Playthrough:
           <select
             class="bg-gray-100 border-2 border-stone-500 rounded-lg
-              pt-1 pb-1 pl-2 pr-2
+              px-2 py-1
             disabled:bg-gray-300 text-stone-700
             invalid:text-stone-500 *:text-stone-700"
             {...register("playthrough", { required: "Playthrough must be selected", valueAsNumber: true })}
@@ -187,7 +187,7 @@ function ImportPokemonModalInner({ close, playthrough: defaultPlaythrough }: Pro
         <select
           disabled={ isSubmitting }
           class="bg-gray-100 border-2 border-stone-500 rounded-lg
-            pt-1 pb-1 pl-2 pr-2
+            px-2 py-1
           disabled:bg-gray-300 text-stone-700
           invalid:text-stone-500 *:text-stone-700"
           {...register("grouping", {

@@ -134,7 +134,7 @@ export function Combobox({
             data-value={ data }
             role="option"
             tabindex={ -1 }
-            class="text-stone-700 pt-1 pb-1 pl-2 pr-2
+            class="text-stone-700 px-2 py-1
               hover:bg-gray-300 focus:bg-gray-300 focus:outline-0 select-none"
           >
             {data}

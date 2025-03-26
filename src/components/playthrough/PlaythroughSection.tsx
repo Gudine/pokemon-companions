@@ -12,7 +12,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
   const collapsed = useSignal(true);
   
   return (
-    <section class="pl-1 pr-1">
+    <section class="px-1">
       <header class={`bg-indigo-700 text-gray-100 rounded-t-xl ${collapsed.value ? "rounded-b-xl" : ""}
         text-lg p-1
         flex flex-row justify-between`}>

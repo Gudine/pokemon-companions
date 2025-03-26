@@ -285,7 +285,7 @@ export function AddPokemonForm() {
               id="pokemon-species"
               class="flex flex-col relative
                 bg-gray-100 border-2 border-stone-500 rounded-lg text-stone-700
-                pt-1 pb-1 pl-2 pr-2"
+                px-2 py-1"
               name="species"
               formHook={formHook}
               registerOpts={{ required: true, validate: validateData }}
@@ -298,7 +298,7 @@ export function AddPokemonForm() {
             <select
               disabled={ isSubmitting }
               class="bg-gray-100 border-2 border-stone-500 rounded-lg
-                pt-1 pb-1 pl-2 pr-2
+                px-2 py-1
               disabled:bg-gray-300 text-stone-700
               invalid:text-stone-500 *:text-stone-700"
               {...register("grouping", { required: "Grouping must be selected" })}
@@ -315,7 +315,7 @@ export function AddPokemonForm() {
             <select
               disabled={ isSubmitting }
               class="bg-gray-100 border-2 border-stone-500 rounded-lg
-                pt-1 pb-1 pl-2 pr-2
+                px-2 py-1
               disabled:bg-gray-300 text-stone-700
               invalid:text-stone-500 *:text-stone-700"
               {...register("playthrough", { required: "Playthrough must be selected", valueAsNumber: true })}

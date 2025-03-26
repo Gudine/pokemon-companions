@@ -96,7 +96,7 @@ export function PokemonBig({ pkmn }: { pkmn: PokemonSet }) {
           class="rounded-xl bg-gray-100"
         />
         <div class="bg-gray-100 rounded-md w-9/10
-          pb-0.5 pt-0.5 pl-1 pr-1
+          px-1 py-0.5
           text-center text-sm">
           <span class="">{ pkmn.name ?? species.name }</span>
         </div>
@@ -121,20 +121,20 @@ export function PokemonBig({ pkmn }: { pkmn: PokemonSet }) {
         bg-gray-100 p-1 rounded-xl gap-0.5">
         <div class="grid grid-rows-[max-content] auto-rows-fr grid-cols-[max-content_max-content_8fr_1fr_1fr] gap-0.5 rounded-lg overflow-hidden">
           <div class="col-span-full grid grid-cols-subgrid *:bg-type-steel-light">
-            <div class="text-center col-span-2 pt-0.5 pb-0.5">
+            <div class="text-center col-span-2 py-0.5">
               {pkmn.isGen(3) && (<>
                 <p class="text-xs">Nature:</p>
                 <p>{pkmn.data.nature?.name || "Unspecified"}</p>
               </>)}
             </div>
-            <p class="flex items-end justify-center pt-0.5 pb-0.5">Stats</p>
-            <p class="flex items-end justify-center pt-0.5 pb-0.5">EVs</p>
-            <p class="flex items-end justify-center pt-0.5 pb-0.5">IVs</p>
+            <p class="flex items-end justify-center py-0.5">Stats</p>
+            <p class="flex items-end justify-center py-0.5">EVs</p>
+            <p class="flex items-end justify-center py-0.5">IVs</p>
           </div>
           { stats.map(({ id, name, iv, ev, width, value }) => (
             <div class="col-span-full grid grid-cols-subgrid">
               <div
-                class="col-span-2 grid grid-cols-subgrid gap-1.5 pt-0.5 pb-0.5"
+                class="col-span-2 grid grid-cols-subgrid gap-1.5 py-0.5"
                 style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
               >
                 <p class="text-right pl-1">{name}:</p>
@@ -162,7 +162,7 @@ export function PokemonBig({ pkmn }: { pkmn: PokemonSet }) {
                 class="text-center"
                 style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
               >
-                <p class="pt-0.5 pb-0.5">
+                <p class="py-0.5">
                   {ev ?? "--"}
                 </p>
               </div>
@@ -170,7 +170,7 @@ export function PokemonBig({ pkmn }: { pkmn: PokemonSet }) {
                 class="text-center"
                 style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
               >
-                <p class="pt-0.5 pb-0.5">
+                <p class="py-0.5">
                   {iv ?? "--"}
                 </p>
               </div>

@@ -61,7 +61,7 @@ export function PokemonBigForm({ formHook, speciesName, grouping }: Props) {
 
         <input
           class="bg-gray-100 rounded-md w-9/10
-            pb-0.5 pt-0.5 pl-1 pr-1
+            px-1 py-0.5
             text-center text-sm"
           type="text"
           placeholder={species.name}

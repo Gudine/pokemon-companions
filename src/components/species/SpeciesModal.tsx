@@ -42,8 +42,8 @@ function SpeciesModalInner({ speciesName }: Props) {
   return (
     <div class="flex flex-row h-full">
       {forms.map((form, i) => <div class="grow flex flex-col gap-0 bg-stone-200 border-dotted not-last:border-r-2">
-        <div class="flex flex-col pl-0.5 pr-0.5 bg-linear-to-b from-transparent from-75% to-stone-400/65">
-          <div class="grow flex flex-col items-center text-center pr-1.5 pl-1.5 pb-2
+        <div class="flex flex-col px-0.5 bg-linear-to-b from-transparent from-75% to-stone-400/65">
+          <div class="grow flex flex-col items-center text-center px-1.5 pb-2
             border-dashed border-b-2">
             <span
               role="img"

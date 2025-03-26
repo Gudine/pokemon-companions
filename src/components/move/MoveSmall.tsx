@@ -13,17 +13,17 @@ export function MoveSmall({ move }: { move: Move }) {
       rounded-2xl border-4 overflow-hidden border-type-unknown-dark`}
       style={{ borderColor: `var(--color-type-${move.type.toLowerCase()}-dark)`}}
     >
-      <p class="col-span-full text-sm bg-gray-100 pb-0.5 pt-0.5 pl-1 pr-1">
+      <p class="col-span-full text-sm bg-gray-100 px-1 py-0.5">
         {move.name.startsWith("Hidden Power") ? "Hidden Power" : move.name}
       </p>
       <p
-        class="text-xs text-gray-100 pb-0.5 pt-0.5 pl-1 pr-1 bg-type-unknown"
+        class="text-xs text-gray-100 px-1 py-0.5 bg-type-unknown"
         style={{ backgroundColor: `var(--color-type-${move.type.toLowerCase()})`}}
       >
         {move.type}
       </p>
       {hasCategory && (<p
-        class="text-xs text-gray-100 pb-0.5 pt-0.5 pl-1 pr-1 bg-type-unknown"
+        class="text-xs text-gray-100 px-1 py-0.5 bg-type-unknown"
         style={{ backgroundColor: `var(--color-attack-${move.category.toLowerCase()})`}}
       >
         {move.category}

@@ -59,7 +59,7 @@ export function PokemonBigFormStats({ formHook, speciesName }: Props) {
       bg-gray-100 p-1 rounded-xl gap-0.5">
       <div class="grid grid-rows-[max-content] auto-rows-fr grid-cols-[max-content_max-content_8fr_1fr_1fr] gap-0.5 rounded-lg overflow-hidden">
         <div class="col-span-full grid grid-cols-subgrid *:bg-type-steel-light">
-          <div class="text-center col-span-2 pt-0.5 pb-0.5 flex flex-col items-center">
+          <div class="text-center col-span-2 py-0.5 flex flex-col items-center">
             {gen >= 3 && (<>
               <label for="pokemon-nature" class="text-xs">Nature:</label>
               <select
@@ -72,14 +72,14 @@ export function PokemonBigFormStats({ formHook, speciesName }: Props) {
               </select>
             </>)}
           </div>
-          <p class="flex items-end justify-center pt-0.5 pb-0.5">Stats</p>
-          <p class="flex items-end justify-center pt-0.5 pb-0.5">EVs</p>
-          <p class="flex items-end justify-center pt-0.5 pb-0.5">IVs</p>
+          <p class="flex items-end justify-center py-0.5">Stats</p>
+          <p class="flex items-end justify-center py-0.5">EVs</p>
+          <p class="flex items-end justify-center py-0.5">IVs</p>
         </div>
         { stats.map(({ id, name, width, value }) => (
           <div key={id} class="col-span-full grid grid-cols-subgrid">
             <div
-              class="col-span-2 grid grid-cols-subgrid gap-1.5 pt-0.5 pb-0.5"
+              class="col-span-2 grid grid-cols-subgrid gap-1.5 py-0.5"
               style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
             >
               <p class="text-right pl-1">{name}:</p>
@@ -108,7 +108,7 @@ export function PokemonBigFormStats({ formHook, speciesName }: Props) {
               style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
             >
               <input
-                class="[text-align:inherit] bg-gray-100 rounded-md pl-2 ml-1 mr-1"
+                class="[text-align:inherit] bg-gray-100 rounded-md pl-2 mx-1"
                 type="number"
                 min={0}
                 max={255}
@@ -125,7 +125,7 @@ export function PokemonBigFormStats({ formHook, speciesName }: Props) {
               style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
             >
               <input
-                class="[text-align:inherit] bg-gray-100 rounded-md pl-2 ml-1 mr-1"
+                class="[text-align:inherit] bg-gray-100 rounded-md pl-2 mx-1"
                 type="number"
                 min={0}
                 max={31}

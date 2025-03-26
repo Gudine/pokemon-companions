@@ -40,7 +40,7 @@ export function MoveSmallForm({ formHook, index }: Props) {
     >
       <div class="col-span-full">
         <Combobox
-          class="rounded-t-xl [text-align:inherit] text-sm bg-gray-100 pb-0.5 pt-0.5 pl-1 pr-1"
+          class="rounded-t-xl [text-align:inherit] text-sm bg-gray-100 px-1 py-0.5"
           placeholder={ "--" }
           name={`move.${index}`}
           formHook={formHook}
@@ -49,14 +49,14 @@ export function MoveSmallForm({ formHook, index }: Props) {
         />
       </div>
       <p
-        class={`text-xs text-gray-100 pb-0.5 pt-0.5 pl-1 pr-1
+        class={`text-xs text-gray-100 px-1 py-0.5
           bg-type-unknown rounded-bl-xl ${!hasCategory ? "rounded-br-xl" : ""}`}
         style={move ? { backgroundColor: `var(--color-type-${move.type.toLowerCase()})`} : {}}
       >
         {move?.type || "--"}
       </p>
       {hasCategory && (<p
-        class="text-xs text-gray-100 pb-0.5 pt-0.5 pl-1 pr-1 bg-type-unknown rounded-br-xl"
+        class="text-xs text-gray-100 px-1 py-0.5 bg-type-unknown rounded-br-xl"
         style={move ? { backgroundColor: `var(--color-attack-${move.category.toLowerCase()})`} : {}}
       >
         {move?.category || "--"}
