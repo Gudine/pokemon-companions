@@ -12,10 +12,10 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
   const collapsed = useSignal(true);
   
   return (
-    <section>
-      <header class="bg-indigo-700 text-gray-100
+    <section class="pl-1 pr-1">
+      <header class={`bg-indigo-700 text-gray-100 rounded-t-xl ${collapsed.value ? "rounded-b-xl" : ""}
         text-lg p-1
-        flex flex-row justify-between">
+        flex flex-row justify-between`}>
         <div class="flex flex-row items-center gap-2 pl-2">
           <button
             onClick={ () => collapsed.value = !collapsed.value }
@@ -46,7 +46,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
       { !collapsed.value && (
         <div class="flex flex-row flex-wrap justify-evenly
         bg-indigo-200 border-indigo-700 border-t-0 border-2 border-dashed
-          gap-2 p-2 pb-6 mb-2">
+          gap-2 p-2 pb-6 mb-2 rounded-b-xl">
           <Suspense fallback={ <Loading /> }>
             <PlaythroughSectionList playthrough={ playthrough } />
           </Suspense>
