@@ -5,6 +5,10 @@
   color: var(--color-stone-900);
 }
 
+:has(.modal) {
+  overflow: hidden;
+}
+
 .half-completed {
   background: repeating-linear-gradient(
     45deg,
