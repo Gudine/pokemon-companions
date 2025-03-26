@@ -124,7 +124,7 @@ export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: P
   return (
     <form
       onSubmit={ handleSubmit(onSubmit) }
-      class="w-full h-full
+      class="p-4 w-full h-full
       grid grid-cols-2 grid-rows-[max-content_max-content_max-content_1fr_max-content] gap-2"
     >
       <p class="text-xl font-bold text-center col-span-2">Add new Pokémon</p>
