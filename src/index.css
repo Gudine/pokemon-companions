@@ -10,6 +10,10 @@
     scrollbar-color: var(--color-indigo-800) var(--color-stone-200);
     scrollbar-width: thin;
   }
+
+  body {
+    scrollbar-gutter: stable;
+  }
 }
 
 @supports selector(::-webkit-scrollbar) {
