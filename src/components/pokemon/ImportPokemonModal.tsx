@@ -1,3 +1,4 @@
+import type { SpeciesName } from "@pkmn/data";
 import { useSignal } from "@preact/signals";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useForm, type SubmitHandler, type Validate } from "react-hook-form";
@@ -7,10 +8,10 @@ import { PokemonUnit } from "@/db/PokemonUnit";
 import { SetValidationError } from "@/errors";
 import { useDBResource } from "@/hooks/useDBResource";
 import { importSetWithErrors, type PokemonSet } from "@/utils/setUtils";
-import { Button } from "@/components/common/Button";
-import { PokemonSmall } from "./PokemonSmall";
 import { tracePokemon } from "@/utils/pkmnUtils";
-import type { SpeciesName } from "@pkmn/data";
+import { Button } from "@/components/common/Button";
+import { Modal } from "@/components/common/Modal";
+import { PokemonSmall } from "./PokemonSmall";
 
 interface Props {
   close: () => void;
@@ -23,7 +24,15 @@ interface Inputs {
   data: string,
 }
 
-export function ImportPokemonModal({ close, playthrough: defaultPlaythrough }: Props) {
+export function ImportPokemonModal({ close, playthrough }: Props) {
+  return (
+    <Modal close={ close } class="w-9/10 h-9/10">
+      <ImportPokemonModalInner close={ close } playthrough={ playthrough } />
+    </Modal>
+  )
+}
+
+function ImportPokemonModalInner({ close, playthrough: defaultPlaythrough }: Props) {
   const playthroughs = useDBResource(
     Playthrough.getAll,
     "playthrough",

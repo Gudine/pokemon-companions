@@ -1,3 +1,6 @@
+import { Suspense } from "preact/compat";
+import { Loading } from "./Loading";
+
 interface Props {
   class: string,
   close: () => void,
@@ -13,7 +16,9 @@ export function Modal({ class: className, close, children }: Props) {
       <div class={`rounded-4xl ${className} bg-stone-200 border-4 border-stone-500 overflow-hidden`}>
         <div class="overflow-auto w-full h-full grid grid-cols-1 grid-rows-1">
           <div class="flex flex-col">
-            {children}
+            <Suspense fallback={ <Loading /> }>
+              {children}
+            </Suspense>
           </div>
         </div>
       </div>
