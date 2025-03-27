@@ -16,9 +16,9 @@ export function PlaythroughSectionList({ playthrough }: { playthrough: IPlaythro
   return (
     <GenProvider gen={ playthrough.gen }>
       { units.length === 0 && <Placeholder /> }
-      { units.map((info) => ({ ...info, set: unpackSet(info.data, playthrough.gen) }))
-        .filter(({ set }) => set !== undefined)
-        .map(({ id, set }) => (<PokemonBig key={ id } pkmn={ set! } />))}
+      { units.map((data) => [data, unpackSet(data.data, playthrough.gen)] as const)
+        .filter(([_, set]) => set !== undefined)
+        .map(([data, set]) => (<PokemonBig key={ data.id } unit={ data } pkmn={ set! } />))}
     </GenProvider>
   )
 }

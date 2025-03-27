@@ -57,11 +57,11 @@ function SpeciesModalInner({ speciesName }: Props) {
           <div class="p-2 gap-2 flex flex-row flex-wrap justify-around overflow-y-auto overflow-x-hidden">
             { units.filter((unit) => unit.form === form).length === 0 && <Placeholder /> }
             { units.filter((unit) => unit.form === form)
-              .map((info) => ({ ...info, set: unpackSet(info.data, playthroughGens.get(info.playthrough) ?? 9) }))
-              .filter(({ set }) => set !== undefined)
-              .map(({ id, set, playthrough }) => (
-                <GenProvider gen={ playthroughGens.get(playthrough) ?? 9 }>
-                  <PokemonSmall key={ id } pkmn={ set! } />
+              .map((data) => [data, unpackSet(data.data, playthroughGens.get(data.playthrough) ?? 9)] as const)
+              .filter(([_, set]) => set !== undefined)
+              .map(([data, set]) => (
+                <GenProvider gen={ playthroughGens.get(data.playthrough) ?? 9 }>
+                  <PokemonSmall key={ data.id } unit={ data } pkmn={ set! } />
                 </GenProvider>))}
           </div>
         </div>

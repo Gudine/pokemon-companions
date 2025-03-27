@@ -1,4 +1,5 @@
-import type { ComponentChildren } from "preact";
+import type { ComponentChildren, RefCallback } from "preact";
+import type { IPokemonUnit } from "@/db/db";
 import type { PokemonSet } from "@/utils/setUtils";
 import { Dex } from "@pkmn/dex";
 import { ImgUtils } from "@/utils/imgUtils";
@@ -11,7 +12,14 @@ const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
 
 const graphFunction = graphFunctionBuilder(600);
 
-export function PokemonBig({ pkmn }: { pkmn: PokemonSet }) {
+export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonSet }) {
+  const checkScroll: RefCallback<HTMLElement> = (elem) => {
+    if (unit && elem && window.location.hash === `#${unit.playthrough}.${unit.id}`) {
+      elem.scrollIntoView({ block: "center", behavior: "smooth" });
+      window.location.hash = "";
+    }
+  };
+
   const { species } = pkmn.data;
 
   const image = ImgUtils.getPokemon(
@@ -79,6 +87,7 @@ export function PokemonBig({ pkmn }: { pkmn: PokemonSet }) {
 
   return (
     <article
+      ref={ checkScroll }
       class="grid grid-cols-4 grid-rows-[repeat(3,max-content)] content-between gap-1
         rounded-xl p-1 w-170
         border-4 border-type-unknown-dark bg-type-unknown-light"

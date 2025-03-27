@@ -1,12 +1,14 @@
 import type { ComponentChildren } from "preact";
+import type { IPokemonUnit } from "@/db/db";
 import type { PokemonSet } from "@/utils/setUtils";
-import { FaMars, FaVenus } from "react-icons/fa6";
+import { FaMars, FaVenus, FaCircleInfo } from "react-icons/fa6";
+import { selectedPage } from "@/globalState";
 import { ImgUtils } from "@/utils/imgUtils";
 import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
 import { MoveInvalid } from "@/components/move/MoveInvalid";
 
-export function PokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
+export function PokemonSmall({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonSet }) {
   const { species } = pkmn.data;
 
   const image = ImgUtils.getPokemon(
@@ -24,6 +26,12 @@ export function PokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
     {pkmn.data.item?.name || "No item"}
   </div>)]);
 
+  const viewDetails = () => {
+    if (!unit) return;
+    window.location.hash = `#${unit.playthrough}.${unit.id}`;
+    selectedPage.value = "savedPlaythroughs";
+  };
+
   return (
     <article
       class="grid grid-cols-2 grid-rows-[repeat(2,max-content)] content-between gap-1
@@ -34,28 +42,36 @@ export function PokemonSmall({ pkmn }: { pkmn: PokemonSet }) {
         borderColor: `var(--color-type-${(species.types[1] ?? species.types[0]).toLowerCase()}-dark)`,
       }}
     >
-      <div class="flex flex-col items-center gap-1">
-        <span
-          role="img"
-          aria-label={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
-          title={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
-          style={ image.css }
-          class="rounded-xl bg-gray-100"
-        />
-        <div class="bg-gray-100 rounded-xl w-full
-          px-1 py-0.5
-          text-center text-sm">
-          <span class="font-bold">{ pkmn.name || species.name }</span>
-          {pkmn.isGen(2) && (<>
-            { pkmn.gender === "M" && (
-              <span class="text-blue-600 text-xs">&nbsp;<FaMars title="Male" /></span>
-            )}
-            { pkmn.gender === "F" && (
-              <span class="text-pink-400 text-xs">&nbsp;<FaVenus title="Female" /></span>
-            )}
-          </>)}
-          <span class="font-bold text-xs"> Lv.</span>
-          <span class="font-bold">{pkmn.level}</span>
+      <div class="grid grid-cols-1 grid-rows-1 *:col-start-1 *:row-start-1">
+        <div class="flex flex-col items-center gap-1">
+          <span
+            role="img"
+            aria-label={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
+            title={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
+            style={ image.css }
+            class="rounded-xl bg-gray-100"
+          />
+          <div class="bg-gray-100 rounded-xl w-full px-1 py-0.5 text-center text-sm">
+            <span class="font-bold">{ pkmn.name || species.name }</span>
+            {pkmn.isGen(2) && (<>
+              { pkmn.gender === "M" && (
+                <span class="text-blue-600 text-xs">&nbsp;<FaMars title="Male" /></span>
+              )}
+              { pkmn.gender === "F" && (
+                <span class="text-pink-400 text-xs">&nbsp;<FaVenus title="Female" /></span>
+              )}
+            </>)}
+            <span class="font-bold text-xs"> Lv.</span>
+            <span class="font-bold">{pkmn.level}</span>
+          </div>
+        </div>
+        <div class="flex flex-col gap-0.5 justify-self-start">
+          { unit && <button
+            class="flex cursor-pointer hover:text-stone-700"
+            onClick={ viewDetails }
+          >
+            <FaCircleInfo title="More information" />
+          </button> }
         </div>
       </div>
       <dl class="text-sm text-center flex flex-col justify-center gap-1">

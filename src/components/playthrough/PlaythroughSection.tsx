@@ -1,15 +1,20 @@
 import type { IPlaythrough } from "@/db/db";
+import { createPortal, Suspense } from "preact/compat";
+import { useEffect } from "preact/hooks";
 import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { useSignal } from "@preact/signals";
-import { createPortal, Suspense } from "preact/compat";
+import { selectedPage, storedFormData } from "@/globalState";
 import { Loading } from "@/components/common/Loading";
 import { PlaythroughSectionList } from "./PlaythroughSectionList";
 import { AddPlaythroughModal } from "./AddPlaythroughModal";
-import { selectedPage, storedFormData } from "@/globalState";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
   const showPlaythroughModal = useSignal(false);
   const collapsed = useSignal(true);
+
+  useEffect(() => {
+    if (window.location.hash.slice(1).split(".")[0] === String(playthrough.id)) collapsed.value = false;
+  }, []);
   
   return (
     <section class="px-1">
