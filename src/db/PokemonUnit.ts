@@ -58,7 +58,7 @@ export class PokemonUnit {
     });
   }
   
-  static async updateSet(id: number, payload: Omit<MinimalSet, "species">) {
+  static async updateSet(id: number, payload: MinimalSet) {
     const t = db.transaction(["pkmn", "playthrough"], "readwrite");
 
     const old = await t.objectStore("pkmn").get(id);
