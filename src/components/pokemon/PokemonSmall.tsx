@@ -65,9 +65,12 @@ export function PokemonSmall({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: Pokemo
             <span class="font-bold">{pkmn.level}</span>
           </div>
         </div>
-        <div class="flex flex-col gap-0.5 justify-self-start">
+        <div
+          class="flex flex-col gap-0.5 justify-self-start text-type-unknown-dark"
+          style={ { color: `var(--color-type-${species.types[0].toLowerCase()}-dark)` } }
+        >
           { unit && <button
-            class="flex cursor-pointer hover:text-stone-700"
+            class="flex cursor-pointer hover:brightness-125"
             onClick={ viewDetails }
           >
             <FaCircleInfo title="More information" />
