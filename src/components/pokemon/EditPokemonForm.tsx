@@ -182,14 +182,14 @@ export function EditPokemonForm({
   return (
     <form
       onSubmit={ handleSubmit(onSubmit) }
-      class="flex flex-col gap-2"
+      class="min-w-0 flex flex-col gap-2"
     >
       {errorMessage && <p class="text-sm text-center text-red-500">
         {errorMessage}
       </p>}
 
       <fieldset
-        class="flex justify-center items-center"
+        class="min-w-0 flex justify-center items-center"
         disabled={ isDeleting.value || isSubmitting }
       >
         <GenProvider gen={ generation }>

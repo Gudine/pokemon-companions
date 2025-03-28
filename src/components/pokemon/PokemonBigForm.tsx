@@ -55,8 +55,9 @@ export function PokemonBigForm({
 
   return (
     <div
-      class="grid grid-cols-4 grid-rows-[repeat(3,max-content)] content-between gap-1
-        rounded-xl p-1 w-170
+      class="grid grid-cols-2 grid-rows-[repeat(4,max-content)] content-between gap-1
+        rounded-xl p-1 w-80
+        md:grid-cols-4 md:grid-rows-[repeat(3,max-content)] md:w-170
         border-4 border-type-unknown-dark bg-type-unknown-light
         **:placeholder:text-stone-400"
       style={{
@@ -64,7 +65,7 @@ export function PokemonBigForm({
         borderColor: `var(--color-type-${(species.types[1] ?? species.types[0]).toLowerCase()}-dark)`,
       }}
     >
-      <div class="grid grid-cols-1 grid-rows-1 *:col-start-1 *:row-start-1">
+      <div class="col-span-full md:col-span-1 grid grid-cols-1 grid-rows-1 *:col-start-1 *:row-start-1">
         <div class="flex flex-col items-center justify-evenly gap-0.5">
           <span
             role="img"
@@ -95,8 +96,8 @@ export function PokemonBigForm({
         grouping={ unit ? unit.species : grouping }
       />
 
-      <div class="grid grid-cols-4 gap-2 items-end
-        row-start-2 col-span-full bg-gray-100 rounded-xl p-1">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 items-end
+        col-span-full bg-gray-100 rounded-xl p-1">
           {([0, 1, 2, 3] as const).map((i) => (validMoves < i) ? <MoveInvalid /> : (
             <MoveSmallForm
               key={`move${i}`}

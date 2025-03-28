@@ -6,6 +6,7 @@ import { GenContext } from "@/contexts/GenContext";
 import { batched } from "@/utils/miscUtils";
 import { Types } from "@/components/common/Types";
 import { Combobox } from "@/components/common/Combobox";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export interface PokemonBigFormDataInputs {
   level?: number,
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export function PokemonBigFormData({ formHook, species, grouping }: Props) {
+  const isMediumScreen = useMediaQuery("(width >= 48rem)");
   const { register } = formHook;
   const { gen, data } = useContext(GenContext);
 
@@ -45,7 +47,7 @@ export function PokemonBigFormData({ formHook, species, grouping }: Props) {
     <label for="pokemon-level" class="text-xs">Level*:</label>
     <input
       id="pokemon-level"
-      class="[text-align:inherit] bg-gray-100 rounded-md pl-4"
+      class="[text-align:inherit] bg-gray-100 rounded-md"
       type="number"
       placeholder="Unspecified"
       min={1}
@@ -118,7 +120,7 @@ export function PokemonBigFormData({ formHook, species, grouping }: Props) {
       <label for="pokemon-happiness" class="text-xs">Happiness:</label>
       <input
         id="pokemon-happiness"
-        class="[text-align:inherit] bg-gray-100 rounded-md pl-4"
+        class="[text-align:inherit] bg-gray-100 rounded-md"
         type="number"
         placeholder="Unspecified"
         min={0}
@@ -166,7 +168,7 @@ export function PokemonBigFormData({ formHook, species, grouping }: Props) {
       <label for="pokemon-dynamax-level" class="text-xs">Dynamax level:</label>
       <input
         id="pokemon-dynamax-level"
-        class="[text-align:inherit] bg-gray-100 rounded-md pl-4"
+        class="[text-align:inherit] bg-gray-100 rounded-md"
         type="number"
         placeholder="Unspecified"
         min={0}
@@ -204,11 +206,12 @@ export function PokemonBigFormData({ formHook, species, grouping }: Props) {
   </div>);
 
   return (
-    <div class="text-sm text-center col-span-3
-      grid grid-flow-col justify-evenly auto-cols-[minmax(0,33%)] gap-1">
-      {batched(dataItems, 3).map((items) => (<div class="flex flex-col justify-evenly gap-1">
-        {items}
-      </div>))}
+    <div class="text-sm text-center col-span-full md:col-span-3
+      grid grid-flow-col justify-evenly auto-cols-[minmax(0,50%)] md:auto-cols-[minmax(0,33%)] gap-1">
+      {batched(dataItems, isMediumScreen.value ? 3 : 5)
+        .map((items) => (<div class="flex flex-col justify-evenly gap-1">
+          {items}
+        </div>))}
     </div>
   );
 }

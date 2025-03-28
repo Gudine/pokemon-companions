@@ -46,23 +46,23 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
 
       return {
         id: stat,
-        name: gen === 1 && stat === "spa" ? "Special" : Dex.stats.mediumNames[stat],
+        name: gen === 1 && stat === "spa" ? "Spc" : Dex.stats.shortNames[stat],
         width: graphFunction(value),
         value,
       };
     });
 
   return (
-    <div class="row-start-3 col-span-full
-      bg-gray-100 p-1 rounded-xl gap-0.5">
+    <div class="col-span-full bg-gray-100 p-1 rounded-xl gap-0.5">
       <div class="grid grid-rows-[max-content] auto-rows-fr grid-cols-[max-content_max-content_8fr_1fr_1fr] gap-0.5 rounded-lg overflow-hidden">
         <div class="col-span-full grid grid-cols-subgrid *:bg-type-steel-light">
-          <div class="text-center col-span-2 py-0.5 flex flex-col items-center">
+          <p class="col-span-2 flex items-end justify-center py-0.5">Stats</p>
+          <div class="text-center py-0.5 flex flex-col items-center">
             {gen >= 3 && (<>
               <label for="pokemon-nature" class="text-xs">Nature:</label>
               <select
                 id="pokemon-nature"
-                class="[text-align:inherit] bg-gray-100 rounded-md max-w-9/10 text-sm w-32 has-[[value='']:checked]:text-stone-400"
+                class="[text-align:inherit] bg-gray-100 rounded-md max-w-9/10 text-sm w-28 md:w-32 has-[[value='']:checked]:text-stone-400"
                 {...register("nature")}
               >
                 <option class="text-stone-400" value="">Unspecified</option>
@@ -70,14 +70,13 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
               </select>
             </>)}
           </div>
-          <p class="flex items-end justify-center py-0.5">Stats</p>
           <p class="flex items-end justify-center py-0.5">EVs</p>
           <p class="flex items-end justify-center py-0.5">IVs</p>
         </div>
         { stats.map(({ id, name, width, value }) => (
           <div key={id} class="col-span-full grid grid-cols-subgrid">
             <div
-              class="col-span-2 grid grid-cols-subgrid gap-1.5 py-0.5"
+              class="col-span-2 grid grid-cols-subgrid gap-1.5 py-0.5 max-md:text-sm"
               style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
             >
               <p class="text-right pl-1">{name}:</p>
@@ -102,11 +101,11 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
               />
             </div>
             <div
-              class="text-center flex justify-center items-center"
+              class="text-center flex justify-center items-center max-md:text-sm"
               style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
             >
               <input
-                class="[text-align:inherit] bg-gray-100 rounded-md pl-2 mx-1"
+                class="[text-align:inherit] bg-gray-100 rounded-md mx-1"
                 type="number"
                 min={0}
                 max={255}
@@ -119,11 +118,11 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
               />
             </div>
             <div
-              class="text-center flex justify-center items-center"
+              class="text-center flex justify-center items-center max-md:text-sm"
               style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
             >
               <input
-                class="[text-align:inherit] bg-gray-100 rounded-md pl-2 mx-1"
+                class="[text-align:inherit] bg-gray-100 rounded-md mx-1"
                 type="number"
                 min={0}
                 max={31}
