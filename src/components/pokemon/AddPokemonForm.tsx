@@ -275,10 +275,10 @@ export function AddPokemonForm() {
     >
       <p class="text-xl font-bold text-center col-span-2">Add new Pokémon</p>
       <fieldset
-        class="flex flex-col gap-2"
+        class="min-w-0 flex flex-col gap-2"
         disabled={ isSubmitting }
       >
-        <div class="flex flex-row justify-between gap-2">
+        <div class="flex flex-col md:flex-row justify-between gap-2">
           <div class="flex flex-col grow">
             <label for="pokemon-species">Species*:</label>
             <Combobox
