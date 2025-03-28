@@ -51,7 +51,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
       { !collapsed.value && (
         <div class="flex flex-row flex-wrap justify-evenly
         bg-indigo-200 border-indigo-700 border-t-0 border-2 border-dashed
-          gap-2 p-2 pb-6 mb-2 rounded-b-xl">
+          gap-2 p-1 sm:p-2 pb-6 mb-2 rounded-b-xl">
           <Suspense fallback={ <Loading /> }>
             <PlaythroughSectionList playthrough={ playthrough } />
           </Suspense>
