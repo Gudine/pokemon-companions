@@ -34,7 +34,7 @@ export function EditPokemonForm({
       name: initialPkmn.name,
       happiness: initialPkmn.isGen(2) ? initialPkmn.happiness : undefined,
       ability: (initialPkmn.isGen(3) && initialPkmn.data.ability.name) || undefined,
-      gender: (initialPkmn.isGen(2) && initialPkmn.gender) || "",
+      gender: (initialPkmn.isGen(2) && initialPkmn.gender) || "N",
       item: (initialPkmn.isGen(2) && initialPkmn.data.item?.name) || undefined,
       shiny: (initialPkmn.isGen(2) && initialPkmn.shiny) || false,
 
