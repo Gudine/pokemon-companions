@@ -10,12 +10,14 @@ import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
 import { MoveInvalid } from "@/components/move/MoveInvalid";
 import { EditPokemonForm } from "./EditPokemonForm";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
 
 const graphFunction = graphFunctionBuilder(600);
 
 export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonSet }) {
+  const isMediumScreen = useMediaQuery("(width >= 48rem)");
   const isEditing = useSignal(false);
 
   if (unit && isEditing.value) return (<EditPokemonForm
@@ -88,7 +90,7 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
 
       return {
         id: stat,
-        name: pkmn.gen === 1 && stat === "spa" ? "Special" : Dex.stats.mediumNames[stat],
+        name: pkmn.gen === 1 && stat === "spa" ? "Spc" : Dex.stats.shortNames[stat],
         iv: pkmn.ivs[stat],
         ev: pkmn.evs[stat],
         width: graphFunction(value),
@@ -99,15 +101,16 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
   return (
     <article
       ref={ checkScroll }
-      class="grid grid-cols-4 grid-rows-[repeat(3,max-content)] content-between gap-1
-        rounded-xl p-1 w-170
+      class="grid grid-cols-2 grid-rows-[repeat(4,max-content)] content-between gap-1
+        rounded-xl p-1 w-80
+        md:grid-cols-4 md:grid-rows-[repeat(3,max-content)] md:w-170
         border-4 border-type-unknown-dark bg-type-unknown-light"
       style={{
         backgroundColor: `var(--color-type-${species.types[0].toLowerCase()}-light)`,
         borderColor: `var(--color-type-${(species.types[1] ?? species.types[0]).toLowerCase()}-dark)`,
       }}
     >
-      <div class="grid grid-cols-1 grid-rows-1 *:col-start-1 *:row-start-1">
+      <div class="col-span-full md:col-span-1 grid grid-cols-1 grid-rows-1 *:col-start-1 *:row-start-1">
         <div class="flex flex-col items-center justify-evenly gap-0.5">
           <span
             role="img"
@@ -132,40 +135,40 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
           </button>) }
         </div>
       </div>
-      <dl class="text-sm text-center col-span-3
-        grid grid-flow-col justify-evenly auto-cols-[minmax(0,33%)] gap-1">
-        {batched(dataItems, 3).map((items) => (<div class="flex flex-col justify-evenly gap-1">
-          {items.map(([dtValue, ddValue]) => (<div class={`flex flex-col gap-0.5`}>
-            <dt class="text-xs">{dtValue}:</dt>
-            <dd>{ddValue}</dd>
+      <dl class="text-sm text-center col-span-full md:col-span-3
+        grid grid-flow-col justify-evenly auto-cols-[minmax(0,50%)] md:auto-cols-[minmax(0,33%)] gap-1">
+        {batched(dataItems, isMediumScreen.value ? 3 : 5)
+          .map((items) => (<div class="flex flex-col justify-evenly gap-1">
+            {items.map(([dtValue, ddValue]) => (<div class={`flex flex-col gap-0.5`}>
+              <dt class="text-xs">{dtValue}:</dt>
+              <dd>{ddValue}</dd>
+            </div>))}
           </div>))}
-        </div>))}
       </dl>
 
-      <div class="grid grid-cols-4 gap-2 items-end
-        row-start-2 col-span-full bg-gray-100 rounded-xl p-1">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 items-end
+        col-span-full bg-gray-100 rounded-xl p-1">
           {pkmn.data.moves.map((move) => (<MoveSmall move={move} />))}
           {Array<void>(4 - pkmn.moves.length).fill().map(() => (<MoveInvalid />))}
       </div>
 
-      <div class="row-start-3 col-span-full
-        bg-gray-100 p-1 rounded-xl gap-0.5">
+      <div class="col-span-full bg-gray-100 p-1 rounded-xl gap-0.5">
         <div class="grid grid-rows-[max-content] auto-rows-fr grid-cols-[max-content_max-content_8fr_1fr_1fr] gap-0.5 rounded-lg overflow-hidden">
           <div class="col-span-full grid grid-cols-subgrid *:bg-type-steel-light">
-            <div class="text-center col-span-2 py-0.5">
+            <p class="col-span-2  flex items-end justify-center py-0.5">Stats</p>
+            <div class="text-center py-0.5">
               {pkmn.isGen(3) && (<>
                 <p class="text-xs">Nature:</p>
                 <p>{pkmn.data.nature?.name || "Unspecified"}</p>
               </>)}
             </div>
-            <p class="flex items-end justify-center py-0.5">Stats</p>
             <p class="flex items-end justify-center py-0.5">EVs</p>
             <p class="flex items-end justify-center py-0.5">IVs</p>
           </div>
           { stats.map(({ id, name, iv, ev, width, value }) => (
             <div class="col-span-full grid grid-cols-subgrid">
               <div
-                class="col-span-2 grid grid-cols-subgrid gap-1.5 py-0.5"
+                class="col-span-2 grid grid-cols-subgrid gap-1.5 py-0.5 max-md:text-sm"
                 style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
               >
                 <p class="text-right pl-1">{name}:</p>
@@ -190,7 +193,7 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
                 />
               </div>
               <div
-                class="text-center"
+                class="text-center max-md:text-sm"
                 style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
               >
                 <p class="py-0.5">
@@ -198,7 +201,7 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
                 </p>
               </div>
               <div
-                class="text-center"
+                class="text-center max-md:text-sm"
                 style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
               >
                 <p class="py-0.5">
