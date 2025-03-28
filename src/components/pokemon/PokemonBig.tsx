@@ -1,18 +1,29 @@
 import type { ComponentChildren, RefCallback } from "preact";
 import type { IPokemonUnit } from "@/db/db";
 import type { PokemonSet } from "@/utils/setUtils";
+import { useSignal } from "@preact/signals";
+import { FaPencil } from "react-icons/fa6";
 import { Dex } from "@pkmn/dex";
 import { ImgUtils } from "@/utils/imgUtils";
+import { batched, graphFunctionBuilder } from "@/utils/miscUtils";
 import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
 import { MoveInvalid } from "@/components/move/MoveInvalid";
-import { batched, graphFunctionBuilder } from "@/utils/miscUtils";
+import { EditPokemonForm } from "./EditPokemonForm";
 
 const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
 
 const graphFunction = graphFunctionBuilder(600);
 
 export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonSet }) {
+  const isEditing = useSignal(false);
+
+  if (unit && isEditing.value) return (<EditPokemonForm
+    unit={ unit }
+    pkmn={ pkmn }
+    close={ () => { isEditing.value = false; } }
+  />);
+
   const checkScroll: RefCallback<HTMLElement> = (elem) => {
     if (unit && elem && window.location.hash === `#${unit.playthrough}.${unit.id}`) {
       elem.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -96,18 +107,29 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
         borderColor: `var(--color-type-${(species.types[1] ?? species.types[0]).toLowerCase()}-dark)`,
       }}
     >
-      <div class="flex flex-col items-center justify-evenly gap-0.5">
-        <span
-          role="img"
-          aria-label={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
-          title={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
-          style={ image.css }
-          class="rounded-xl bg-gray-100"
-        />
-        <div class="bg-gray-100 rounded-md w-9/10
-          px-1 py-0.5
-          text-center text-sm">
-          <span class="">{ pkmn.name ?? species.name }</span>
+      <div class="grid grid-cols-1 grid-rows-1 *:col-start-1 *:row-start-1">
+        <div class="flex flex-col items-center justify-evenly gap-0.5">
+          <span
+            role="img"
+            aria-label={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
+            title={ `${pkmn.isGen(2) && pkmn.shiny ? "Shiny " : ""}${species.name}` }
+            style={ image.css }
+            class="rounded-xl bg-gray-100"
+          />
+          <div class="bg-gray-100 rounded-md w-9/10 px-1 py-0.5 text-center text-sm">
+            <span>{ pkmn.name ?? species.name }</span>
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-2 justify-self-start text-type-unknown-dark"
+          style={ { color: `var(--color-type-${species.types[0].toLowerCase()}-dark)` } }
+        >
+          { unit && (<button
+            class="flex cursor-pointer hover:brightness-125"
+            onClick={ () => { isEditing.value = true; } }
+          >
+            <FaPencil title="Edit" />
+          </button>) }
         </div>
       </div>
       <dl class="text-sm text-center col-span-3

@@ -1,5 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
-import type { StatsTable } from "@pkmn/data";
+import type { Specie, StatsTable } from "@pkmn/data";
 import { useContext } from "preact/hooks";
 import { Dex } from "@pkmn/dex";
 import { GenContext } from "@/contexts/GenContext";
@@ -19,14 +19,12 @@ export interface PokemonBigFormStatsInputs {
 
 interface Props {
   formHook: UseFormReturn<PokemonBigFormStatsInputs>,
-  speciesName: string,
+  species: Specie,
 }
 
-export function PokemonBigFormStats({ formHook, speciesName }: Props) {
+export function PokemonBigFormStats({ formHook, species }: Props) {
   const { register, watch } = formHook;
   const { gen, data } = useContext(GenContext);
-
-  const species = data.species.get(speciesName)!;
 
   const ivs = watch("ivs");
   const evs = watch("evs");

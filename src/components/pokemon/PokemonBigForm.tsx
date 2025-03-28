@@ -1,5 +1,8 @@
 import type { UseFormReturn } from "react-hook-form";
 import type { GenderName } from "@pkmn/data";
+import type { IPokemonUnit } from "@/db/db";
+import type { PokemonSet } from "@/utils/setUtils";
+import type { ComponentChildren } from "preact";
 import { useContext } from "preact/hooks";
 import { GenContext } from "@/contexts/GenContext";
 import { ImgUtils } from "@/utils/imgUtils";
@@ -12,17 +15,28 @@ export interface PokemonBigFormInputs extends PokemonBigFormStatsInputs, Pokemon
   name?: string,
 }
 
-interface Props {
-  formHook: UseFormReturn<PokemonBigFormInputs>,
+type Props = {
+  formHook: UseFormReturn<PokemonBigFormInputs>
+  buttons?: ComponentChildren,
+} & ({
   speciesName: string,
   grouping?: string,
-}
+  unit?: never,
+  base?: never,
+} | {
+  speciesName?: never,
+  grouping?: never,
+  unit: IPokemonUnit,
+  base: PokemonSet,
+});
 
-export function PokemonBigForm({ formHook, speciesName, grouping }: Props) {
+export function PokemonBigForm({
+  formHook, speciesName, grouping, unit, base, buttons,
+}: Props) {
   const { register, watch } = formHook;
   const { gen, data } = useContext(GenContext);
 
-  const species = data.species.get(speciesName)!;
+  const species = base ? base.data.species : data.species.get(speciesName)!;
   const shiny = watch("shiny");
   const gender = watch("gender");
   const moves = watch("move");
@@ -50,29 +64,35 @@ export function PokemonBigForm({ formHook, speciesName, grouping }: Props) {
         borderColor: `var(--color-type-${(species.types[1] ?? species.types[0]).toLowerCase()}-dark)`,
       }}
     >
-      <div class="flex flex-col items-center justify-evenly gap-0.5">
-        <span
-          role="img"
-          aria-label={ `${gen >= 2 && shiny ? "Shiny " : ""}${species.name}` }
-          title={ `${gen >= 2 && shiny ? "Shiny " : ""}${species.name}` }
-          style={ image.css }
-          class="rounded-xl bg-gray-100"
-        />
+      <div class="grid grid-cols-1 grid-rows-1 *:col-start-1 *:row-start-1">
+        <div class="flex flex-col items-center justify-evenly gap-0.5">
+          <span
+            role="img"
+            aria-label={ `${gen >= 2 && shiny ? "Shiny " : ""}${species.name}` }
+            title={ `${gen >= 2 && shiny ? "Shiny " : ""}${species.name}` }
+            style={ image.css }
+            class="rounded-xl bg-gray-100"
+          />
 
-        <input
-          class="bg-gray-100 rounded-md w-9/10
-            px-1 py-0.5
-            text-center text-sm"
-          type="text"
-          placeholder={species.name}
-          {...register("name")}
-        />
+          <input
+            class="bg-gray-100 rounded-md w-9/10 px-1 py-0.5 text-center text-sm"
+            type="text"
+            placeholder={species.name}
+            {...register("name")}
+          />
+        </div>
+        { buttons && <div
+          class="flex flex-col gap-2 justify-self-start text-type-unknown-dark"
+          style={ { color: `var(--color-type-${species.types[0].toLowerCase()}-dark)` } }
+        >
+          { buttons }
+        </div> }
       </div>
 
       <PokemonBigFormData
         formHook={formHook}
-        speciesName={ speciesName }
-        grouping={ grouping }
+        species={ species }
+        grouping={ unit ? unit.species : grouping }
       />
 
       <div class="grid grid-cols-4 gap-2 items-end
@@ -87,7 +107,7 @@ export function PokemonBigForm({ formHook, speciesName, grouping }: Props) {
       </div>
 
       <PokemonBigFormStats
-        speciesName={ speciesName }
+        species={ species }
         formHook={formHook}
       />
     </div>

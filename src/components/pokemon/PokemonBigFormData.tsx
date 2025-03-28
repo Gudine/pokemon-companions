@@ -1,5 +1,6 @@
 import type { ComponentChildren } from "preact";
 import type { UseFormReturn } from "react-hook-form";
+import type { Specie } from "@pkmn/data";
 import { useContext } from "preact/hooks";
 import { GenContext } from "@/contexts/GenContext";
 import { batched } from "@/utils/miscUtils";
@@ -23,15 +24,14 @@ export interface PokemonBigFormDataInputs {
 
 interface Props {
   formHook: UseFormReturn<PokemonBigFormDataInputs>,
-  speciesName: string,
+  species: Specie,
   grouping?: string,
 }
 
-export function PokemonBigFormData({ formHook, speciesName, grouping }: Props) {
+export function PokemonBigFormData({ formHook, species, grouping }: Props) {
   const { register } = formHook;
   const { gen, data } = useContext(GenContext);
 
-  const species = data.species.get(speciesName)!;
   const genderSpecies = grouping && data.species.get(grouping) || species;
   
   const dataItems: ComponentChildren[] = [];
