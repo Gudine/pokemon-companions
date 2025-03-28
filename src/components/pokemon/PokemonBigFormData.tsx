@@ -96,7 +96,7 @@ export function PokemonBigFormData({ formHook, species, grouping }: Props) {
       <Combobox
         id="pokemon-item"
         class="[text-align:inherit] bg-gray-100 rounded-md"
-        placeholder="Unspecified"
+        placeholder="No item"
         name="item"
         formHook={formHook}
         registerOpts={{
