@@ -52,7 +52,7 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
   if (pkmn.isGen(3)) dataItems.push(["Ability", pkmn.data.ability.name]);
 
   if (pkmn.isGen(2)) dataItems.push(
-    ["Gender", pkmn.gender ?? "N/A"],
+    ["Gender", pkmn.gender === "M" ? "Male" : pkmn.gender === "F" ? "Female" : "N/A"],
     ["Held item", (<div class="flex flex-row justify-center items-end gap-0.5">
       {itemIcon && <span class="self-center -m-[2px]" style={ itemIcon.css } />}
       {pkmn.data.item?.name || "No item"}
