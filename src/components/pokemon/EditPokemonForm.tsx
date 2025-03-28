@@ -101,7 +101,7 @@ export function EditPokemonForm({
   };
 
   const onDelete = async () => {
-    if (confirm(`Are you sure you want to delete "${pkmn.value.name}"?`)) {
+    if (confirm(`Are you sure you want to delete ${pkmn.value.name ?? pkmn.value.data.species.name}?`)) {
       isDeleting.value = true;
       await PokemonUnit.delete(unit.id);
   
