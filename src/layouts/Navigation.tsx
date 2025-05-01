@@ -38,7 +38,7 @@ export function Navigation() {
         <FaBars title="Navigation menu" />
       </button>) }
       { (isOpen.value || isSmallScreen.value) && <div
-        class="z-20 absolute top-full inset-x-0
+        class="max-sm:z-20 absolute top-full inset-x-0
           flex flex-col justify-stretch
           sm:static sm:flex-row">
         <a
