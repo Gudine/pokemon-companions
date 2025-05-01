@@ -13,7 +13,7 @@ interface Props {
 const getCompletionStyle = (completion: number) => completion === 0
   ? "bg-stone-50 hover:bg-stone-200"
   : completion === 1
-    ? "bg-indigo-300 hover:bg-indigo-400"
+    ? "bg-indigo-200 hover:bg-indigo-300"
     : "half-completed"
 
 export function SpeciesBig({ name, completion }: Props) {
