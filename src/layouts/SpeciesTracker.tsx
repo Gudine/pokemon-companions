@@ -1,7 +1,9 @@
+import { SpeciesSmall } from "@/components/species/SpeciesSmall";
 import { SpeciesBig } from "@/components/species/SpeciesBig";
 import { PokemonUnit } from "@/db/PokemonUnit";
 import { useDBResource } from "@/hooks/useDBResource";
 import { pokemonList } from "@/pokemonList";
+import { settings } from "@/settings";
 
 export function SpeciesTracker() {
   const formSet = useDBResource(
@@ -9,8 +11,10 @@ export function SpeciesTracker() {
     "pkmn",
   );
 
+  const SpeciesComponent = settings.smallPokemonSprites ? SpeciesSmall : SpeciesBig;
+
   return [...pokemonList].map(([name, forms]) => (
-    <SpeciesBig
+    <SpeciesComponent
       key={ name }
       name={ name }
       completion={ forms.filter((form) => formSet.has(form)).length / forms.length }
