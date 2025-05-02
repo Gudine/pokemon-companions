@@ -2,7 +2,7 @@ import { selectedPage } from "@/globalState";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useSignal } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";
-import { FaBars } from "react-icons/fa6";
+import { FaBars, FaGear } from "react-icons/fa6";
 
 export function Navigation() {
   const buttonRef = useRef(null);
@@ -64,6 +64,14 @@ export function Navigation() {
             ${selectedPage.value === "pokemonWorkshop" ? "bg-gray-100 text-indigo-700" : "bg-indigo-700"}`}
         >
           Pokémon workshop
+        </a>
+        <a
+          onClick={() => selectedPage.value = "settings"}
+          class={`px-6 py-3 cursor-pointer border-1 border-indigo-900
+            hover:bg-gray-100 hover:text-indigo-900
+            ${selectedPage.value === "settings" ? "bg-gray-100 text-indigo-900" : "bg-indigo-900"}`}
+        >
+          <FaGear title="Settings" />
         </a>
       </div> }
     </nav>
