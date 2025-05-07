@@ -2,6 +2,7 @@ import { Header } from "./layouts/Header";
 import { Navigation } from "./layouts/Navigation";
 import { Main } from "./layouts/Main";
 import { Footer } from "./layouts/Footer";
+import { Toaster } from "react-hot-toast";
 
 export function App() {
   return (
@@ -10,6 +11,7 @@ export function App() {
       <Navigation />
       <Main />
       <Footer />
+      <Toaster position="bottom-right" />
     </div>
   )
 }
