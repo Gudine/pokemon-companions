@@ -87,8 +87,8 @@ export class PokemonSetGen1 {
       name: this.name,
       species: this.species,
       moves: this.moves,
-      evs: this.evs,
-      ivs: this.ivs,
+      ...(Object.keys(this.evs).length ? { evs: this.evs }: {}),
+      ...(Object.keys(this.ivs).length ? { ivs: this.ivs }: {}),
       level: this.level,
     }
   }
