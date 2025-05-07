@@ -12,6 +12,12 @@ export default defineConfig({
   build: {
     // For top-level await
     target: ['es2022', 'edge89', 'firefox89', 'chrome89', 'safari15'],
+    rollupOptions: {
+      external: /\/learnsets-\w+.mjs$/,
+      output: { manualChunks(id) {
+        if (id.includes("@pkmn")) return "pkmn";
+      } },
+    }
   },
   base: "/pokemon-companions/",
   resolve: {
@@ -21,5 +27,5 @@ export default defineConfig({
         replacement: fileURLToPath(new URL('./src', import.meta.url))
       },
     ]
-  }
+  },
 })
