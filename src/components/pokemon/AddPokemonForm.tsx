@@ -18,7 +18,6 @@ import { PokemonBigForm, type PokemonBigFormInputs } from "./PokemonBigForm";
 
 export interface PokemonFormInputs extends PokemonBigFormInputs {
   playthrough: number,
-  grouping?: string,
   species: string,
 }
 
@@ -38,7 +37,6 @@ function getValuesFromStore(): DefaultValues<PokemonFormInputs> {
     playthrough: storedFormData.value.playthrough !== undefined && !isNaN(storedFormData.value.playthrough!)
       ? storedFormData.value.playthrough
       : "" as unknown as number,
-    grouping: storedFormData.value.grouping ?? "",
     species: storedFormData.value.species ?? "",
     
     name: storedFormData.value.name,
@@ -105,15 +103,12 @@ export function AddPokemonForm() {
   const data = gens.get(generation ?? 9);
 
   const speciesName = watch("species");
-  const groupings = tracePokemon(speciesName as SpeciesName, data).map((grouping) => grouping[1]);
-  const grouping = watch("grouping");
 
   const saveToStore = () => {
     const values = getValues();
 
     storedFormData.value = {
       playthrough: values.playthrough,
-      grouping: values.grouping,
       species: values.species,
       
       name: values.name,
@@ -184,8 +179,6 @@ export function AddPokemonForm() {
     if (formValues?.gender && (species.gender ? formValues.gender !== species.gender : !["M", "F"].includes(formValues.gender))) {
       setValue("gender", "");
     }
-    
-    if (formValues?.grouping && !groupings.includes(formValues.grouping as SpeciesName)) setValue("grouping", "");
 
     return true;
   }) satisfies Validate<string, PokemonFormInputs>;
@@ -236,11 +229,9 @@ export function AddPokemonForm() {
     
     try {
       const pkmn = importFromObject(minimal, generation ?? 9);
+      const groupings = tracePokemon(speciesName as SpeciesName, data);
 
-      const [species, form] = tracePokemon(
-        (values.grouping as SpeciesName | undefined) || groupings[0],
-        data
-      )[0];
+      const [species, form] = groupings.length === 1 ? groupings[0] : ["", ""] as const;
       
       await PokemonUnit.add(
         pkmn,
@@ -293,23 +284,6 @@ export function AddPokemonForm() {
             />
           </div>
 
-          {groupings.length > 1 && (<label class="flex flex-col grow">
-            Grouping*:
-            <select
-              disabled={ isSubmitting }
-              class="bg-gray-100 border-2 border-stone-500 rounded-lg
-                px-2 py-1
-              disabled:bg-gray-300 text-stone-700
-              invalid:text-stone-500 *:text-stone-700"
-              {...register("grouping", { required: "Grouping must be selected" })}
-            >
-              <option disabled class="hidden" value="">
-                -- Select Grouping --
-              </option>
-              {groupings.map((grouping) => <option value={grouping}>{grouping}</option>)}
-            </select>
-          </label>)}
-
           <label class="flex flex-col grow">
             Playthrough*:
             <select
@@ -337,7 +311,6 @@ export function AddPokemonForm() {
             <FormProvider {...formHook}>
               { validateData(speciesName) && (<PokemonBigForm
                 speciesName={ speciesName }
-                grouping={ grouping }
                 formHook={ formHook as UseFormReturn<PokemonFormInputs | PokemonBigFormInputs> }
               />) }
             </FormProvider>

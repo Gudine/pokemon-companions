@@ -1,6 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
 import type { GenderName } from "@pkmn/data";
-import type { IPokemonUnit } from "@/db/db";
 import type { PokemonSet } from "@/utils/setUtils";
 import type { ComponentChildren } from "preact";
 import { useContext } from "preact/hooks";
@@ -20,18 +19,14 @@ type Props = {
   buttons?: ComponentChildren,
 } & ({
   speciesName: string,
-  grouping?: string,
-  unit?: never,
   base?: never,
 } | {
   speciesName?: never,
-  grouping?: never,
-  unit: IPokemonUnit,
   base: PokemonSet,
 });
 
 export function PokemonBigForm({
-  formHook, speciesName, grouping, unit, base, buttons,
+  formHook, speciesName, base, buttons,
 }: Props) {
   const { register, watch } = formHook;
   const { gen, data } = useContext(GenContext);
@@ -93,7 +88,6 @@ export function PokemonBigForm({
       <PokemonBigFormData
         formHook={formHook}
         species={ species }
-        grouping={ unit ? unit.species : grouping }
       />
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2 items-end

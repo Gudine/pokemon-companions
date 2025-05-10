@@ -195,7 +195,6 @@ export function EditPokemonForm({
         <GenProvider gen={ generation }>
           <FormProvider {...formHook}>
             <PokemonBigForm
-              unit={ unit }
               base={ pkmn.value }
               formHook={ formHook }
               buttons={<>

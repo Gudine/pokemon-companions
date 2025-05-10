@@ -26,15 +26,12 @@ export interface PokemonBigFormDataInputs {
 interface Props {
   formHook: UseFormReturn<PokemonBigFormDataInputs>,
   species: Specie,
-  grouping?: string,
 }
 
-export function PokemonBigFormData({ formHook, species, grouping }: Props) {
+export function PokemonBigFormData({ formHook, species }: Props) {
   const isMediumScreen = useMediaQuery("(width >= 48rem)");
   const { register } = formHook;
   const { gen, data } = useContext(GenContext);
-
-  const genderSpecies = grouping && data.species.get(grouping) || species;
   
   const dataItems: ComponentChildren[] = [];
 
@@ -86,9 +83,9 @@ export function PokemonBigFormData({ formHook, species, grouping }: Props) {
         {...register("gender", { required: "Gender must be selected" })}
       >
         <option disabled class="hidden" value="">Unspecified</option>
-        {genderSpecies.gender === "N" && <option class="text-stone-900" value="N">N/A</option>}
-        {(!genderSpecies.gender || genderSpecies.gender === "M") && <option class="text-stone-900" value="M">Male</option>}
-        {(!genderSpecies.gender || genderSpecies.gender === "F") && <option class="text-stone-900" value="F">Female</option>}
+        {species.gender === "N" && <option class="text-stone-900" value="N">N/A</option>}
+        {(!species.gender || species.gender === "M") && <option class="text-stone-900" value="M">Male</option>}
+        {(!species.gender || species.gender === "F") && <option class="text-stone-900" value="F">Female</option>}
       </select>
     </div>),
     (<div class="flex flex-col gap-0.5">
