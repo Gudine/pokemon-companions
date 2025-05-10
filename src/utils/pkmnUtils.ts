@@ -38,7 +38,9 @@ export function getGenealogies(name: SpeciesName, data: Generation = defaultGen)
 
   const immediateNext = getImmediateParent(parentData);
   const nextNames = immediateNext ? [immediateNext] : parentData.evos?.length
-    ? parentData.evos : [parentData.baseSpecies];
+    ? parentData.evos : undefined;
+  
+  if (!nextNames) return [[parentName]];
   
   return nextNames.flatMap((nextName) => {
     if (nextName === parentData.name) return [[parentName]];
@@ -57,7 +59,7 @@ export function tracePokemon(form: SpeciesName, _data?: Generation) {
   const data = _data ?? defaultGen;
   const genealogies = getGenealogies(form, data);
 
-  return genealogies?.flatMap((genealogy) => {
+  const result = genealogies?.flatMap((genealogy) => {
     const result: [species: SpeciesName, form: SpeciesName][] = [];
 
     for (const [species, forms] of pokemonList) {
@@ -70,5 +72,12 @@ export function tracePokemon(form: SpeciesName, _data?: Generation) {
     }
 
     return result;
-  }).filter((genealogy) => genealogy !== undefined) ?? [];
+  }).filter((genealogy) => genealogy !== undefined);
+
+  if (result?.length) return result;
+
+  const baseSpecies = data.species.get(form)?.baseSpecies;
+  if (baseSpecies) return tracePokemon(baseSpecies);
+
+  return [];
 }
