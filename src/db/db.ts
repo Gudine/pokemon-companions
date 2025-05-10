@@ -4,8 +4,8 @@ import { openDB, type DBSchema } from "idb";
 
 export interface IPokemonUnit {
   id: number,
-  species: SpeciesName,
-  form: SpeciesName,
+  species: SpeciesName | "",
+  form: SpeciesName | "",
   playthrough: IPlaythrough["id"],
   data: ReturnType<PokemonSet["pack"]>,
 }

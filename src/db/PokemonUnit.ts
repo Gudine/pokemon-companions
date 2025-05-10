@@ -24,8 +24,8 @@ export class PokemonUnit {
 
   static async add(
     pkmn: PokemonSet,
-    species: SpeciesName,
-    form: SpeciesName,
+    species: SpeciesName | "",
+    form: SpeciesName | "",
     playthrough: number,
   ) {
     const key = await db.add("pkmn", {
