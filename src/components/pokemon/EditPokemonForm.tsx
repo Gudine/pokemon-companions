@@ -1,17 +1,18 @@
+import type { Specie, SpeciesName } from "@pkmn/data";
 import type { IPokemonUnit } from "@/db/db";
 import type { MinimalSet } from "@/utils/setUtils/sets";
+import { FaCircleArrowLeft, FaFloppyDisk, FaTrash } from "react-icons/fa6";
+import { GiUpgrade } from "react-icons/gi";
+import { useSignal } from "@preact/signals";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import { GenProvider } from "@/contexts/GenContext";
 import { PokemonUnit } from "@/db/PokemonUnit";
 import { DatabaseError, SetValidationError } from "@/errors";
+import { getGenealogies, tracePokemon } from "@/utils/pkmnUtils";
 import { importFromObject, type PokemonSet } from "@/utils/setUtils";
 import { PokemonBigForm, type PokemonBigFormInputs } from "./PokemonBigForm";
-import { FaCircleArrowLeft, FaFloppyDisk, FaTrash } from "react-icons/fa6";
-import { GiUpgrade } from "react-icons/gi";
-import { getGenealogies } from "@/utils/pkmnUtils";
-import { useSignal } from "@preact/signals";
-import type { Specie } from "@pkmn/data";
-
+import { createPortal } from "preact/compat";
+import { SelectEvoModal } from "./SelectEvoModal";
 
 function findMessage(obj: any): string | undefined {
   for (const entry of Object.values<any>(obj)) {
@@ -73,31 +74,41 @@ export function EditPokemonForm({
     },
   });
 
-  const { handleSubmit, setError, setValue, formState: { errors, isSubmitting } } = formHook;
+  const { handleSubmit, setError, setValue, watch, formState: { errors, isSubmitting } } = formHook;
 
+  const showModal = useSignal(false);
   const isDeleting = useSignal(false);
   const pkmn = useSignal(initialPkmn);
   
   const generation = pkmn.value.gen;
+  const gender = watch("gender");
 
-  const genealogy = getGenealogies(pkmn.value.data.species.name, pkmn.value.data.main)
-    ?.find((genealogy) => genealogy.includes(unit.form));
+  const genealogies = getGenealogies(pkmn.value.data.species.name, pkmn.value.data.main) ?? [];
   
-  const nextEvo = genealogy && genealogy.indexOf(pkmn.value.data.species.name) < genealogy.indexOf(unit.form)
-    ? genealogy[genealogy.indexOf(pkmn.value.data.species.name) + 1]
-    : undefined;
-
-  const onEvolve = () => {
+  const nextEvos = Array.from(new Set(genealogies
+    .map((genealogy) => genealogy[genealogy.indexOf(pkmn.value.data.species.name) + 1])
+    .filter((evo) => {
+      if (!evo) return false;
+      const evoData = pkmn.value.data.main.species.get(evo)!;
+      return !evoData.gender || !gender || evoData.gender === gender;
+    })));
+  
+  const evolve = (evo: SpeciesName) => {
     const newSet = pkmn.value.toObject();
-    newSet.species = nextEvo!;
+    newSet.species = evo;
     
     const abilitySlot = Object.entries(pkmn.value.data.species.abilities)
       .find((([_k, v]) => pkmn.value.isGen(3) && pkmn.value.data.ability.name === v))?.[0] as keyof Specie["abilities"] | undefined;
 
-    if (abilitySlot !== undefined) newSet.ability = pkmn.value.data.main.species.get(nextEvo!)?.abilities[abilitySlot];
+    if (abilitySlot !== undefined) newSet.ability = pkmn.value.data.main.species.get(evo!)?.abilities[abilitySlot];
 
     pkmn.value = importFromObject(newSet, pkmn.value.gen);
     setValue("ability", newSet.ability);
+  };
+
+  const onEvolve = () => {
+    if (nextEvos.length === 1) return evolve(nextEvos[0]);
+    showModal.value = true;
   };
 
   const onDelete = async () => {
@@ -152,12 +163,12 @@ export function EditPokemonForm({
 
       moves,
     };
+
+    const groupings = tracePokemon(pkmn.value.data.species.name, pkmn.value.data.main);
+    const [species, form] = groupings.length === 1 ? groupings[0] : ["", ""] as const;
     
     try {
-      await PokemonUnit.update(
-        unit.id,
-        { data: minimal },
-      );
+      await PokemonUnit.update(unit.id, { species, form, data: minimal });
 
       // Form is auto-closed by cache clear
     } catch (err) {
@@ -205,7 +216,7 @@ export function EditPokemonForm({
                 >
                   <FaCircleArrowLeft title="Go back" />
                 </button>
-                { nextEvo !== undefined && (<button
+                { nextEvos.length > 0 && (<button
                   type="button"
                   class="flex cursor-pointer hover:brightness-125"
                   onClick={ onEvolve }
@@ -230,6 +241,11 @@ export function EditPokemonForm({
           </FormProvider>
         </GenProvider>
       </fieldset>
+      { showModal.value && createPortal(<SelectEvoModal
+        close={ () => showModal.value = false }
+        evos={ nextEvos }
+        select={ evolve }
+      />, document.body)}
     </form>
   )
 }
