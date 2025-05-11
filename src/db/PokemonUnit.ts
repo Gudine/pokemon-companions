@@ -38,15 +38,38 @@ export class PokemonUnit {
     markDBAsStale("pkmn", { key, species, form, playthrough });
   }
   
-  static async update(id: number, payload: Partial<Omit<IPokemonUnit, "id">>) {
-    const t = db.transaction("pkmn", "readwrite");
+  static async update(
+    id: number,
+    payload: Partial<Omit<IPokemonUnit, "id" | "data">> & { data?: string | MinimalSet },
+  ) {
+    const t = db.transaction(["pkmn", "playthrough"], "readwrite");
 
-    const old = await t.store.get(id);
+    const old = await t.objectStore("pkmn").get(id);
     if (!old) throw new DatabaseError("notFound", { store: "pkmn", key: "id", value: id });
+
+    const newPayload = { ...payload } as Partial<Omit<IPokemonUnit, "id">>;
+
+    if (typeof payload.data === "object") {
+      const playthrough = await t.objectStore("playthrough").get(old.playthrough);
+      if (!playthrough) throw new DatabaseError(
+        "notFound",
+        { store: "playthrough", key: "id", value: old.playthrough },
+        { store: "pkmn", key: "id", value: id }
+      );
     
-    const newFile = Object.assign({}, old, payload);
+      const oldSet = Sets.unpackSet(old.data);
+      if (!oldSet) throw new Error(`Stored set for Pokémon #${id} is invalid`);
+      
+      const newSet = Object.assign({}, oldSet, payload.data);
+      
+      const newInstance = importFromObject(newSet, playthrough.gen);
+
+      newPayload.data = newInstance.pack();
+    }
+
+    const newFile = Object.assign({}, old, newPayload);
     await Promise.all([
-      t.store.put(newFile),
+      t.objectStore("pkmn").put(newFile),
       t.done,
     ]);
 
@@ -56,41 +79,6 @@ export class PokemonUnit {
       form: [old.form, newFile.form],
       playthrough: [old.playthrough, newFile.playthrough],
     });
-  }
-  
-  static async updateSet(id: number, payload: MinimalSet) {
-    const t = db.transaction(["pkmn", "playthrough"], "readwrite");
-
-    const old = await t.objectStore("pkmn").get(id);
-    if (!old) throw new DatabaseError("notFound", { store: "pkmn", key: "id", value: id });
-
-    const playthrough = await t.objectStore("playthrough").get(old.playthrough);
-    if (!playthrough) throw new DatabaseError(
-      "notFound",
-      { store: "playthrough", key: "id", value: old.playthrough },
-      { store: "pkmn", key: "id", value: id }
-    );
-  
-    const oldSet = Sets.unpackSet(old.data);
-    if (!oldSet) throw new Error(`Stored set for Pokémon #${id} is invalid`);
-    
-    const newSet = Object.assign({}, oldSet, payload);
-    
-    const newInstance = importFromObject(newSet, playthrough.gen);
-  
-    await Promise.all([
-      t.objectStore("pkmn").put({ ...old, data: newInstance.pack() }),
-      t.done,
-    ]);
-
-    markDBAsStale("pkmn", {
-      key: id,
-      species: old.species,
-      form: old.form,
-      playthrough: old.playthrough,
-    });
-
-    return newInstance;
   }
 
   static async delete(id: number) {

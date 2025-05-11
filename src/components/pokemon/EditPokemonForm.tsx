@@ -154,9 +154,9 @@ export function EditPokemonForm({
     };
     
     try {
-      await PokemonUnit.updateSet(
+      await PokemonUnit.update(
         unit.id,
-        minimal,
+        { data: minimal },
       );
 
       // Form is auto-closed by cache clear
