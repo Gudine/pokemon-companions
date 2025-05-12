@@ -12,6 +12,7 @@ import { getGenealogies, tracePokemon } from "@/utils/pkmnUtils";
 import { importFromObject, type PokemonSet } from "@/utils/setUtils";
 import { PokemonBigForm, type PokemonBigFormInputs } from "./PokemonBigForm";
 import { selectEvo } from "../selectEvo";
+import { confirm } from "@/components/common/confirm";
 
 function findMessage(obj: any): string | undefined {
   for (const entry of Object.values<any>(obj)) {
@@ -108,7 +109,19 @@ export function EditPokemonForm({
   };
 
   const onDelete = async () => {
-    if (confirm(`Are you sure you want to delete ${pkmn.value.name ?? pkmn.value.data.species.name}?`)) {
+    if (await confirm.call({
+      prompt: `Are you sure you want to delete ${pkmn.value.name ?? pkmn.value.data.species.name}?`,
+      leftButton: {
+        text: "Cancel",
+        color: "gray",
+        value: false,
+      },
+      rightButton: {
+        text: "Delete",
+        color: "red",
+        value: true,
+      }
+    })) {
       isDeleting.value = true;
       await PokemonUnit.delete(unit.id);
   

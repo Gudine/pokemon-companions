@@ -6,6 +6,7 @@ import { settings } from "@/settings";
 import { clearData, exportData, importData } from "@/db/dataManagement";
 import { Button } from "@/components/common/Button";
 import { SettingsGroup } from "@/components/common/SettingsGroup";
+import { confirm } from "@/components/common/confirm";
 
 const reader = new FileReader();
 
@@ -60,7 +61,19 @@ export function Settings() {
   }
 
   async function handleClear() {
-    if (confirm("Are you sure you want to clear all data? This cannot be undone.")) {
+    if (await confirm.call({
+      prompt: <>Are you sure you want to clear all data?<br />This cannot be undone.</>,
+      leftButton: {
+        text: "Cancel",
+        color: "gray",
+        value: false,
+      },
+      rightButton: {
+        text: "Clear data",
+        color: "red",
+        value: true,
+      }
+    })) {
       await clearData();
       toast.success("Data cleared successfully");
     }

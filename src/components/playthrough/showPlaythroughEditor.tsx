@@ -4,6 +4,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { Playthrough } from "@/db/Playthrough";
 import { Modal } from "@/components/common/Modal";
 import { Button } from "@/components/common/Button";
+import { confirm } from "@/components/common/confirm";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { DatabaseError } from "@/errors";
 import { useSignal } from "@preact/signals";
@@ -55,10 +56,23 @@ export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough
   }
 
   const onDelete = async () => {
-    if (confirm(
-      `Are you sure you want to delete the "${playthrough!.name}" playthrough?\n`
-      + "This will also delete all the Pokémon under this playthrough."
-    )) {
+    if (await confirm.call({
+      prompt: <>
+        Are you sure you want to delete the "{playthrough!.name}" playthrough?
+        <br />
+        This will also delete all the Pokémon under this playthrough.
+      </>,
+      leftButton: {
+        text: "Cancel",
+        color: "gray",
+        value: false,
+      },
+      rightButton: {
+        text: "Delete",
+        color: "red",
+        value: true,
+      }
+    })) {
       isDeleting.value = true;
       await Playthrough.delete(playthrough!.id);
   
