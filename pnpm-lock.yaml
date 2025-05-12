@@ -35,6 +35,9 @@ importers:
       preact:
         specifier: ^10.26.2
         version: 10.26.2
+      react-call:
+        specifier: ^1.7.0
+        version: 1.7.0(react@19.0.0)
       react-hook-form:
         specifier: ^7.54.2
         version: 7.54.2(react@19.0.0)
@@ -1093,6 +1096,11 @@ packages:
   preact@10.26.2:
     resolution: {integrity: sha512-0gNmv4qpS9HaN3+40CLBAnKe0ZfyE4ZWo5xKlC1rVrr0ckkEvJvAQqKaHANdFKsGstoxrY4AItZ7kZSGVoVjgg==}
 
+  react-call@1.7.0:
+    resolution: {integrity: sha512-HjWK7zzeooYkOlFulkmEd1PFKKPfx7oEHogtSvOCv+6LIh/zTSsTtM0hpAnC5Sm5QVadhSeYLCos86JkcXD0Ag==}
+    peerDependencies:
+      react: '>=18'
+
   react-dom@19.1.0:
     resolution: {integrity: sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==}
     peerDependencies:
@@ -2074,6 +2082,10 @@ snapshots:
       source-map-js: 1.2.1
 
   preact@10.26.2: {}
+
+  react-call@1.7.0(react@19.0.0):
+    dependencies:
+      react: 19.0.0
 
   react-dom@19.1.0(react@19.0.0):
     dependencies:
