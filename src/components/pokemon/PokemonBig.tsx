@@ -9,7 +9,7 @@ import { batched, graphFunctionBuilder } from "@/utils/miscUtils";
 import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
 import { MoveInvalid } from "@/components/move/MoveInvalid";
-import { EditPokemonForm } from "./EditPokemonForm";
+import { EditPokemonForm } from "./form/EditPokemonForm";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];

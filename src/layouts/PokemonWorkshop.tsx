@@ -1,6 +1,6 @@
 import { Suspense } from "preact/compat";
 import { Loading } from "@/components/common/Loading";
-import { AddPokemonForm } from "@/components/pokemon/AddPokemonForm";
+import { AddPokemonForm } from "@/components/pokemon/form/AddPokemonForm";
 
 export function PokemonWorkshop() {
   return (

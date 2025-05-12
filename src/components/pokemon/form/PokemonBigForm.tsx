@@ -6,9 +6,9 @@ import { useContext } from "preact/hooks";
 import { GenContext } from "@/contexts/GenContext";
 import { ImgUtils } from "@/utils/imgUtils";
 import { MoveSmallForm, type MoveSmallFormInputs } from "@/components/move/MoveSmallForm";
+import { MoveInvalid } from "@/components/move/MoveInvalid";
 import { PokemonBigFormStats, type PokemonBigFormStatsInputs } from "./PokemonBigFormStats";
 import { PokemonBigFormData, type PokemonBigFormDataInputs } from "./PokemonBigFormData";
-import { MoveInvalid } from "../move/MoveInvalid";
 
 export interface PokemonBigFormInputs extends PokemonBigFormStatsInputs, PokemonBigFormDataInputs, MoveSmallFormInputs {
   name?: string,

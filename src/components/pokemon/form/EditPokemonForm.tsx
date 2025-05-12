@@ -12,7 +12,7 @@ import { getGenealogies, tracePokemon } from "@/utils/pkmnUtils";
 import { importFromObject, type PokemonSet } from "@/utils/setUtils";
 import { PokemonBigForm, type PokemonBigFormInputs } from "./PokemonBigForm";
 import { createPortal } from "preact/compat";
-import { SelectEvoModal } from "./SelectEvoModal";
+import { SelectEvoModal } from "../SelectEvoModal";
 
 function findMessage(obj: any): string | undefined {
   for (const entry of Object.values<any>(obj)) {
