@@ -17,7 +17,7 @@ type Props = {
 
 export const confirm = createCallable<Props, boolean | void>(({ call, prompt, leftButton, rightButton }) => {
   return (
-    <Modal close={ () => call.end() } class="min-w-80" priority={10}>
+    <Modal onClickOutside={ () => call.end() } class="min-w-80" priority={10}>
       <div class="p-4 w-full h-full flex flex-col justify-around gap-8 grow">
         <p class="text-lg text-center">
           {prompt}

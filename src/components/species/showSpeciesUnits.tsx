@@ -20,7 +20,7 @@ interface Props {
 
 export const showSpeciesUnits = createCallable<Props>(({ call, speciesName }) => {
   return (
-    <Modal close={ () => call.end() } class="w-9/10 h-9/10">
+    <Modal onClickOutside={ () => call.end() } class="w-9/10 h-9/10">
       <SpeciesModalInner call={ call } speciesName={ speciesName } />
     </Modal>
   )

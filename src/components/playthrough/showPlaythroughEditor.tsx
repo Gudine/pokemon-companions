@@ -81,7 +81,7 @@ export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough
   };
 
   return (
-    <Modal close={ () => call.end() } class="w-80 h-100">
+    <Modal onClickOutside={ () => call.end() } class="w-80 h-100">
       <form
         onSubmit={ handleSubmit(onSubmit) }
         class="p-4 w-full h-full flex flex-col justify-around grow"

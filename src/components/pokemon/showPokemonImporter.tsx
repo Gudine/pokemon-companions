@@ -27,7 +27,7 @@ interface Inputs {
 
 export const showPokemonImporter = createCallable<Props>(({ call, playthrough }) => {
   return (
-    <Modal close={ () => call.end() } class="w-9/10 h-9/10">
+    <Modal onClickOutside={ () => call.end() } class="w-9/10 h-9/10">
       <ImportPokemonModalInner call={ call } playthrough={ playthrough } />
     </Modal>
   )

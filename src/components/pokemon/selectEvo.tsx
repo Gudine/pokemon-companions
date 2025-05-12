@@ -5,7 +5,7 @@ import { SpeciesBig } from "@/components/species/SpeciesBig";
 
 export const selectEvo = createCallable<{ evos: SpeciesName[] }, SpeciesName | void>(({ call, evos }) => {
   return (
-    <Modal close={ () => call.end() } class="min-w-80 max-w-4/5 min-h-80 max-h-9/10">
+    <Modal onClickOutside={ () => call.end() } class="min-w-80 max-w-4/5 min-h-80 max-h-9/10">
       <div
         class="p-4 w-full h-full flex flex-col gap-2 justify-around grow"
       >

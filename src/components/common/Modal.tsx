@@ -3,15 +3,15 @@ import { Loading } from "./Loading";
 
 interface Props {
   class: string,
-  close: () => void,
+  onClickOutside: () => void,
   priority?: number,
   children?: any,
 }
 
-export function Modal({ class: className, close, priority = 0, children }: Props) {
+export function Modal({ class: className, onClickOutside, priority = 0, children }: Props) {
   return (
     <div
-      onClick={(ev) => ev.target === ev.currentTarget && close()}
+      onClick={(ev) => ev.target === ev.currentTarget && onClickOutside()}
       style={{ zIndex: priority }}
       class="modal fixed inset-0 bg-black/40 flex items-center justify-center"
     >
