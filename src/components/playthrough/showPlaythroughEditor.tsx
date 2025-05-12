@@ -123,7 +123,7 @@ export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough
         </label>
         <div class={`flex ${playthrough ? "justify-between" : "justify-end"}`}>
           {!!playthrough && <Button
-            class="bg-red-600 border-red-600 hover:text-red-800"
+            color="red"
             type="button"
             disabled={!isValid || isSubmitting || isDeleting.value}
             onClick={ onDelete }

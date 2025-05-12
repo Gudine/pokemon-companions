@@ -107,7 +107,8 @@ export function Settings() {
                 Import data
               </Button>
               <Button
-                class="col-span-2 bg-red-700 border-red-700 hover:text-red-800 flex gap-1 items-center justify-center"
+                class="col-span-2 flex gap-1 items-center justify-center"
+                color="red"
                 onClick={ handleClear }
               >
                 <FaBomb />
