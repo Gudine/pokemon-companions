@@ -1,4 +1,6 @@
 import type { SpeciesName } from "@pkmn/data";
+import type { ReactCall } from "react-call";
+import { FaCircleInfo } from "react-icons/fa6";
 import { PokemonUnit } from "@/db/PokemonUnit";
 import { useDBResource } from "@/hooks/useDBResource";
 import { pokemonList } from "@/pokemonList";
@@ -9,34 +11,32 @@ import { Playthrough } from "@/db/Playthrough";
 import { Placeholder } from "@/components/common/Placeholder";
 import { Modal } from "@/components/common/Modal";
 import { PokemonSmall } from "@/components/pokemon/PokemonSmall";
+import { createCallable } from "@/utils/callUtils";
 import { selectedPage } from "@/globalState";
-import { FaCircleInfo } from "react-icons/fa6";
 
 interface Props {
-  close: () => void;
   speciesName: SpeciesName;
 }
 
-export function SpeciesModal({ close, speciesName }: Props) {
+export const showSpeciesUnits = createCallable<Props>(({ call, speciesName }) => {
   return (
-    <Modal close={ close } class="w-9/10 h-9/10">
-      <SpeciesModalInner close={ close } speciesName={ speciesName } />
+    <Modal close={ () => call.end() } class="w-9/10 h-9/10">
+      <SpeciesModalInner call={ call } speciesName={ speciesName } />
     </Modal>
   )
-}
+});
 
-function SpeciesModalInner({ speciesName }: Props) {
+function SpeciesModalInner({ call, speciesName }: ReactCall.Props<Props, void, {}>) {
   const units = useDBResource(
     () => PokemonUnit.getBySpecies(speciesName),
     "pkmn",
     { species: speciesName },
   );
 
-  const playthroughGens = useDBResource(
-    async () => new Map((await Playthrough.getAll()).map((curr) => [curr.id, curr.gen])),
+  const playthroughGens = new Map(useDBResource(
+    Playthrough.getAll,
     "playthrough",
-    {},
-  );
+  ).map((curr) => [curr.id, curr.gen]));
 
   const forms = pokemonList.get(speciesName) ?? [];
   const formImages = forms.map((form) => ImgUtils.getPokemon(form));
@@ -69,6 +69,7 @@ function SpeciesModalInner({ speciesName }: Props) {
                     <button
                       class="flex cursor-pointer hover:brightness-125"
                       onClick={ () => {
+                        call.end();
                         window.location.hash = `#${data.playthrough}.${data.id}`;
                         selectedPage.value = "savedPlaythroughs";
                       } }

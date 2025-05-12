@@ -1,4 +1,4 @@
-import type { Specie, SpeciesName } from "@pkmn/data";
+import type { Specie } from "@pkmn/data";
 import type { IPokemonUnit } from "@/db/db";
 import type { MinimalSet } from "@/utils/setUtils/sets";
 import { FaCircleArrowLeft, FaFloppyDisk, FaTrash } from "react-icons/fa6";
@@ -11,8 +11,7 @@ import { DatabaseError, SetValidationError } from "@/errors";
 import { getGenealogies, tracePokemon } from "@/utils/pkmnUtils";
 import { importFromObject, type PokemonSet } from "@/utils/setUtils";
 import { PokemonBigForm, type PokemonBigFormInputs } from "./PokemonBigForm";
-import { createPortal } from "preact/compat";
-import { SelectEvoModal } from "../SelectEvoModal";
+import { selectEvo } from "../selectEvo";
 
 function findMessage(obj: any): string | undefined {
   for (const entry of Object.values<any>(obj)) {
@@ -76,7 +75,6 @@ export function EditPokemonForm({
 
   const { handleSubmit, setError, setValue, watch, formState: { errors, isSubmitting } } = formHook;
 
-  const showModal = useSignal(false);
   const isDeleting = useSignal(false);
   const pkmn = useSignal(initialPkmn);
   
@@ -92,23 +90,21 @@ export function EditPokemonForm({
       const evoData = pkmn.value.data.main.species.get(evo)!;
       return !evoData.gender || !gender || evoData.gender === gender;
     })));
-  
-  const evolve = (evo: SpeciesName) => {
+
+  const onEvolve = async () => {
+    const nextEvo = nextEvos.length === 1 ? nextEvos[0] : await selectEvo.call({ evos: nextEvos });
+    if (!nextEvo) return;
+
     const newSet = pkmn.value.toObject();
-    newSet.species = evo;
+    newSet.species = nextEvo;
     
     const abilitySlot = Object.entries(pkmn.value.data.species.abilities)
       .find((([_k, v]) => pkmn.value.isGen(3) && pkmn.value.data.ability.name === v))?.[0] as keyof Specie["abilities"] | undefined;
 
-    if (abilitySlot !== undefined) newSet.ability = pkmn.value.data.main.species.get(evo!)?.abilities[abilitySlot];
+    if (abilitySlot !== undefined) newSet.ability = pkmn.value.data.main.species.get(nextEvo!)?.abilities[abilitySlot];
 
     pkmn.value = importFromObject(newSet, pkmn.value.gen);
     setValue("ability", newSet.ability);
-  };
-
-  const onEvolve = () => {
-    if (nextEvos.length === 1) return evolve(nextEvos[0]);
-    showModal.value = true;
   };
 
   const onDelete = async () => {
@@ -241,11 +237,6 @@ export function EditPokemonForm({
           </FormProvider>
         </GenProvider>
       </fieldset>
-      { showModal.value && createPortal(<SelectEvoModal
-        close={ () => showModal.value = false }
-        evos={ nextEvos }
-        select={ evolve }
-      />, document.body)}
     </form>
   )
 }

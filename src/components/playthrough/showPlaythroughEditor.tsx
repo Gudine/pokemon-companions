@@ -7,6 +7,7 @@ import { Button } from "@/components/common/Button";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { DatabaseError } from "@/errors";
 import { useSignal } from "@preact/signals";
+import { createCallable } from "@/utils/callUtils";
 
 const GENS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
@@ -16,7 +17,7 @@ interface Inputs {
   gen: GenerationNum,
 }
 
-export function AddPlaythroughModal({ close, playthrough }: { close: () => void, playthrough?: IPlaythrough }) {
+export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough }>(({ call, playthrough }) => {
   const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid } } = useForm<Inputs>({
     mode: "onChange",
     defaultValues: {
@@ -32,7 +33,7 @@ export function AddPlaythroughModal({ close, playthrough }: { close: () => void,
     if (playthrough) {
       await Playthrough.update(playthrough.id, { name, date });
   
-      close();
+      call.end();
     } else {
       try {
         await Playthrough.add(
@@ -41,7 +42,7 @@ export function AddPlaythroughModal({ close, playthrough }: { close: () => void,
           gen,
         );
   
-        close();
+        call.end();
       } catch (err) {
         if (err instanceof DatabaseError) {
           setError("name", {
@@ -61,12 +62,12 @@ export function AddPlaythroughModal({ close, playthrough }: { close: () => void,
       isDeleting.value = true;
       await Playthrough.delete(playthrough!.id);
   
-      close();
+      call.end();
     }
   };
 
   return (
-    <Modal close={ close } class="w-80 h-100">
+    <Modal close={ () => call.end() } class="w-80 h-100">
       <form
         onSubmit={ handleSubmit(onSubmit) }
         class="p-4 w-full h-full flex flex-col justify-around grow"
@@ -146,4 +147,4 @@ export function AddPlaythroughModal({ close, playthrough }: { close: () => void,
       </form>
     </Modal>
   )
-}
+});

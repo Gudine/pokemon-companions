@@ -1,16 +1,11 @@
 import type { SpeciesName } from "@pkmn/data";
+import { createCallable } from "@/utils/callUtils";
 import { Modal } from "@/components/common/Modal";
-import { SpeciesBig } from "../species/SpeciesBig";
+import { SpeciesBig } from "@/components/species/SpeciesBig";
 
-interface Props {
-  close: () => void,
-  evos: SpeciesName[],
-  select: (evo: SpeciesName) => void,
-}
-
-export function SelectEvoModal({ close, evos, select }: Props) {
+export const selectEvo = createCallable<{ evos: SpeciesName[] }, SpeciesName | void>(({ call, evos }) => {
   return (
-    <Modal close={ close } class="min-w-80 max-w-4/5 min-h-80 max-h-9/10">
+    <Modal close={ () => call.end() } class="min-w-80 max-w-4/5 min-h-80 max-h-9/10">
       <div
         class="p-4 w-full h-full flex flex-col gap-2 justify-around grow"
       >
@@ -19,10 +14,9 @@ export function SelectEvoModal({ close, evos, select }: Props) {
         </p>
 
         <div class="grow flex flex-row flex-wrap gap-2 justify-around">
-          {evos.map((evo) => <button type="button" onClick={(ev) => {
+          {evos.map((evo) => <button type="button" onClickCapture={(ev) => {
             ev.stopPropagation();
-            close();
-            select(evo);
+            call.end(evo);
           }}>
             <SpeciesBig name={ evo } completion={ 0 } />
           </button>)}
@@ -30,4 +24,4 @@ export function SelectEvoModal({ close, evos, select }: Props) {
       </div>
     </Modal>
   )
-}
+});

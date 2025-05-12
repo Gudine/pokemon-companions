@@ -1,15 +1,14 @@
 import type { IPlaythrough } from "@/db/db";
-import { createPortal, Suspense } from "preact/compat";
+import { Suspense } from "preact/compat";
 import { useEffect } from "preact/hooks";
 import { FaPencil, FaUserPlus, FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { useSignal } from "@preact/signals";
 import { selectedPage, storedFormData } from "@/globalState";
 import { Loading } from "@/components/common/Loading";
 import { PlaythroughSectionList } from "./PlaythroughSectionList";
-import { AddPlaythroughModal } from "./AddPlaythroughModal";
+import { showPlaythroughEditor } from "./showPlaythroughEditor";
 
 export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough }) {
-  const showPlaythroughModal = useSignal(false);
   const collapsed = useSignal(true);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
             { collapsed.value ? <FaChevronRight title="Expand" /> : <FaChevronDown title="Collapse" /> }
           </button>
           <button
-            onClick={ () => showPlaythroughModal.value = true }
+            onClick={ () => showPlaythroughEditor.call({ playthrough }) }
             class={`cursor-pointer flex ${collapsed.value ? "invisible" : ""}`}
           >
             <FaPencil title="Edit playthrough" />
@@ -57,10 +56,6 @@ export function PlaythroughSection({ playthrough }: { playthrough: IPlaythrough 
           </Suspense>
         </div>
       )}
-      { showPlaythroughModal.value && createPortal(<AddPlaythroughModal
-        close={ () => showPlaythroughModal.value = false }
-        playthrough={ playthrough }
-      />, document.body)}
     </section>
   )
 }

@@ -1,4 +1,5 @@
 import type { SpeciesName } from "@pkmn/data";
+import type { ReactCall } from "react-call";
 import { useSignal } from "@preact/signals";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useForm, type SubmitHandler, type Validate } from "react-hook-form";
@@ -12,9 +13,9 @@ import { tracePokemon } from "@/utils/pkmnUtils";
 import { Button } from "@/components/common/Button";
 import { Modal } from "@/components/common/Modal";
 import { PokemonSmall } from "./PokemonSmall";
+import { createCallable } from "@/utils/callUtils";
 
 interface Props {
-  close: () => void;
   playthrough?: number;
 }
 
@@ -24,15 +25,15 @@ interface Inputs {
   data: string,
 }
 
-export function ImportPokemonModal({ close, playthrough }: Props) {
+export const showPokemonImporter = createCallable<Props>(({ call, playthrough }) => {
   return (
-    <Modal close={ close } class="w-9/10 h-9/10">
-      <ImportPokemonModalInner close={ close } playthrough={ playthrough } />
+    <Modal close={ () => call.end() } class="w-9/10 h-9/10">
+      <ImportPokemonModalInner call={ call } playthrough={ playthrough } />
     </Modal>
   )
-}
+})
 
-function ImportPokemonModalInner({ close, playthrough: defaultPlaythrough }: Props) {
+function ImportPokemonModalInner({ call, playthrough: defaultPlaythrough }: ReactCall.Props<Props, void, {}>) {
   const playthroughs = useDBResource(
     Playthrough.getAll,
     "playthrough",
@@ -119,7 +120,7 @@ function ImportPokemonModalInner({ close, playthrough: defaultPlaythrough }: Pro
         form,
         playthrough,
       );
-      close();
+      call.end();
     } catch (err) {
       if (err instanceof Error && err.message.match(/^Species .+? not found$/)) {
         setError("data", {
