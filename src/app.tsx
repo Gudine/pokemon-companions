@@ -1,8 +1,9 @@
+import { Toaster } from "react-hot-toast";
 import { Header } from "./layouts/Header";
 import { Navigation } from "./layouts/Navigation";
 import { Main } from "./layouts/Main";
 import { Footer } from "./layouts/Footer";
-import { Toaster } from "react-hot-toast";
+import { CallableRoots } from "./utils/callUtils";
 
 export function App() {
   return (
@@ -12,6 +13,7 @@ export function App() {
       <Main />
       <Footer />
       <Toaster position="bottom-right" />
+      <CallableRoots />
     </div>
   )
 }
