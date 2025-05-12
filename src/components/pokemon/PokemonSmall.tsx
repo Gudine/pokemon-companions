@@ -1,14 +1,12 @@
 import type { ComponentChildren } from "preact";
-import type { IPokemonUnit } from "@/db/db";
 import type { PokemonSet } from "@/utils/setUtils";
-import { FaMars, FaVenus, FaCircleInfo } from "react-icons/fa6";
-import { selectedPage } from "@/globalState";
+import { FaMars, FaVenus } from "react-icons/fa6";
 import { ImgUtils } from "@/utils/imgUtils";
 import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
 import { MoveInvalid } from "@/components/move/MoveInvalid";
 
-export function PokemonSmall({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonSet }) {
+export function PokemonSmall({ pkmn, buttons }: { pkmn: PokemonSet, buttons?: ComponentChildren }) {
   const { species } = pkmn.data;
 
   const image = ImgUtils.getPokemon(
@@ -25,12 +23,6 @@ export function PokemonSmall({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: Pokemo
     {itemIcon && <span class="self-center" style={ itemIcon.css } />}
     {pkmn.data.item?.name || "No item"}
   </div>)]);
-
-  const viewDetails = () => {
-    if (!unit) return;
-    window.location.hash = `#${unit.playthrough}.${unit.id}`;
-    selectedPage.value = "savedPlaythroughs";
-  };
 
   return (
     <article
@@ -65,17 +57,12 @@ export function PokemonSmall({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: Pokemo
             <span class="font-bold">{pkmn.level}</span>
           </div>
         </div>
-        <div
+        { buttons && <div
           class="flex flex-col gap-0.5 justify-self-start text-type-unknown-dark"
           style={ { color: `var(--color-type-${species.types[0].toLowerCase()}-dark)` } }
         >
-          { unit && <button
-            class="flex cursor-pointer hover:brightness-125"
-            onClick={ viewDetails }
-          >
-            <FaCircleInfo title="More information" />
-          </button> }
-        </div>
+          { buttons }
+        </div> }
       </div>
       <dl class="text-sm text-center flex flex-col justify-center gap-1">
         {dataItems.map(([dtValue, ddValue]) => (<div class="flex flex-col gap-0.5">

@@ -9,6 +9,8 @@ import { Playthrough } from "@/db/Playthrough";
 import { Placeholder } from "@/components/common/Placeholder";
 import { Modal } from "@/components/common/Modal";
 import { PokemonSmall } from "@/components/pokemon/PokemonSmall";
+import { selectedPage } from "@/globalState";
+import { FaCircleInfo } from "react-icons/fa6";
 
 interface Props {
   close: () => void;
@@ -59,10 +61,23 @@ function SpeciesModalInner({ speciesName }: Props) {
             { units.filter((unit) => unit.form === form)
               .map((data) => [data, unpackSet(data.data, playthroughGens.get(data.playthrough) ?? 9)] as const)
               .filter(([_, set]) => set !== undefined)
-              .map(([data, set]) => (
-                <GenProvider gen={ playthroughGens.get(data.playthrough) ?? 9 }>
-                  <PokemonSmall key={ data.id } unit={ data } pkmn={ set! } />
-                </GenProvider>))}
+              .map(([data, set]) => (<GenProvider gen={ playthroughGens.get(data.playthrough) ?? 9 }>
+                <PokemonSmall
+                  key={ data.id }
+                  pkmn={ set! }
+                  buttons={ [
+                    <button
+                      class="flex cursor-pointer hover:brightness-125"
+                      onClick={ () => {
+                        window.location.hash = `#${data.playthrough}.${data.id}`;
+                        selectedPage.value = "savedPlaythroughs";
+                      } }
+                    >
+                      <FaCircleInfo title="More information" />
+                    </button>
+                  ] }
+                />
+              </GenProvider>))}
           </div>
         </div>
       </div>)}
