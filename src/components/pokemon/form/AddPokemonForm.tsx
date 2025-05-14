@@ -1,5 +1,6 @@
 import type { SpeciesName } from "@pkmn/data";
 import type { MinimalSet } from "@/utils/setUtils/sets";
+import toast from "react-hot-toast";
 import { useEffect } from "preact/hooks";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FormProvider, useForm, type DefaultValues, type SubmitHandler, type UseFormReturn, type Validate } from "react-hook-form";
@@ -239,6 +240,8 @@ export function AddPokemonForm() {
         form,
         values.playthrough,
       );
+
+      toast.success(`${pkmn.name || pkmn.data.species.name} added successfully`);
 
       storedFormData.value = {};
       reset(getValuesFromStore());
