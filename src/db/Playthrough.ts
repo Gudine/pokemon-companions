@@ -22,6 +22,7 @@ export class Playthrough {
       });
 
       markDBAsStale("playthrough", { key, name, date });
+      return key;
     } catch (err) {
       if (err instanceof DOMException && err.name === "ConstraintError") {
         throw new DatabaseError("alreadyExists", {
@@ -30,6 +31,7 @@ export class Playthrough {
           value: name,
         });
       }
+      throw err;
     }
   }
 

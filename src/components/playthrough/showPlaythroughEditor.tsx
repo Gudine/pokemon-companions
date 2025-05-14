@@ -18,7 +18,7 @@ interface Inputs {
   gen: GenerationNum,
 }
 
-export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough }>(({ call, playthrough }) => {
+export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough }, number | void>(({ call, playthrough }) => {
   const { register, handleSubmit, setError, formState: { isSubmitting, errors, isValid } } = useForm<Inputs>({
     mode: "onChange",
     defaultValues: {
@@ -34,16 +34,16 @@ export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough
     if (playthrough) {
       await Playthrough.update(playthrough.id, { name, date });
   
-      call.end();
+      call.end(playthrough.id);
     } else {
       try {
-        await Playthrough.add(
+        const id = await Playthrough.add(
           name,
           date,
           gen,
         );
   
-        call.end();
+        call.end(id);
       } catch (err) {
         if (err instanceof DatabaseError) {
           setError("name", {

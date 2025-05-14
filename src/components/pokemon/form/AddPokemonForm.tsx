@@ -1,7 +1,9 @@
 import type { SpeciesName } from "@pkmn/data";
 import type { MinimalSet } from "@/utils/setUtils/sets";
+import type { TargetedEvent } from "preact/compat";
 import toast from "react-hot-toast";
 import { useEffect } from "preact/hooks";
+import { useSignal } from "@preact/signals";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FormProvider, useForm, type DefaultValues, type SubmitHandler, type UseFormReturn, type Validate } from "react-hook-form";
 import { GenProvider } from "@/contexts/GenContext";
@@ -15,6 +17,7 @@ import { tracePokemon } from "@/utils/pkmnUtils";
 import { useDBResource } from "@/hooks/useDBResource";
 import { Button } from "@/components/common/Button";
 import { Combobox } from "@/components/common/Combobox";
+import { showPlaythroughEditor } from "@/components/playthrough/showPlaythroughEditor";
 import { PokemonBigForm, type PokemonBigFormInputs } from "./PokemonBigForm";
 
 export interface PokemonFormInputs extends PokemonBigFormInputs {
@@ -86,6 +89,7 @@ export function AddPokemonForm() {
     Playthrough.getAll,
     "playthrough",
     {},
+    false,
   );
 
   const formHook = useForm<PokemonFormInputs>({
@@ -99,6 +103,13 @@ export function AddPokemonForm() {
     watch, getValues, reset, trigger,
     formState: { isSubmitting, errors, isValid },
   } = formHook;
+
+  const pendingPlaythrough = useSignal<number>();
+
+  useEffect(() => {
+    const pending = pendingPlaythrough.value;
+    if (pending !== undefined) setValue("playthrough", pending);
+  }, [playthroughs]);
   
   const generation = playthroughs.find((p) => p.id === watch("playthrough"))?.gen;
   const data = gens.get(generation ?? 9);
@@ -295,12 +306,25 @@ export function AddPokemonForm() {
                 px-2 py-1
               disabled:bg-gray-300 text-stone-700
               invalid:text-stone-500 *:text-stone-700"
-              {...register("playthrough", { required: "Playthrough must be selected", valueAsNumber: true })}
+              {...register("playthrough", {
+                required: "Playthrough must be selected",
+                valueAsNumber: true,
+                onChange: async (ev: TargetedEvent<HTMLSelectElement>) => {
+                  if (ev.currentTarget.value === "-1") {
+                    setValue("playthrough", "" as unknown as number);
+                    const id = await showPlaythroughEditor.call({});
+                    if (id) pendingPlaythrough.value = id;
+                  }
+                },
+              })}
             >
               <option disabled class="hidden" value="">
                 -- Select Playthrough --
               </option>
               {playthroughs.map((currPlaythrough) => <option value={currPlaythrough.id}>{currPlaythrough.name}</option>)}
+              <option value="-1">
+                -- New Playthrough --
+              </option>
             </select>
           </label>
         </div>
