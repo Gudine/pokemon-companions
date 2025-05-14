@@ -278,7 +278,6 @@ export function AddPokemonForm() {
       onSubmit={ handleSubmit(onSubmit) }
       class="w-full h-full flex flex-col gap-2"
     >
-      <p class="text-xl font-bold text-center col-span-2">Add new Pokémon</p>
       <fieldset
         class="min-w-0 flex flex-col gap-2"
         disabled={ isSubmitting }
