@@ -1,4 +1,4 @@
-import type { Generation, Specie, SpeciesName } from "@pkmn/data";
+import { StatID, type Generation, type Nature, type Specie, type SpeciesName, type StatsTable } from "@pkmn/data";
 import { defaultGen } from "@/data";
 import { pokemonList } from "@/pokemonList";
 
@@ -80,4 +80,48 @@ export function tracePokemon(form: SpeciesName, _data?: Generation) {
   if (baseSpecies) return tracePokemon(baseSpecies);
 
   return [];
+}
+
+function calcStat(
+  data: Generation,
+  stat: StatID,
+  base: number,
+  iv?: number,
+  ev?: number,
+  level?: number,
+  nature?: Nature
+) {
+  return data.stats.calc(
+    stat,
+    base,
+    (iv && data.num <= 2) ? iv * 2 : iv,
+    (ev && data.num <= 2) ? Math.sqrt(ev) : ev,
+    level,
+    nature
+  );
+}
+
+export function getStats(
+  data: Generation,
+  species: Specie,
+  ivs?: Partial<StatsTable>,
+  evs?: Partial<StatsTable>,
+  level?: number,
+  nature?: Nature,
+) {
+  return new Map([...data.stats]
+    .filter((stat) => data.num !== 1 || stat !== "spd")
+    .map((stat) => {
+      const value = calcStat(
+        data,
+        stat,
+        species.baseStats[stat],
+        !Number.isNaN(ivs?.[stat]) ? ivs?.[stat] : undefined,
+        !Number.isNaN(evs?.[stat]) ? evs?.[stat] : undefined,
+        !Number.isNaN(level) ? level : undefined,
+        nature,
+      );
+
+      return [stat, value];
+    }));
 }
