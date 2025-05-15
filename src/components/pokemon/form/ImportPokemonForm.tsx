@@ -1,3 +1,4 @@
+import type { StatID } from "@pkmn/data";
 import { useEffect, type TargetedEvent } from "preact/compat";
 import { useSignal } from "@preact/signals";
 import toast from "react-hot-toast";
@@ -54,9 +55,27 @@ export function ImportPokemonForm() {
     }
 
     try {
+      const gen = generation ?? 9;
+
       pkmnList.value = Teams.importTeams(value)
         .flatMap((team) => team.team)
-        .map((set) => importFromObject(set, generation ?? 9));
+        .map((set) => {
+          if (gen <= 2) {
+            if (set.ivs && Object.values(set.ivs).some((v) => v > 15)) {
+              for (const key in set.ivs) {
+                set.ivs[key as StatID] = Math.floor(set.ivs[key as StatID]! / 2);
+              }
+            }
+
+            if (set.evs && !Object.values(set.evs).some((v) => v > 255)) {
+              for (const key in set.evs) {
+                set.evs[key as StatID] = set.evs[key as StatID]! ** 2;
+              }
+            }
+          }
+          
+          return importFromObject(set, gen);
+        });
       return true;
     } catch (err) {
       pkmnList.value = [];
