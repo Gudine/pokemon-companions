@@ -7,57 +7,27 @@ import { clearData, exportData, importData } from "@/db/dataManagement";
 import { Button } from "@/components/common/Button";
 import { SettingsGroup } from "@/components/common/SettingsGroup";
 import { confirm } from "@/components/common/confirm";
-
-const reader = new FileReader();
-
-function readFile(file: File) {
-  const promise = new Promise<string>((res) => {
-    function readCallback() {
-      reader.removeEventListener("load", readCallback);
-      res(reader.result as string);
-    }
-
-    reader.addEventListener("load", readCallback);
-  });
-
-  reader.readAsText(file);
-  return promise;
-}
+import { downloadFile, uploadFile } from "@/utils/fileUtils";
 
 export function Settings() {
   async function handleExport() {
-    const blob = new Blob([dump(await exportData())], { type: "application/yaml" });
-  
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob)
-    a.download = `pokemoncompanions ${new Date().toISOString().slice(0,10)}.yaml`;
-  
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    downloadFile(
+      `pokemoncompanions ${new Date().toISOString().slice(0,10)}.yaml`,
+      new Blob([dump(await exportData())], { type: "application/yaml" }),
+    );
   }
 
   async function handleImport() {
-    const input = document.createElement('input');
-    input.type = "file";
-    input.accept = "application/yaml,.yaml,.yml";
-    
-    input.addEventListener("change", async () => {
-      try {
-        const file = input.files![0];
-        const data = load(await readFile(file));
-        if (!Array.isArray(data)) throw new Error("Data not in expected format");
-        await importData(data);
-        toast.success("Data imported successfully");
-      } catch (err) {
-        console.error(err);
-        toast.error("Error while importing data");
-      }
-    });
-  
-    document.body.appendChild(input);
-    input.click();
-    document.body.removeChild(input);
+    try {
+      const data = load(await uploadFile("application/yaml,.yaml,.yml"));
+      if (!Array.isArray(data)) throw new Error("Data not in expected format");
+      await importData(data);
+      toast.success("Data imported successfully");
+    } catch (err) {
+      if (err instanceof Error && err.message === "File picker cancelled") return;
+      console.error(err);
+      toast.error("Error while importing data");
+    }
   }
 
   async function handleClear() {
