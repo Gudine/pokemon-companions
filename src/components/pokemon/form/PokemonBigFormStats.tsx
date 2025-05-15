@@ -99,11 +99,11 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
                 class="[text-align:inherit] bg-gray-100 rounded-md mx-1"
                 type="number"
                 min={0}
-                max={255}
-                placeholder="0"
+                max={gen <= 2 ? 65535 : 255}
+                placeholder={gen <= 2 ? "65535" : "0"}
                 {...register(`evs.${id}`, {
                   min: { value: 0, message: `${name} EV can't be lower than 0` },
-                  max: { value: 255, message: `${name} EV can't be higher than 255` },
+                  max: { value: 255, message: `${name} EV can't be higher than ${gen <= 2 ? 65535 : 255}` },
                   valueAsNumber: true,
                 })}
               />
@@ -116,11 +116,11 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
                 class="[text-align:inherit] bg-gray-100 rounded-md mx-1"
                 type="number"
                 min={0}
-                max={31}
-                placeholder="31"
+                max={gen <= 2 ? 15 : 31}
+                placeholder={gen <= 2 ? "15" : "31"}
                 {...register(`ivs.${id}`, {
                   min: { value: 0, message: `${name} IV can't be lower than 0` },
-                  max: { value: 31, message: `${name} IV can't be higher than 31` },
+                  max: { value: 31, message: `${name} IV can't be higher than ${gen <= 2 ? 15 : 31}` },
                   valueAsNumber: true,
                 })}
               />
