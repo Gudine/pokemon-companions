@@ -39,7 +39,7 @@ export function EditPokemonForm({
       item: (initialPkmn.isGen(2) && initialPkmn.data.item?.name) || undefined,
       shiny: (initialPkmn.isGen(2) && initialPkmn.shiny) || false,
 
-      pokeball: (initialPkmn.isGen(3) && initialPkmn.pokeball) || undefined,
+      pokeball: (initialPkmn.isGen(3) && initialPkmn.data.pokeball?.name) || undefined,
       hpType: (initialPkmn.isGen(7) && initialPkmn.hpType) || "",
       dynamaxLevel: initialPkmn.isGen(8) ? initialPkmn.dynamaxLevel : undefined,
       gigantamax: (initialPkmn.isGen(8) && initialPkmn.gigantamax) || false,
