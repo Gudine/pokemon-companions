@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { FaBomb, FaToggleOff, FaToggleOn } from "react-icons/fa6";
 import { BiExport, BiImport } from "react-icons/bi";
 import { settings } from "@/settings";
-import { clearData, exportData, importData } from "@/db/dataManagement";
+import { clearData, exportData, exportTeams, importData } from "@/db/dataManagement";
 import { Button } from "@/components/common/Button";
 import { SettingsGroup } from "@/components/common/SettingsGroup";
 import { confirm } from "@/components/common/confirm";
@@ -14,6 +14,13 @@ export function Settings() {
     downloadFile(
       `pokemoncompanions ${new Date().toISOString().slice(0,10)}.yaml`,
       new Blob([dump(await exportData())], { type: "application/yaml" }),
+    );
+  }
+
+  async function handleExportTeams() {
+    downloadFile(
+      `pokemoncompanions ${new Date().toISOString().slice(0,10)}.txt`,
+      new Blob([await exportTeams()], { type: "text/plain" }),
     );
   }
 
@@ -88,6 +95,13 @@ export function Settings() {
               >
                 <BiImport />
                 Import data
+              </Button>
+              <Button
+                class="col-span-2 flex gap-1 items-center justify-center"
+                onClick={ handleExportTeams }
+              >
+                <BiExport />
+                Export to Showdown
               </Button>
               <Button
                 class="col-span-2 flex gap-1 items-center justify-center"
