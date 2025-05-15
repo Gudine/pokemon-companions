@@ -2,6 +2,7 @@ import type { Ability, GenderName, Generation, GenerationNum, ID, Item, Move, Na
 import { gens } from '@/data';
 import { SetValidationError } from '@/errors';
 import { type MinimalSet, Sets } from './sets';
+import { getStats } from '../pkmnUtils';
 
 type UpToFour<T> = [T] | [T, T] | [T, T, T] | [T, T, T, T];
 
@@ -44,6 +45,16 @@ export class PokemonSetGen1 {
   }
 
   get gen() { return this.data.main.num; }
+
+  get stats() {
+    return getStats(
+      this.data.main,
+      this.data.species,
+      this.ivs,
+      this.evs,
+      this.level
+    );
+  }
 
   protected constructor(set: MinimalSet, gen: PokemonSetGen1["gen"]) {
     const data = gens.get(gen);
@@ -187,6 +198,17 @@ export class PokemonSetGen3 extends PokemonSetGen2 {
   }
 
   get gen() { return this.data.main.num as 3 | 4 | 5 | 6 | 7 | 8 | 9; }
+
+  get stats() {
+    return getStats(
+      this.data.main,
+      this.data.species,
+      this.ivs,
+      this.evs,
+      this.level,
+      this.data.nature,
+    );
+  }
 
   protected constructor(set: MinimalSet, gen: PokemonSetGen3["gen"]) {
     super(set, gen);
