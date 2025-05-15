@@ -16,7 +16,7 @@ export async function exportData() {
 
     const pokemon = rawPokemon.map(({ playthrough: {}, ...pkmn }) => ({
       ...pkmn,
-      data: unpackSet(pkmn.data, playthrough.gen)!.toObject(),
+      data: unpackSet(pkmn.data, playthrough.gen)!.toObject(false),
     }));
 
     result.push({ ...playthrough, date: playthrough.date.toISOString(), pokemon });

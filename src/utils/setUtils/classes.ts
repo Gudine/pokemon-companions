@@ -93,11 +93,12 @@ export class PokemonSetGen1 {
     return Sets.exportSet(this);
   }
 
-  toObject(): MinimalSet {
+  toObject(keepIds = true): MinimalSet {
     return {
       name: this.name,
-      species: this.species,
-      moves: this.moves,
+      species: this.data.species[keepIds ? "id" : "name"],
+      moves: keepIds ? this.moves : this.data.moves
+        .map((move) => move.name.replace(/^Hidden Power (\w+)$/, "Hidden Power [$1]")),
       ...(Object.keys(this.evs).length ? { evs: this.evs }: {}),
       ...(Object.keys(this.ivs).length ? { ivs: this.ivs }: {}),
       level: this.level,
@@ -161,10 +162,10 @@ export class PokemonSetGen2 extends PokemonSetGen1 {
     this.happiness = set.happiness;
   }
 
-  toObject(): MinimalSet {
+  toObject(keepIds = true): MinimalSet {
     return {
-      ...super.toObject(),
-      item: this.item,
+      ...super.toObject(keepIds),
+      item: this.data.item?.[keepIds ? "id" : "name"],
       gender: this.gender,
       shiny: this.shiny,
       happiness: this.happiness,
@@ -230,12 +231,12 @@ export class PokemonSetGen3 extends PokemonSetGen2 {
     if (set.nature && !this.data.nature) throw new SetValidationError("nature", set.nature);
   }
 
-  toObject(): MinimalSet {
+  toObject(keepIds = true): MinimalSet {
     return {
-      ...super.toObject(),
-      ability: this.ability,
-      nature: this.nature,
-      pokeball: this.pokeball,
+      ...super.toObject(keepIds),
+      ability: this.data.ability[keepIds ? "id" : "name"],
+      nature: this.data.nature?.[keepIds ? "id" : "name"],
+      pokeball: this.data.pokeball?.[keepIds ? "id" : "name"],
     }
   }
 
@@ -266,10 +267,10 @@ export class PokemonSetGen7 extends PokemonSetGen3 {
     this.hpType = (!hiddenPower && hpTypeData && hpTypeData.id !== hpCalc.id) ? hpTypeData.id : undefined;
   }
 
-  toObject(): MinimalSet {
+  toObject(keepIds = true): MinimalSet {
     return {
-      ...super.toObject(),
-      hpType: this.hpType,
+      ...super.toObject(keepIds),
+      hpType: this.hpType && this.data.main.types.get(this.hpType)![keepIds ? "id" : "name"],
     }
   }
 
@@ -297,9 +298,9 @@ export class PokemonSetGen8 extends PokemonSetGen7 {
     this.dynamaxLevel = set.dynamaxLevel;
   }
 
-  toObject(): MinimalSet {
+  toObject(keepIds = true): MinimalSet {
     return {
-      ...super.toObject(),
+      ...super.toObject(keepIds),
       dynamaxLevel: this.dynamaxLevel,
       gigantamax: this.gigantamax,
     }
@@ -326,10 +327,10 @@ export class PokemonSetGen9 extends PokemonSetGen8 {
     this.teraType = teraTypeData?.id;
   }
 
-  toObject(): MinimalSet {
+  toObject(keepIds = true): MinimalSet {
     return {
-      ...super.toObject(),
-      teraType: this.teraType,
+      ...super.toObject(keepIds),
+      teraType: this.teraType && this.data.main.types.get(this.teraType)![keepIds ? "id" : "name"],
     }
   }
 
