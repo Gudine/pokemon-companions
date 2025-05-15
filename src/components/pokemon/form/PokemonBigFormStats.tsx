@@ -4,6 +4,7 @@ import { useContext } from "preact/hooks";
 import { Dex } from "@pkmn/dex";
 import { GenContext } from "@/contexts/GenContext";
 import { graphFunctionBuilder } from "@/utils/miscUtils";
+import { getStats } from "@/utils/pkmnUtils";
 
 const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
 
@@ -31,19 +32,9 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
   const level = watch("level");
   const nature = watch("nature");
 
-  const stats = [...data.stats]
-    .sort((a, b) => STAT_ORDER.indexOf(a) - STAT_ORDER.indexOf(b))
-    .filter((stat) => gen !== 1 || stat !== "spd")
-    .map((stat) => {
-      const value = data.stats.calc(
-        stat,
-        species.baseStats[stat],
-        !Number.isNaN(ivs?.[stat]) ? ivs?.[stat] : undefined,
-        !Number.isNaN(evs?.[stat]) ? evs?.[stat] : undefined,
-        !Number.isNaN(level) ? level : undefined,
-        (nature && gen >= 3 && data.natures.get(nature)) || undefined,
-      );
-
+  const stats = [...getStats(data, species, ivs, evs, level, (nature && gen >= 3 && data.natures.get(nature)) || undefined)]
+    .sort((a, b) => STAT_ORDER.indexOf(a[0]) - STAT_ORDER.indexOf(b[0]))
+    .map(([stat, value]) => {
       return {
         id: stat,
         name: gen === 1 && stat === "spa" ? "Spc" : Dex.stats.shortNames[stat],

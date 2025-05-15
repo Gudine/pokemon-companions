@@ -75,28 +75,16 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
 
   if (pkmn.isGen(9)) dataItems.push(["Tera type", pkmn.teraType ? <Types types={ [pkmn.data.main.types.get(pkmn.teraType)!.name] } /> : "Unspecified"]);
 
-  const stats = [...pkmn.data.main.stats]
-    .sort((a, b) => STAT_ORDER.indexOf(a) - STAT_ORDER.indexOf(b))
-    .filter((stat) => pkmn.gen !== 1 || stat !== "spd")
-    .map((stat) => {
-      const value = pkmn.data.main.stats.calc(
-        stat,
-        species.baseStats[stat],
-        pkmn.ivs[stat],
-        pkmn.evs[stat],
-        pkmn.level,
-        (pkmn.isGen(3) && pkmn.data.nature) || undefined,
-      );
-
-      return {
-        id: stat,
-        name: pkmn.gen === 1 && stat === "spa" ? "Spc" : Dex.stats.shortNames[stat],
-        iv: pkmn.ivs[stat],
-        ev: pkmn.evs[stat],
-        width: graphFunction(value),
-        value,
-      };
-    });
+  const stats = [...pkmn.stats]
+    .sort((a, b) => STAT_ORDER.indexOf(a[0]) - STAT_ORDER.indexOf(b[0]))
+    .map(([stat, value]) => ({
+      id: stat,
+      name: pkmn.gen === 1 && stat === "spa" ? "Spc" : Dex.stats.shortNames[stat],
+      iv: pkmn.ivs[stat],
+      ev: pkmn.evs[stat],
+      width: graphFunction(value),
+      value,
+    }));
 
   return (
     <article
