@@ -11,7 +11,7 @@ export function SpeciesTracker() {
     "pkmn",
   );
 
-  const SpeciesComponent = settings.smallPokemonSprites ? SpeciesSmall : SpeciesBig;
+  const SpeciesComponent = settings.smallSpeciesSprites ? SpeciesSmall : SpeciesBig;
 
   return [...pokemonList].map(([name, forms]) => (
     <SpeciesComponent

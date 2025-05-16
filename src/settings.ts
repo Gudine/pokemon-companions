@@ -1,8 +1,8 @@
 export const settings = {
-  get smallPokemonSprites() {
-    return localStorage.getItem("smallPokemonSprites") === "true";
+  get smallSpeciesSprites() {
+    return localStorage.getItem("smallSpeciesSprites") === "true";
   },
-  set smallPokemonSprites(v) {
-    localStorage.setItem("smallPokemonSprites", String(v));
-  }
+  set smallSpeciesSprites(v) {
+    localStorage.setItem("smallSpeciesSprites", String(v));
+  },
 };

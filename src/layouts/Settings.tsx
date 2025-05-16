@@ -67,15 +67,15 @@ export function Settings() {
                   <input
                     type="checkbox"
                     class="sr-only peer"
-                    checked={ settings.smallPokemonSprites }
-                    onChange={ (ev) => settings.smallPokemonSprites = ev.currentTarget.checked }
+                    checked={ settings.smallSpeciesSprites }
+                    onChange={ (ev) => settings.smallSpeciesSprites = ev.currentTarget.checked }
                   />
                   {/* @ts-expect-error */}
                   <FaToggleOff className="peer-checked:hidden" />
                   {/* @ts-expect-error */}
                   <FaToggleOn className="peer-not-checked:hidden text-indigo-700" />
                 </div>
-                Small Pokémon sprites
+                Small species sprites
               </label>
             </div>
           </SettingsGroup>
