@@ -58,7 +58,7 @@ export function PokemonSmall({ pkmn, buttons }: { pkmn: PokemonSet, buttons?: Co
           </div>
         </div>
         { buttons && <div
-          class="flex flex-col gap-0.5 justify-self-start text-type-unknown-dark"
+          class="flex flex-col gap-2 justify-self-start text-type-unknown-dark"
           style={ { color: `var(--color-type-${species.types[0].toLowerCase()}-dark)` } }
         >
           { buttons }
