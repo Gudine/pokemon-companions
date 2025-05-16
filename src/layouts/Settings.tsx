@@ -1,6 +1,6 @@
 import { dump, load } from "js-yaml";
 import toast from "react-hot-toast";
-import { FaBomb, FaToggleOff, FaToggleOn } from "react-icons/fa6";
+import { FaBomb } from "react-icons/fa6";
 import { BiExport, BiImport } from "react-icons/bi";
 import { settings } from "@/settings";
 import { clearData, exportData, exportTeams, importData } from "@/db/dataManagement";
@@ -8,6 +8,7 @@ import { Button } from "@/components/common/Button";
 import { SettingsGroup } from "@/components/common/SettingsGroup";
 import { confirm } from "@/components/common/confirm";
 import { downloadFile, uploadFile } from "@/utils/fileUtils";
+import { Toggle } from "@/components/common/Toggle";
 
 export function Settings() {
   async function handleExport() {
@@ -61,20 +62,12 @@ export function Settings() {
       <div class="col-span-full row-span-full flex flex-col p-1 sm:p-4">
         <div class="flex flex-row justify-center items-start gap-4">
           <SettingsGroup title="Appearance">
-            <div class="flex flex-col items-center p-2">
+            <div class="flex flex-col p-2">
               <label class="flex gap-2 items-center">
-                <div class="text-3xl flex cursor-pointer">
-                  <input
-                    type="checkbox"
-                    class="sr-only peer"
-                    checked={ settings.smallSpeciesSprites }
-                    onChange={ (ev) => settings.smallSpeciesSprites = ev.currentTarget.checked }
-                  />
-                  {/* @ts-expect-error */}
-                  <FaToggleOff className="peer-checked:hidden" />
-                  {/* @ts-expect-error */}
-                  <FaToggleOn className="peer-not-checked:hidden text-indigo-700" />
-                </div>
+                <Toggle
+                  checked={ settings.smallSpeciesSprites }
+                  onChange={ (ev) => settings.smallSpeciesSprites = ev.currentTarget.checked }
+                />
                 Small species sprites
               </label>
             </div>
