@@ -60,17 +60,17 @@ export function ImportPokemonForm() {
       pkmnList.value = Teams.importTeams(value)
         .flatMap((team) => team.team)
         .map((set) => {
-          if (gen <= 2) {
-            if (set.ivs && Object.values(set.ivs).some((v) => v > 15)) {
-              for (const key in set.ivs) {
-                set.ivs[key as StatID] = Math.floor(set.ivs[key as StatID]! / 2);
-              }
+          if (
+            gen < 3
+            && (!set.ivs || !Object.values(set.ivs).length || Object.values(set.ivs).some((v) => v > 15))
+            && (!set.evs || !Object.values(set.evs).length || !Object.values(set.evs).some((v) => v > 255))
+          ) {
+            if (set.ivs) for (const key in set.ivs) {
+              set.ivs[key as StatID] = Math.floor(set.ivs[key as StatID]! / 2);
             }
-
-            if (set.evs && !Object.values(set.evs).some((v) => v > 255)) {
-              for (const key in set.evs) {
-                set.evs[key as StatID] = set.evs[key as StatID]! ** 2;
-              }
+            
+            if (set.evs) for (const key in set.evs) {
+              set.evs[key as StatID] = set.evs[key as StatID]! ** 2;
             }
           }
           
