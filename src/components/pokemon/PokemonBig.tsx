@@ -1,37 +1,19 @@
-import type { ComponentChildren, RefCallback } from "preact";
-import type { IPokemonUnit } from "@/db/db";
+import type { ComponentChildren } from "preact";
 import type { PokemonSet } from "@/utils/setUtils";
-import { useSignal } from "@preact/signals";
-import { FaPencil } from "react-icons/fa6";
 import { Dex } from "@pkmn/dex";
 import { ImgUtils } from "@/utils/imgUtils";
 import { batched, graphFunctionBuilder } from "@/utils/miscUtils";
 import { Types } from "@/components/common/Types";
 import { MoveSmall } from "@/components/move/MoveSmall";
 import { MoveInvalid } from "@/components/move/MoveInvalid";
-import { EditPokemonForm } from "./form/EditPokemonForm";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const STAT_ORDER = ["hp", "atk", "def", "spa", "spd", "spe"];
 
 const graphFunction = graphFunctionBuilder(600);
 
-export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonSet }) {
+export function PokemonBig({ pkmn, buttons }: { pkmn: PokemonSet, buttons?: ComponentChildren }) {
   const isMediumScreen = useMediaQuery("(width >= 48rem)");
-  const isEditing = useSignal(false);
-
-  if (unit && isEditing.value) return (<EditPokemonForm
-    unit={ unit }
-    pkmn={ pkmn }
-    close={ () => { isEditing.value = false; } }
-  />);
-
-  const checkScroll: RefCallback<HTMLElement> = (elem) => {
-    if (unit && elem && window.location.hash === `#${unit.playthrough}.${unit.id}`) {
-      elem.scrollIntoView({ block: "center", behavior: "smooth" });
-      window.location.hash = "";
-    }
-  };
 
   const { species } = pkmn.data;
 
@@ -88,7 +70,6 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
 
   return (
     <article
-      ref={ checkScroll }
       class="grid grid-cols-2 grid-rows-[repeat(4,max-content)] content-between gap-1
         rounded-xl p-1 w-80
         md:grid-cols-4 md:grid-rows-[repeat(3,max-content)] md:w-170
@@ -111,17 +92,12 @@ export function PokemonBig({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonS
             <span>{ pkmn.name ?? species.name }</span>
           </div>
         </div>
-        <div
+        { buttons && <div
           class="flex flex-col gap-2 justify-self-start text-type-unknown-dark"
           style={ { color: `var(--color-type-${species.types[0].toLowerCase()}-dark)` } }
         >
-          { unit && (<button
-            class="flex cursor-pointer hover:brightness-125"
-            onClick={ () => { isEditing.value = true; } }
-          >
-            <FaPencil title="Edit" />
-          </button>) }
-        </div>
+          { buttons }
+        </div> }
       </div>
       <dl class="text-sm text-center col-span-full md:col-span-3
         grid grid-flow-col justify-evenly auto-cols-[minmax(0,50%)] md:auto-cols-[minmax(0,33%)] gap-1">
