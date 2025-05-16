@@ -3,8 +3,10 @@ import type { IPokemonUnit } from "@/db/db";
 import type { PokemonSet } from "@/utils/setUtils";
 import { useSignal } from "@preact/signals";
 import { FaPencil } from "react-icons/fa6";
-import { PokemonBig } from "./PokemonBig";
+import { settings } from "@/settings";
 import { EditPokemonForm } from "./form/EditPokemonForm";
+import { PokemonBig } from "./PokemonBig";
+import { PokemonSmall } from "./PokemonSmall";
 
 export function PokemonEditableContainer({ unit, pkmn }: { unit?: IPokemonUnit, pkmn: PokemonSet }) {
   const isEditing = useSignal(false);
@@ -16,6 +18,8 @@ export function PokemonEditableContainer({ unit, pkmn }: { unit?: IPokemonUnit, 
     }
   };
 
+  const PokemonComponent = settings.smallPokemonCards ? PokemonSmall : PokemonBig;
+
   return (
     <div ref={ checkScroll } class="relative">
       {(unit && isEditing.value)
@@ -23,7 +27,7 @@ export function PokemonEditableContainer({ unit, pkmn }: { unit?: IPokemonUnit, 
           unit={ unit }
           pkmn={ pkmn }
           close={ () => { isEditing.value = false; } }
-        />) : (<PokemonBig
+        />) : (<PokemonComponent
           pkmn={ pkmn }
           buttons={unit && (<button
             class="flex cursor-pointer hover:brightness-125"

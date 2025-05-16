@@ -70,6 +70,13 @@ export function Settings() {
                 />
                 Small species sprites
               </label>
+              <label class="flex gap-2 items-center">
+                <Toggle
+                  checked={ settings.smallPokemonCards }
+                  onChange={ (ev) => settings.smallPokemonCards = ev.currentTarget.checked }
+                />
+                Small Pokémon card
+              </label>
             </div>
           </SettingsGroup>
 
