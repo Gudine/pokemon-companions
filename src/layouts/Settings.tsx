@@ -60,7 +60,7 @@ export function Settings() {
   return (
     <main class="grid grid-cols-1 grid-rows-1 grow">
       <div class="col-span-full row-span-full flex flex-col p-1 sm:p-4">
-        <div class="flex flex-row justify-center items-start gap-4">
+        <div class="flex sm:flex-row sm:items-start flex-col items-center justify-center gap-4">
           <SettingsGroup title="Appearance">
             <div class="flex flex-col p-2">
               <label class="flex gap-2 items-center">
