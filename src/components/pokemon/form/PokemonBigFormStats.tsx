@@ -45,8 +45,10 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
 
   return (
     <div class="col-span-full bg-gray-100 p-1 rounded-xl gap-0.5">
-      <div class="grid grid-rows-[max-content] auto-rows-fr grid-cols-[max-content_max-content_8fr_1fr_1fr] gap-0.5 rounded-lg overflow-hidden">
-        <div class="col-span-full grid grid-cols-subgrid *:bg-type-steel-light">
+      <div class="grid grid-rows-[max-content] auto-rows-fr gap-0.5 rounded-lg overflow-hidden
+        grid-cols-[max-content_max-content_8fr_1fr_1fr] not-supports-subgrid:grid-cols-[2em_2em_1fr_3em_3em]">
+        <div class="col-span-full grid *:bg-type-steel-light
+          grid-cols-subgrid not-supports-subgrid:grid-cols-[inherit] not-supports-subgrid:gap-[inherit]">
           <p class="col-span-2 flex items-end justify-center py-0.5">Stats</p>
           <div class="text-center py-0.5 flex flex-col items-center">
             {gen >= 3 && (<>
@@ -65,9 +67,10 @@ export function PokemonBigFormStats({ formHook, species }: Props) {
           <p class="flex items-end justify-center py-0.5">IVs</p>
         </div>
         { stats.map(({ id, name, width, value }) => (
-          <div key={id} class="col-span-full grid grid-cols-subgrid">
+          <div key={id} class="col-span-full grid grid-cols-subgrid
+            not-supports-subgrid:grid-cols-[inherit] not-supports-subgrid:gap-[inherit]">
             <div
-              class="col-span-2 grid grid-cols-subgrid gap-1.5 py-0.5 max-md:text-sm"
+              class="col-span-2 grid gap-1.5 py-0.5 max-md:text-sm grid-cols-subgrid not-supports-subgrid:grid-cols-2"
               style={{ backgroundColor: `var(--color-stat-${id}-light)` }}
             >
               <p class="text-right pl-1">{name}:</p>

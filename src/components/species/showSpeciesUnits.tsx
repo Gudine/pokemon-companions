@@ -43,7 +43,7 @@ function SpeciesModalInner({ call, speciesName }: ReactCall.Props<Props, void, {
 
   return (
     <div class="grid grid-rows-[max-content_1fr] grid-flow-col auto-cols-[minmax(85%,auto)] sm:auto-cols-[minmax(--spacing(80),auto)] h-full">
-      {forms.map((form, i) => <div class="row-span-2 grid grid-rows-subgrid gap-0 bg-stone-200 border-dotted not-last:border-r-2">
+      {forms.map((form, i) => <div class="row-span-2 grid not-supports-subgrid:grid-rows-[inherit] grid-rows-subgrid gap-0 bg-stone-200 border-dotted not-last:border-r-2">
         <div class="flex flex-col px-0.5 bg-linear-to-b from-transparent from-75% to-stone-400/65">
           <div class="grow flex flex-col items-center text-center px-1.5 pb-2
             border-dashed border-b-2">

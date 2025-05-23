@@ -65,6 +65,12 @@
   );
 }
 
+@custom-variant supports-subgrid {
+  @supports (grid-template-columns: subgrid) {
+    @slot;
+  }
+}
+
 @theme static {
   --font-nunito: "Nunito Variable", sans-serif;
   --font-kodchasan: Kodchasan, sans-serif;
