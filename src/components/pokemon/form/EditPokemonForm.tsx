@@ -85,8 +85,11 @@ export function EditPokemonForm({
   const genealogies = getGenealogies(pkmn.value.data.species.name, pkmn.value.data.main) ?? [];
   
   const nextEvos = Array.from(new Set(genealogies
-    .map((genealogy) => genealogy[genealogy.indexOf(pkmn.value.data.species.name) + 1])
-    .filter((evo) => {
+    .map((genealogy) => {
+      const index = genealogy.indexOf(pkmn.value.data.species.name);
+      return index >= 0 ? genealogy[index + 1] : undefined;
+    })
+    .filter((evo): evo is NonNullable<typeof evo> => {
       if (!evo) return false;
       const evoData = pkmn.value.data.main.species.get(evo)!;
       return !evoData.gender || !gender || evoData.gender === gender;
