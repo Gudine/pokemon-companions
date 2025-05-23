@@ -1,8 +1,10 @@
 import type { Specie } from "@pkmn/data";
 import type { IPokemonUnit } from "@/db/db";
 import type { MinimalSet } from "@/utils/setUtils/sets";
+import toast from "react-hot-toast";
 import { FaCircleArrowLeft, FaFloppyDisk, FaTrash } from "react-icons/fa6";
 import { GiUpgrade } from "react-icons/gi";
+import { useEffect } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import { GenProvider } from "@/contexts/GenContext";
@@ -75,6 +77,10 @@ export function EditPokemonForm({
   });
 
   const { handleSubmit, setError, setValue, watch, formState: { errors, isSubmitting } } = formHook;
+
+  const toastId = useSignal<string>();
+
+  useEffect(() => () => { if (toastId.value) toast.dismiss(toastId.value); }, []);
 
   const isDeleting = useSignal(false);
   const pkmn = useSignal(initialPkmn);
@@ -202,15 +208,18 @@ export function EditPokemonForm({
 
   const errorMessage = findMessage(errors);
 
+  if (!errorMessage) {
+    toast.dismiss(toastId.value);
+    toastId.value = undefined;
+  } else {
+    toastId.value = toast.error(errorMessage, { duration: Infinity, id: toastId.value });
+  }
+
   return (
     <form
       onSubmit={ handleSubmit(onSubmit) }
       class="min-w-0 flex flex-col gap-2"
     >
-      {errorMessage && <p class="text-sm text-center text-red-500">
-        {errorMessage}
-      </p>}
-
       <fieldset
         class="min-w-0 flex justify-center items-center"
         disabled={ isDeleting.value || isSubmitting }
@@ -237,7 +246,8 @@ export function EditPokemonForm({
                 </button>) }
                 <button
                   type="submit"
-                  class="flex cursor-pointer hover:brightness-125"
+                  class="flex cursor-pointer enabled:hover:brightness-125 disabled:brightness-25"
+                  disabled={ !!errorMessage }
                 >
                   <FaFloppyDisk title="Save" />
                 </button>
