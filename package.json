@@ -17,7 +17,7 @@
     "@pkmn/img": "^0.3.1",
     "@pkmn/sets": "^5.2.0",
     "@preact/signals": "^2.8.1",
-    "@tailwindcss/vite": "^4.0.17",
+    "@tailwindcss/vite": "^4.1.18",
     "idb": "^8.0.3",
     "js-yaml": "^4.1.1",
     "preact": "^10.28.4",
@@ -25,24 +25,21 @@
     "react-hook-form": "^7.71.2",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
-    "tailwindcss": "^4.0.17"
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
-    "@csstools/postcss-cascade-layers": "^5.0.1",
-    "@csstools/postcss-color-mix-function": "^3.0.9",
-    "@csstools/postcss-oklab-function": "^4.0.9",
+    "@csstools/postcss-oklab-function": "^5.0.2",
     "@preact/preset-vite": "^2.10.3",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.3.3",
-    "autoprefixer": "^10.4.27",
     "postcss": "^8.5.6",
     "postcss-media-minmax": "^5.0.0",
-    "postcss-nesting": "^13.0.1",
+    "postcss-nesting": "^14.0.0",
     "postcss-value-parser": "^4.2.0",
     "sharp": "^0.34.5",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vite": "^6.3.5",
+    "vite": "^6.4.1",
     "vite-plugin-pwa": "^1.2.0"
   }
 }
