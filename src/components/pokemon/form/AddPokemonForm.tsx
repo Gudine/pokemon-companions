@@ -347,7 +347,6 @@ export function AddPokemonForm() {
       <Button class="justify-self-end" type="submit" disabled={!(isValid || isSubmitting)}>
         { !isSubmitting
           ? "Submit"
-          /* @ts-expect-error */
           : <AiOutlineLoading className="animate-spin" /> }
       </Button>
     </form>

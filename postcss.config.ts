@@ -1,148 +1,9 @@
 // Source: https://gist.github.com/alexanderbuhler/2386befd7b6b3be3695667cb5cb5e709
 import postcss, { type PluginCreator } from "postcss";
 import valueParser from "postcss-value-parser";
-
-import cascadeLayers from "@csstools/postcss-cascade-layers";
 import mediaMinmax from "postcss-media-minmax";
 import oklabFunction from "@csstools/postcss-oklab-function";
-import colorMixFunction from "@csstools/postcss-color-mix-function";
 import nesting from "postcss-nesting";
-import autoprefixer from "autoprefixer";
-
-/*
-  This plugin polyfills @property definitions with regular CSS variables
-  Additionally, it removes `in <colorspace>` after `to left` or `to right` gradient args for older browsers
-*/
-const propertyInjectPlugin: PluginCreator<{}> = () => {
-  return {
-    postcssPlugin: 'postcss-property-polyfill',
-    Once(root) {
-      const fallbackRules: string[] = []
-
-      // 1. Collect initial-value props from @property at-rules
-      root.walkAtRules('property', (rule) => {
-        const declarations = {}
-        let varName: string | null = null;
-
-        rule.walkDecls((decl) => {
-          if (decl.prop === 'initial-value') {
-            varName = rule.params.trim()
-            declarations[varName] = decl.value
-          }
-        })
-
-        if (varName) {
-          fallbackRules.push(`${varName}: ${declarations[varName]};`)
-        }
-      })
-
-      // 2. Inject fallback variables if any exist
-      if (fallbackRules.length > 0) {
-        // check for paint() because its browser support aligns with @property at-rule
-        const fallbackCSS = `@supports not (background: paint(something)) {
-          :root { ${fallbackRules.join(' ')} }
-        }`
-
-        const sourceFile = root.source?.input?.file || root.source?.input?.from
-        const fallbackAst = postcss.parse(fallbackCSS, { from: sourceFile })
-
-        // Insert after last @import (or prepend if none found)
-        let lastImportIndex = -1
-        root.nodes.forEach((node, i) => {
-          if (node.type === 'atrule' && node.name === 'import') {
-            lastImportIndex = i
-          }
-        })
-
-        if (lastImportIndex === -1) {
-          root.prepend(fallbackAst)
-        }
-        else {
-          root.insertAfter(root.nodes[lastImportIndex], fallbackAst)
-        }
-      }
-
-      // 3. Remove `in <colorspace>` after `to left` or `to right`, e.g. "to right in oklab" -> "to right"
-      root.walkDecls((decl) => {
-        if (!decl.value) return
-
-        decl.value = decl.value.replaceAll(/\bto\s+(left|right)\s+in\s+[\w-]+/g, (_, direction) => {
-          return `to ${direction}`
-        })
-      })
-    },
-  }
-}
-
-propertyInjectPlugin.postcss = true;
-
-/*
-  This plugin resolves/calculates CSS variables within color-mix() functions so they can be calculated using postcss-color-mix-function
-  Exception: dynamic values like currentColor
-*/
-const colorMixVarResolverPlugin: PluginCreator<{}> = () => {
-  return {
-    postcssPlugin: 'postcss-color-mix-var-resolver',
-
-    Once(root) {
-      const cssVariables = {}
-
-      // 1. Collect all CSS variable definitions from tailwind
-      root.walkRules((rule) => {
-        if (!rule.selectors) return
-
-        const isRootOrHost = rule.selectors.some(
-          sel => sel.includes(':root') || sel.includes(':host'),
-        )
-
-        if (isRootOrHost) {
-          // Collect all --var declarations in this rule
-          rule.walkDecls((decl) => {
-            if (decl.prop.startsWith('--')) {
-              cssVariables[decl.prop] = decl.value.trim()
-            }
-          })
-        }
-      })
-
-      // 2. Parse each declaration's value and replace var(...) in color-mix(...)
-      root.walkDecls((decl) => {
-        const originalValue = decl.value
-        if (!originalValue || !originalValue.includes('color-mix(')) return
-
-        const parsed = valueParser(originalValue)
-        let modified = false
-
-        parsed.walk((node) => {
-          if (node.type === 'function' && node.value === 'color-mix') {
-            node.nodes.forEach((childNode) => {
-              if (childNode.type === 'function' && childNode.value === 'var' && childNode.nodes.length > 0) {
-                const varName = childNode.nodes[0]?.value
-                if (!varName) return
-
-                const resolvedVarName = cssVariables[varName] === undefined ? 'black' : cssVariables[varName] // fall back to black if var is undefined
-                // add whitespace because it might just be a part of a color notation e.g. #fff 10%
-                const resolved = `${resolvedVarName} ` || `var(${varName})`;
-
-                (childNode.type as string) = 'word';
-                childNode.value = resolved
-                childNode.nodes = []
-                modified = true
-              }
-            })
-          }
-        })
-
-        if (modified) {
-          const newValue = parsed.toString()
-          decl.value = newValue
-        }
-      })
-    },
-  }
-}
-
-colorMixVarResolverPlugin.postcss = true
 
 /*
   This plugin transforms shorthand rotate/scale/translate into their transform[3d] counterparts
@@ -273,16 +134,11 @@ addSpaceForEmptyVarFallback.postcss = true
 
 const config = {
   plugins: [
-    cascadeLayers,
-    propertyInjectPlugin(),
-    colorMixVarResolverPlugin(),
     transformShortcutPlugin(),
     addSpaceForEmptyVarFallback(),
     mediaMinmax,
     oklabFunction,
-    colorMixFunction,
     nesting,
-    autoprefixer,
   ],
 }
 
