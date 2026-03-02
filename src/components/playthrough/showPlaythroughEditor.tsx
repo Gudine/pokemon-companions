@@ -144,7 +144,6 @@ export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough
           >
             { !isDeleting.value
               ? "Delete"
-              /* @ts-expect-error */
               : <AiOutlineLoading className="animate-spin" /> }
           </Button>}
           <Button
@@ -154,7 +153,6 @@ export const showPlaythroughEditor = createCallable<{ playthrough?: IPlaythrough
           >
             { !isSubmitting
               ? "Save"
-              /* @ts-expect-error */
               : <AiOutlineLoading className="animate-spin" /> }
           </Button>
         </div>
